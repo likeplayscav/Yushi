@@ -658,7 +658,7 @@ fn marked_rest(rest: &str) -> String {
         return String::new();
     }
     match segment_longest_prefix(rest) {
-        Ok((segmentations, tail)) => query::join_marked(&segmentations, tail),
+        Ok((segmentations, tail)) => query::join_spelled(&segmentations, tail),
         Err(_) => rest.to_owned(),
     }
 }

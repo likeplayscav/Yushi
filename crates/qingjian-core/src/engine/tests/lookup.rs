@@ -201,7 +201,7 @@ fn keyboard_u_umlaut_spelling_matches_canonical_dictionary_keys() {
 
     engine.set_input("celue");
     let query = engine.query().unwrap();
-    assert_eq!(query.marked_text(), "ce'lue");
+    assert_eq!(query.marked_text(), "ce'lüe");
     assert_eq!(query.candidates.items[0].text, "策略");
     assert_eq!(query.candidates.items[0].syllables, ["ce", "lve"]);
     let strategy = query.candidates.items[0].clone();
@@ -225,7 +225,7 @@ fn keyboard_v_after_jqxy_matches_u_dictionary_keys() {
 
     engine.set_input("tiqv");
     let query = engine.query().unwrap();
-    assert_eq!(query.marked_text(), "ti'qv");
+    assert_eq!(query.marked_text(), "ti'qu");
     assert_eq!(query.candidates.items[0].text, "提取");
     assert_eq!(query.candidates.items[0].syllables, ["ti", "qu"]);
 

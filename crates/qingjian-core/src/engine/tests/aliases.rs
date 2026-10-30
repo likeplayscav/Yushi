@@ -23,7 +23,9 @@ fn keyboard_v_aliases_preserve_lookup_preedit_and_commit() {
             query.candidates.items[0].syllables,
             canonical_items[0].syllables
         );
-        assert!(query.marked_text().contains('v'), "{keys}");
+        // 上游按拼音正字法显示 u，原始按键仍保存在组句中。
+        assert_eq!(query.marked_text().replace('\'', ""), canonical, "{keys}");
+        assert_eq!(engine.composition().text(), keys, "{keys}");
         let candidate = query.candidates.items[0].clone();
         engine.commit(&candidate);
         assert!(engine.composition().is_empty(), "{keys}");

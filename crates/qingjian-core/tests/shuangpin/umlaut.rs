@@ -50,8 +50,8 @@ fn sogou_umlaut_keys_query_and_commit_by_syllable() {
         ("qy", "qu", "去"),
         ("xy", "xu", "需"),
         ("yy", "yu", "鱼"),
-        ("ny", "nv", "女"),
-        ("ly", "lv", "绿"),
+        ("ny", "nü", "女"),
+        ("ly", "lü", "绿"),
     ] {
         engine.set_input(&format!("{keys}x;"));
         let query = engine.query().unwrap();

@@ -18,7 +18,7 @@ description: 选择全拼、九套双拼或大千注音；九条模糊音的开�
 
 ## 全拼的几个写法
 
-- `lue` / `nue` 与 `lve` / `nve` 等价；j / q / x / y 后的 `v` 也认（`tiqv` → 提取），带韵母时同样可用（`xvexi` → 学习、`jvan` → 卷、`yvn` → 云）。
+- `lue` / `nue` 与 `lve` / `nve` 等价；j / q / x / y 后的 `v` 也认（`tiqv` → 提取），带韵母时同样可用（`xvexi` → 学习、`jvan` → 卷、`yvn` → 云）。拼音行按汉语拼音的写法显示 ü：l、n 后写 `ü`（敲 `lve` 或 `lue` 显示 `lüe`，`nv` 显示 `nü`），j / q / x / y 后写 `u`（敲 `qv` 显示 `qu`，`jvan` 显示 `juan`）；双拼解出的全拼与九宫格的拼音行也一样。
 - 「嗯」按习惯用 `en` 输入（`enen` → 嗯嗯）；单独敲 `ng` 也出「嗯」，与其他拼音连写时请用 `en`。
 - `lo` 与 `luo` 同键，按 luo 处理。
 
@@ -45,8 +45,8 @@ description: 选择全拼、九套双拼或大千注音；九条模糊音的开�
 - **`;` 键**：微软 / 搜狗 / 紫光的 `;` 为 ing：打拼音时末尾有落单的声母，`;` 当拼音用（`x;` → xing）；其他情况下仍为标点。Android 的微软双拼键盘把 `;` 放在左下角原来 Shift 的位置（往上一划是 Shift），见 [Android：键盘与打字](../platforms/android.md#键盘)。
 - **ü**：微软 / 搜狗的 ü 键为 `y`：`ny` / `ly` 输入女 / 绿，`jy` / `qy` / `xy` / `yy` 解为 ju / qu / xu / yu，原来的 `ju` / `qu` / `xu` / `yu` 也可继续使用。其他方案也接受各自 ü 键与 j / q / x / y 的组合，但同键已有的读法优先（微软 `jv` 仍为 jue，小浪 `jv` 仍为 jing）。
 - **智能ABC**：翘舌声母以 `a` 为 zh、`e` 为 ch、`v` 为 sh（`ai` → zhi、`ei` → chi、`vi` → shi）。
-- **小浪**：翘舌声母以 `e` 为 zh、`i` 为 ch、`v` 为 sh；`x` 为 ü（`lx` → lv，`nx` → nv，`jx` → ju）；`v` 兼作韵母 uai 与 ing；键位表没列出的韵母按原拼键输入。`en` 与 `eng` 同码（`un`），按 en 处理；`dia` / `dai` 同码按 dai，`lia` / `lai` 同码按 lai，`nen` / `niang` 同码按 niang。
-- **首道**：翘舌声母以 `v` 为 zh、`i` 为 ch、`e` 为 sh；零声母双写首字母或照全拼输入（`aa` `ai` `an` `ao` `oo` `ou` `en` `er`），ang 为 `ay`，e / ei / eng 以 `u` 引导（`ue` `ui` `uf`）；ue 在 `l`（`jl` → jue），üe 单独在 `b`（`lb` → lve）。`den` / `dia` 同码（`dk`），按 den 处理。
+- **小浪**：翘舌声母以 `e` 为 zh、`i` 为 ch、`v` 为 sh；`x` 为 ü（`lx` → lü，`nx` → nü，`jx` → ju）；`v` 兼作韵母 uai 与 ing；键位表没列出的韵母按原拼键输入。`en` 与 `eng` 同码（`un`），按 en 处理；`dia` / `dai` 同码按 dai，`lia` / `lai` 同码按 lai，`nen` / `niang` 同码按 niang。
+- **首道**：翘舌声母以 `v` 为 zh、`i` 为 ch、`e` 为 sh；零声母双写首字母或照全拼输入（`aa` `ai` `an` `ao` `oo` `ou` `en` `er`），ang 为 `ay`，e / ei / eng 以 `u` 引导（`ue` `ui` `uf`）；ue 在 `l`（`jl` → jue），üe 单独在 `b`（`lb` → lüe）。`den` / `dia` 同码（`dk`），按 den 处理。
 - **拼音加加**：翘舌声母以 `v` 为 zh、`u` 为 ch、`i` 为 sh（ch / sh 与小鹤、自然码相反）；主排高频韵母 ai→S、ao→D、an→F、ang→G、ei→W、en→R、eng→T，ing 在 `q`；ü 在 `v`（`nv` 女、`lv` 绿），üe 在 `x`（`jx` → jue、`nx` → nüe）；零声母以双写为主（`aa` `as` `af`、`ee` `er` `eq`、`oo` `op`，注意 en 是 `er`、er 是 `eq`），也兼容 o 前缀（`oa` `oe`）；不用 `;` 键。
 - **紫光**：翘舌声母以 `u` 为 zh、`a` 为 ch、`i` 为 sh（`ui` → zhi、`ai` → chi、`ii` → shi，`a` 与 `i` 兼作韵母）；`;` 为 ing；ü 在 `v`（`nv` 女、`lv` 绿），üe 与 ue、ui 同在 `n`（`jn` → jue、`yn` → yue、`gn` → gui）；零声母只写 `o` + 韵母键，不认双写元音（`aa` 是 cha）也不认双写韵母 `ii` `uu`（那是 shi、zhu）。
 

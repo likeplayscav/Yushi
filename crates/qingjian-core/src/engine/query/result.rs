@@ -1,12 +1,29 @@
+use std::borrow::Cow;
+
 use crate::candidate::{Candidate, CandidateList};
 use crate::correction::Correction;
-use crate::parser::Segmentation;
+use crate::parser::{Segmentation, umlaut_spelling};
 
-/// 最优切分的音节用 `'` 连接，再接未切分尾部。
+/// 最优切分的音节照敲法用 `'` 连接，再接未切分尾部：输入日志与云端请求用它。
 pub(crate) fn join_marked(segmentations: &[Segmentation], tail: &str) -> String {
     let mut text = segmentations
         .first()
         .map(|s| s.joined("'"))
+        .unwrap_or_default();
+    if !tail.is_empty() {
+        if !text.is_empty() {
+            text.push('\'');
+        }
+        text.push_str(tail);
+    }
+    text
+}
+
+/// 与 [`join_marked`] 相同，但音节按显示写法（[`Segmentation::spelled`]，`lve` → `lüe`），给拼音行用；尾部照敲的。
+pub(crate) fn join_spelled(segmentations: &[Segmentation], tail: &str) -> String {
+    let mut text = segmentations
+        .first()
+        .map(Segmentation::spelled)
         .unwrap_or_default();
     if !tail.is_empty() {
         if !text.is_empty() {
@@ -47,7 +64,7 @@ pub(crate) fn spelling_for(segmentations: &[Segmentation], candidate: Option<&Ca
     best.0
 }
 
-/// 与 [`join_marked`] 相同的分段，但用原样大小写的输入（`Cpan`）：切分是按小写算的，
+/// 与 [`join_spelled`] 相同的分段，但用原样大小写的输入（`Cpan`）：切分是按小写算的，
 /// 大小写只影响显示，逐段按同样的字节长度取回原样文本。
 pub(crate) fn join_marked_typed(typed: &str, segmentations: &[Segmentation], tail: &str) -> String {
     let mut text = String::new();
@@ -58,7 +75,7 @@ pub(crate) fn join_marked_typed(typed: &str, segmentations: &[Segmentation], tai
                 text.push('\'');
             }
             let end = (offset + syllable.text.len()).min(typed.len());
-            text.push_str(&typed[offset..end]);
+            text.push_str(&umlaut_spelling(&typed[offset..end]));
             offset = end;
         }
     }
@@ -203,7 +220,9 @@ impl Query {
         let fits = |toned: &[String]| {
             spelled.is_some_and(|spelled| {
                 spelled.syllables.iter().zip(toned).all(|(typed, read)| {
-                    qingjian_dictionary::strip_marks(read).starts_with(typed.text.as_str())
+                    // ü 的几种敲法（`qv`、`lue`）先归一成词库写法再比
+                    qingjian_dictionary::strip_marks(read)
+                        .starts_with(qingjian_dictionary::canonical_syllable(&typed.text))
                 })
             })
         };
@@ -211,18 +230,18 @@ impl Query {
         else {
             return (self.marked_segments(), self.segments_cursor());
         };
-        let mut parts: Vec<&str> = toned.iter().map(String::as_str).collect();
+        let mut parts: Vec<Cow<str>> = toned.iter().map(|t| Cow::Borrowed(t.as_str())).collect();
         if let Some(spelled) = spelled {
             parts.extend(
                 spelled
                     .syllables
                     .iter()
                     .skip(toned.len())
-                    .map(|s| s.text.as_str()),
+                    .map(|s| umlaut_spelling(&s.text)),
             );
         }
         if !self.tail.is_empty() {
-            parts.push(&self.tail);
+            parts.push(Cow::Borrowed(&self.tail));
         }
         let mut segments = Vec::with_capacity(4);
         if !self.held.is_empty() {
@@ -274,12 +293,17 @@ impl Query {
             let typed = if let Some(typed) = typed {
                 typed
             } else if let Some(display) = &self.typed_display {
-                display.clone()
+                // 九宫格的拼音行同时是输入日志里的拼音，构造时照词库写法（`lv`），到这里才换成显示写法
+                display
+                    .split('\'')
+                    .map(umlaut_spelling)
+                    .collect::<Vec<_>>()
+                    .join("'")
             } else {
                 let spelled = self.segmentations.get(self.spelled..).unwrap_or_default();
                 match &self.typed_case {
                     Some(typed) => join_marked_typed(typed, spelled, &self.tail),
-                    None => join_marked(spelled, &self.tail),
+                    None => join_spelled(spelled, &self.tail),
                 }
             };
             if !typed.is_empty() {

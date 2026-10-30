@@ -22,7 +22,7 @@ mod snapshot;
 
 pub(crate) use english_tail::EnglishTail;
 pub use result::Query;
-pub(super) use result::join_marked;
+pub(super) use result::{join_marked, join_spelled};
 pub(super) use snapshot::QuerySnapshot;
 
 impl Engine {
