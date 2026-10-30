@@ -12,8 +12,11 @@ pub(super) fn frame(frame: &Frame) -> qingjian_render::Frame {
         columns: frame.columns,
         column_ems: frame.column_ems.clone(),
         footer: frame.footer.clone(),
+        previous_page: frame.pages_around.0,
+        next_page: frame.pages_around.1,
         sentence: frame.sentence.clone(),
         status: frame.status.clone(),
+        mode: frame.mode.clone(),
     }
 }
 
@@ -39,7 +42,7 @@ fn row(row: &Row) -> qingjian_render::Row {
     qingjian_render::Row {
         index: row.index.clone(),
         text: row.text.clone(),
-        code: None,
+        code: row.code.clone(),
         annotation: row
             .annotation
             .iter()
@@ -48,6 +51,8 @@ fn row(row: &Row) -> qingjian_render::Row {
                     Tone::Gloss => qingjian_render::Tone::Gloss,
                     Tone::Fresh => qingjian_render::Tone::Fresh,
                     Tone::Faint => qingjian_render::Tone::Faint,
+                    Tone::Pos => qingjian_render::Tone::Pos,
+                    Tone::Separator => qingjian_render::Tone::Separator,
                 };
                 (text.clone(), tone)
             })

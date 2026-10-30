@@ -26,10 +26,13 @@ impl SentenceScorer for Blocks {
 fn unloading_stops_remaining_batches_after_the_current_call() {
     let (started_tx, started) = mpsc::channel();
     let (release, release_rx) = mpsc::channel();
-    let mut worker = RescoreWorker::spawn(Box::new(Blocks {
-        started: started_tx,
-        release: std::sync::Mutex::new(release_rx),
-    }));
+    let mut worker = RescoreWorker::spawn(
+        Box::new(Blocks {
+            started: started_tx,
+            release: std::sync::Mutex::new(release_rx),
+        }),
+        WakeSlot::default(),
+    );
     worker.submit(
         String::new(),
         1,

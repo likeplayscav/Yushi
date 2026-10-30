@@ -9,6 +9,8 @@ pub(super) struct Job {
 
     pub(super) epoch: u64,
 
+    pub(super) serial: u64,
+
     pub(super) batches: Vec<ScoreBatch>,
 
     /// 要生成整句的那段按键（整段作用域）；`None` 就只打分。

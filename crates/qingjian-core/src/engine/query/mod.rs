@@ -1,13 +1,21 @@
 //! 候选生成：按输入模式分派查询。各模式的实现在兄弟文件里，共用的候选构造留在这里。
 
-use super::*;
+use std::time::Instant;
+
+use converting::trim_sentence_alternates;
+
+use crate::engine::is_raw;
+use crate::ranking::Scored;
+use crate::{Candidate, CandidateKind, Engine, ParseError};
 
 mod code;
 mod converting;
+mod diagnosing;
 mod english_tail;
 mod generating;
 mod lookup;
 mod modes;
+mod nine_key;
 mod phonetic;
 mod result;
 mod snapshot;
@@ -15,14 +23,13 @@ mod snapshot;
 pub(crate) use english_tail::EnglishTail;
 pub use result::Query;
 pub(super) use result::join_marked;
-pub(super) use result::join_marked_typed;
 pub(super) use snapshot::QuerySnapshot;
 
 impl Engine {
     /// 解析当前缓冲区并生成排好序的候选。**不带译文**，译文由 [`Self::annotate`] 补。
     ///
     /// 光标停在拼音中间时只按光标前的那段算候选（`ni|hao` 出 你），光标后的拼音留着，
-    /// 上屏之后接着组句；见 [`Composition::scope`]。
+    /// 上屏之后接着组句；见 [`crate::Composition::scope`]。
     pub fn query(&self) -> Result<Query, ParseError> {
         if self.has_sentence_scorer() {
             let mut cache = self.neural_cache.borrow_mut();
@@ -32,6 +39,10 @@ impl Engine {
             }
         }
         self.last_rescored.set(false);
+        self.last_choice.set(None);
+        self.last_choice_scores.borrow_mut().clear();
+        self.corrected_alternates.borrow_mut().clear();
+        self.forget_stale_compose();
         let mut query = match self.query_inner() {
             Ok(query) => query,
             Err(error) => {
@@ -47,20 +58,28 @@ impl Engine {
                     self.composition.cursor(),
                     self.shuangpin.is_some() || self.zhuyin,
                     self.shuangpin.is_some() && self.shuangpin_raw_preedit,
+                    self.shuangpin.is_some() && self.shuangpin_raw_window,
                     self.composition.scope(),
                     self.marked_rest(self.composition.rest()),
                 )
             }
         };
         query.aux = self.aux_segment();
+        query.held = self.held_text();
+        self.apply_demotions(&mut query.candidates.items);
         // 辅码态只出命中码的词：自定义短语没有码，不出
         if self.aux_filter().is_none() {
             self.insert_custom_phrases(&mut query.candidates.items);
         }
+        self.rerank_choices(&mut query.candidates.items);
+        trim_sentence_alternates(&mut query.candidates.items);
+        query.spelled = result::spelling_for(&query.segmentations, query.candidates.items.first());
         // 给输入日志留个摘要：上屏时才知道选了什么，这里才知道看到了什么
-        let pinyin = match &query.correction {
-            Some(correction) => correction.segmentation.joined("'"),
-            None => join_marked(&query.segmentations, &query.tail),
+        // 九宫格没有切分，拼音取拼音行（首选读到的写法），云联想也用它问
+        let pinyin = match (&query.correction, &query.typed_display) {
+            (Some(correction), _) => correction.segmentation.joined("'"),
+            (None, Some(display)) if self.nine_key => display.clone(),
+            (None, _) => join_marked(&query.segmentations, &query.tail),
         };
         *self.last_query.borrow_mut() = Some(QuerySnapshot {
             scope: self.composition.scope().to_owned(),
@@ -74,25 +93,11 @@ impl Engine {
                 .map(|c| c.text.clone())
                 .collect(),
             rescored: self.last_rescored.get(),
+            choice: self.last_choice.get(),
         });
-
-        if self.traditional
-            && let Some(opencc) = &self.opencc
-        {
-            for candidate in &mut query.candidates.items {
-                if matches!(
-                    candidate.kind,
-                    CandidateKind::Chinese | CandidateKind::Sentence | CandidateKind::Cloud
-                ) {
-                    let traditional_text = opencc.convert(&candidate.text);
-                    self.traditional_map
-                        .borrow_mut()
-                        .insert(traditional_text.clone(), candidate.text.clone());
-                    candidate.text = traditional_text;
-                }
-            }
-        }
-
+        // 繁体输出：出 Core 的最后一步才换，并记下「繁体 → 简体」给上屏还原用。
+        // 放在输入日志摘要之后，日志与学习数据一律记简体
+        self.traditional.apply(&mut query.candidates);
         Ok(query)
     }
 
@@ -103,13 +108,17 @@ impl Engine {
         if self.english_mode {
             return Ok(self.query_english(keys, rest, start));
         }
+        // 九宫格的数字不是英文直输段，要赶在原样上屏那条路之前分岔
+        if self.nine_key {
+            return Ok(self.query_nine_key(keys, rest, start));
+        }
         if self.modes().is_expression(keys, self.zhuyin) {
             return Ok(self.query_expression(keys, rest, start));
         }
         if self.modes().is_question(keys, self.zhuyin) {
             return Ok(self.query_question(keys, rest, start));
         }
-        if is_raw(keys, self.modes(), self.shuangpin, self.zhuyin) {
+        if is_raw(keys, self.modes(), self.shuangpin.as_deref(), self.zhuyin) {
             return Ok(self.query_raw(keys, rest, start));
         }
         // 形码与拼音是两条平行的管线，在进切分之前分岔。放在这里是为了让 `?` 问字与

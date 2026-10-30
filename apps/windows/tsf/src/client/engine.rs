@@ -96,11 +96,11 @@ impl<S: Read + Write> EngineClient<S> {
                 commit,
                 frame,
                 ..
-            } => Ok(KeyReply::Result(KeyResponse {
+            } => Ok(KeyReply::Result(Box::new(KeyResponse {
                 outcome,
                 commit,
                 frame,
-            })),
+            }))),
             ServerMessage::RequestSelection { request, .. } => {
                 Ok(KeyReply::NeedSelection { request })
             }
@@ -136,12 +136,12 @@ impl<S: Read + Write> EngineClient<S> {
         }
     }
 
-    /// 组句期间定时拉一次云联想的异步结果，回最新一帧。
-    pub fn poll(&mut self) -> Result<Frame, ClientError> {
+    /// 组句期间定时拉一次云联想的异步结果，回最新一帧，外加鼠标点候选窗口上屏的文本（没点过为 `None`）。
+    pub fn poll(&mut self) -> Result<(Frame, Option<String>), ClientError> {
         match self.call(&ClientMessage::Poll {
             session: self.session,
         })? {
-            ServerMessage::Update { frame, .. } => Ok(frame),
+            ServerMessage::Update { frame, commit, .. } => Ok((frame, commit)),
             _ => Err(ClientError::Unexpected("expected update for poll")),
         }
     }

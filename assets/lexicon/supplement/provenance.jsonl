@@ -10,7 +10,6 @@
 {"word":"一不做","pinyin":"yi bu zuo","weight":87,"evidence":[["jieba",87]],"reading":"unihan_single_reading"}
 {"word":"一业","pinyin":"yi ye","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
 {"word":"一丛丛","pinyin":"yi cong cong","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
-{"word":"一丝","pinyin":"yi si","weight":500,"evidence":[["jieba",1186]],"reading":"unihan_single_reading"}
 {"word":"一丝丝","pinyin":"yi si si","weight":58,"evidence":[["jieba",58]],"reading":"unihan_single_reading"}
 {"word":"一两","pinyin":"yi liang","weight":382,"evidence":[["jieba",382]],"reading":"unihan_single_reading"}
 {"word":"一两个","pinyin":"yi liang ge","weight":424,"evidence":[["jieba",424]],"reading":"unihan_single_reading"}
@@ -99,18 +98,15 @@
 {"word":"一具","pinyin":"yi ju","weight":468,"evidence":[["jieba",468]],"reading":"unihan_single_reading"}
 {"word":"一册","pinyin":"yi ce","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
 {"word":"一出","pinyin":"yi chu","weight":500,"evidence":[["jieba",964]],"reading":"unihan_single_reading"}
-{"word":"一刀","pinyin":"yi dao","weight":500,"evidence":[["jieba",1547]],"reading":"unihan_single_reading"}
 {"word":"一列","pinyin":"yi lie","weight":192,"evidence":[["jieba",192]],"reading":"unihan_single_reading"}
 {"word":"一则","pinyin":"yi ze","weight":500,"evidence":[["jieba",851]],"reading":"unihan_single_reading"}
 {"word":"一刻不停","pinyin":"yi ke bu ting","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"一刻起","pinyin":"yi ke qi","weight":71,"evidence":[["jieba",71]],"reading":"unihan_single_reading"}
 {"word":"一刻里","pinyin":"yi ke li","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
 {"word":"一刻钟","pinyin":"yi ke zhong","weight":47,"evidence":[["jieba",47]],"reading":"unihan_single_reading"}
-{"word":"一剑","pinyin":"yi jian","weight":500,"evidence":[["jieba",1198]],"reading":"unihan_single_reading"}
 {"word":"一力","pinyin":"yi li","weight":79,"evidence":[["jieba",79]],"reading":"unihan_single_reading"}
 {"word":"一动","pinyin":"yi dong","weight":280,"evidence":[["jieba",280]],"reading":"unihan_single_reading"}
 {"word":"一匹","pinyin":"yi pi","weight":500,"evidence":[["jieba",896]],"reading":"unihan_single_reading"}
-{"word":"一十","pinyin":"yi shi","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
 {"word":"一十三","pinyin":"yi shi san","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"一十三招","pinyin":"yi shi san zhao","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"一十五","pinyin":"yi shi wu","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
@@ -139,13 +135,11 @@
 {"word":"一口口","pinyin":"yi kou kou","weight":39,"evidence":[["jieba",39]],"reading":"unihan_single_reading"}
 {"word":"一口咬定","pinyin":"yi kou yao ding","weight":86,"evidence":[["jieba",86]],"reading":"existing_word"}
 {"word":"一口袋","pinyin":"yi kou dai","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
-{"word":"一名","pinyin":"yi ming","weight":500,"evidence":[["jieba",4733]],"reading":"unihan_single_reading"}
 {"word":"一吨","pinyin":"yi dun","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"一周年","pinyin":"yi zhou nian","weight":320,"evidence":[["jieba",320]],"reading":"unihan_single_reading"}
 {"word":"一品","pinyin":"yi pin","weight":500,"evidence":[["jieba",827]],"reading":"unihan_single_reading"}
 {"word":"一品香","pinyin":"yi pin xiang","weight":20,"evidence":[["thuocl_food",2362]],"reading":"existing_word"}
 {"word":"一响","pinyin":"yi xiang","weight":500,"evidence":[["jieba",746]],"reading":"unihan_single_reading"}
-{"word":"一团","pinyin":"yi tuan","weight":500,"evidence":[["jieba",1135]],"reading":"unihan_single_reading"}
 {"word":"一团乱麻","pinyin":"yi tuan luan ma","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"一场场","pinyin":"yi chang chang","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"一堂","pinyin":"yi tang","weight":113,"evidence":[["jieba",113]],"reading":"unihan_single_reading"}
@@ -156,7 +150,6 @@
 {"word":"一壁厢","pinyin":"yi bi xiang","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"一声令下","pinyin":"yi sheng ling xia","weight":146,"evidence":[["jieba",146]],"reading":"unihan_single_reading"}
 {"word":"一声声","pinyin":"yi sheng sheng","weight":101,"evidence":[["jieba",101]],"reading":"unihan_single_reading"}
-{"word":"一处","pinyin":"yi chu","weight":500,"evidence":[["jieba",2335]],"reading":"unihan_single_reading"}
 {"word":"一处处","pinyin":"yi chu chu","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"一多","pinyin":"yi duo","weight":53,"evidence":[["jieba",53]],"reading":"unihan_single_reading"}
 {"word":"一夜间","pinyin":"yi ye jian","weight":297,"evidence":[["jieba",297]],"reading":"unihan_single_reading"}
@@ -170,7 +163,6 @@
 {"word":"一定量","pinyin":"yi ding liang","weight":328,"evidence":[["jieba",328]],"reading":"unihan_single_reading"}
 {"word":"一寸","pinyin":"yi cun","weight":303,"evidence":[["jieba",303]],"reading":"unihan_single_reading"}
 {"word":"一对多","pinyin":"yi dui duo","weight":20,"evidence":[["thuocl_it_computing",15396]],"reading":"existing_word"}
-{"word":"一封","pinyin":"yi feng","weight":500,"evidence":[["jieba",1298]],"reading":"unihan_single_reading"}
 {"word":"一尊","pinyin":"yi zun","weight":209,"evidence":[["jieba",209]],"reading":"unihan_single_reading"}
 {"word":"一小半","pinyin":"yi xiao ban","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"一局","pinyin":"yi ju","weight":157,"evidence":[["jieba",157]],"reading":"unihan_single_reading"}
@@ -192,11 +184,9 @@
 {"word":"一户","pinyin":"yi hu","weight":152,"evidence":[["jieba",152]],"reading":"unihan_single_reading"}
 {"word":"一所","pinyin":"yi suo","weight":500,"evidence":[["jieba",806]],"reading":"unihan_single_reading"}
 {"word":"一扇","pinyin":"yi shan","weight":262,"evidence":[["jieba",262]],"reading":"unihan_single_reading"}
-{"word":"一把","pinyin":"yi ba","weight":500,"evidence":[["jieba",4755]],"reading":"unihan_single_reading"}
 {"word":"一担","pinyin":"yi dan","weight":138,"evidence":[["jieba",138]],"reading":"unihan_single_reading"}
 {"word":"一拖","pinyin":"yi tuo","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
 {"word":"一拖再拖","pinyin":"yi tuo zai tuo","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
-{"word":"一招","pinyin":"yi zhao","weight":500,"evidence":[["jieba",2780]],"reading":"unihan_single_reading"}
 {"word":"一招一式","pinyin":"yi zhao yi shi","weight":99,"evidence":[["jieba",99]],"reading":"unihan_single_reading"}
 {"word":"一拥而上","pinyin":"yi yong er shang","weight":295,"evidence":[["jieba",295]],"reading":"existing_word"}
 {"word":"一拥而入","pinyin":"yi yong er ru","weight":21,"evidence":[["jieba",21]],"reading":"existing_word"}
@@ -208,7 +198,6 @@
 {"word":"一撇","pinyin":"yi pie","weight":86,"evidence":[["jieba",86]],"reading":"unihan_single_reading"}
 {"word":"一文","pinyin":"yi wen","weight":471,"evidence":[["jieba",471]],"reading":"unihan_single_reading"}
 {"word":"一斗","pinyin":"yi dou","weight":120,"evidence":[["jieba",120]],"reading":"unihan_single_reading"}
-{"word":"一日","pinyin":"yi ri","weight":500,"evidence":[["jieba",2277]],"reading":"unihan_single_reading"}
 {"word":"一日三餐","pinyin":"yi ri san can","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
 {"word":"一日游","pinyin":"yi ri you","weight":109,"evidence":[["jieba",109]],"reading":"unihan_single_reading"}
 {"word":"一时三刻","pinyin":"yi shi san ke","weight":118,"evidence":[["jieba",118]],"reading":"existing_word"}
@@ -292,14 +281,12 @@
 {"word":"一章","pinyin":"yi zhang","weight":279,"evidence":[["jieba",279]],"reading":"unihan_single_reading"}
 {"word":"一端","pinyin":"yi duan","weight":500,"evidence":[["jieba",737]],"reading":"unihan_single_reading"}
 {"word":"一笑了之","pinyin":"yi xiao liao zhi","weight":20,"evidence":[["jieba",20]],"reading":"existing_word"}
-{"word":"一笔","pinyin":"yi bi","weight":500,"evidence":[["jieba",1168]],"reading":"unihan_single_reading"}
 {"word":"一等","pinyin":"yi deng","weight":500,"evidence":[["jieba",777]],"reading":"unihan_single_reading"}
 {"word":"一等功","pinyin":"yi deng gong","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"一等奖","pinyin":"yi deng jiang","weight":443,"evidence":[["jieba",443]],"reading":"unihan_single_reading"}
 {"word":"一筹","pinyin":"yi chou","weight":113,"evidence":[["jieba",113]],"reading":"unihan_single_reading"}
 {"word":"一箭之地","pinyin":"yi jian zhi di","weight":24,"evidence":[["jieba",24]],"reading":"existing_word"}
 {"word":"一簇簇","pinyin":"yi cu cu","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
-{"word":"一类","pinyin":"yi lei","weight":500,"evidence":[["jieba",2906]],"reading":"unihan_single_reading"}
 {"word":"一粒","pinyin":"yi li","weight":500,"evidence":[["jieba",575]],"reading":"unihan_single_reading"}
 {"word":"一级缓存","pinyin":"yi ji huan cun","weight":20,"evidence":[["thuocl_it_computing",3413]],"reading":"existing_word"}
 {"word":"一纸","pinyin":"yi zhi","weight":237,"evidence":[["jieba",237]],"reading":"unihan_single_reading"}
@@ -339,9 +326,7 @@
 {"word":"一锤","pinyin":"yi chui","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
 {"word":"一锭","pinyin":"yi ding","weight":125,"evidence":[["jieba",125]],"reading":"unihan_single_reading"}
 {"word":"一键安装","pinyin":"yi jian an zhuang","weight":20,"evidence":[["thuocl_it_computing",1602]],"reading":"existing_word"}
-{"word":"一门","pinyin":"yi men","weight":500,"evidence":[["jieba",2174]],"reading":"unihan_single_reading"}
 {"word":"一问三不知","pinyin":"yi wen san bu zhi","weight":29,"evidence":[["jieba",29]],"reading":"existing_word"}
-{"word":"一间","pinyin":"yi jian","weight":500,"evidence":[["jieba",1210]],"reading":"unihan_single_reading"}
 {"word":"一队","pinyin":"yi dui","weight":500,"evidence":[["jieba",791]],"reading":"unihan_single_reading"}
 {"word":"一阵一阵","pinyin":"yi zhen yi zhen","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"一阵发","pinyin":"yi zhen fa","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
@@ -351,7 +336,6 @@
 {"word":"一隅","pinyin":"yi yu","weight":500,"evidence":[["jieba",663]],"reading":"unihan_single_reading"}
 {"word":"一霎时","pinyin":"yi sha shi","weight":44,"evidence":[["jieba",44]],"reading":"unihan_single_reading"}
 {"word":"一面之辞","pinyin":"yi mian zhi ci","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
-{"word":"一页","pinyin":"yi ye","weight":500,"evidence":[["jieba",3791]],"reading":"unihan_single_reading"}
 {"word":"一顶","pinyin":"yi ding","weight":461,"evidence":[["jieba",461]],"reading":"unihan_single_reading"}
 {"word":"一餐","pinyin":"yi can","weight":94,"evidence":[["jieba",94]],"reading":"unihan_single_reading"}
 {"word":"一高一低","pinyin":"yi gao yi di","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
@@ -674,7 +658,6 @@
 {"word":"三里","pinyin":"san li","weight":119,"evidence":[["jieba",119]],"reading":"existing_word"}
 {"word":"三门","pinyin":"san men","weight":329,"evidence":[["jieba",329]],"reading":"unihan_single_reading"}
 {"word":"三间","pinyin":"san jian","weight":436,"evidence":[["jieba",436]],"reading":"unihan_single_reading"}
-{"word":"三面","pinyin":"san mian","weight":500,"evidence":[["jieba",1193]],"reading":"unihan_single_reading"}
 {"word":"三颗","pinyin":"san ke","weight":108,"evidence":[["jieba",108]],"reading":"unihan_single_reading"}
 {"word":"三首","pinyin":"san shou","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"三鼎","pinyin":"san ding","weight":20,"evidence":[["thuocl_food",2649]],"reading":"existing_word"}
@@ -706,7 +689,6 @@
 {"word":"上元","pinyin":"shang yuan","weight":73,"evidence":[["jieba",73]],"reading":"unihan_single_reading"}
 {"word":"上党","pinyin":"shang dang","weight":139,"evidence":[["jieba",139]],"reading":"unihan_single_reading"}
 {"word":"上册","pinyin":"shang ce","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
-{"word":"上前","pinyin":"shang qian","weight":500,"evidence":[["jieba",1658]],"reading":"unihan_single_reading"}
 {"word":"上升沿","pinyin":"shang sheng yan","weight":20,"evidence":[["thuocl_it_computing",2605]],"reading":"existing_word"}
 {"word":"上升流","pinyin":"shang sheng liu","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"上半","pinyin":"shang ban","weight":65,"evidence":[["jieba",65]],"reading":"unihan_single_reading"}
@@ -758,6 +740,7 @@
 {"word":"上证","pinyin":"shang zheng","weight":120,"evidence":[["jieba",120],["thuocl_finance",8200]],"reading":"existing_word"}
 {"word":"上谕","pinyin":"shang yu","weight":143,"evidence":[["jieba",143]],"reading":"unihan_single_reading"}
 {"word":"上送","pinyin":"shang song","weight":43,"evidence":[["jieba",43]],"reading":"unihan_single_reading"}
+{"word":"上都","pinyin":"shang du","weight":20,"evidence":[["thuocl_places",51677]],"reading":"existing_word"}
 {"word":"上院","pinyin":"shang yuan","weight":356,"evidence":[["jieba",356]],"reading":"unihan_single_reading"}
 {"word":"下一场","pinyin":"xia yi chang","weight":51,"evidence":[["jieba",51]],"reading":"unihan_single_reading"}
 {"word":"下世纪","pinyin":"xia shi ji","weight":60,"evidence":[["jieba",60]],"reading":"unihan_single_reading"}
@@ -842,7 +825,6 @@
 {"word":"不可避免","pinyin":"bu ke bi mian","weight":500,"evidence":[["jieba",650]],"reading":"unihan_single_reading"}
 {"word":"不可重复读","pinyin":"bu ke chong fu du","weight":20,"evidence":[["thuocl_it_computing",2763]],"reading":"existing_word"}
 {"word":"不可限量","pinyin":"bu ke xian liang","weight":44,"evidence":[["jieba",44]],"reading":"existing_word"}
-{"word":"不同于","pinyin":"bu tong yu","weight":500,"evidence":[["jieba",1131]],"reading":"unihan_single_reading"}
 {"word":"不同点","pinyin":"bu tong dian","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"不启用","pinyin":"bu qi yong","weight":20,"evidence":[["thuocl_it_computing",3166]],"reading":"existing_word"}
 {"word":"不图","pinyin":"bu tu","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
@@ -897,7 +879,6 @@
 {"word":"不管怎样","pinyin":"bu guan zen yang","weight":299,"evidence":[["jieba",299]],"reading":"unihan_single_reading"}
 {"word":"不耐烦","pinyin":"bu nai fan","weight":500,"evidence":[["jieba",664]],"reading":"unihan_single_reading"}
 {"word":"不肖子孙","pinyin":"bu xiao zi sun","weight":28,"evidence":[["jieba",28]],"reading":"existing_word"}
-{"word":"不能不","pinyin":"bu neng bu","weight":500,"evidence":[["jieba",1440]],"reading":"unihan_single_reading"}
 {"word":"不能自己","pinyin":"bu neng zi ji","weight":68,"evidence":[["jieba",68]],"reading":"unihan_single_reading"}
 {"word":"不自禁","pinyin":"bu zi jin","weight":283,"evidence":[["jieba",283]],"reading":"unihan_single_reading"}
 {"word":"不致于","pinyin":"bu zhi yu","weight":194,"evidence":[["jieba",194]],"reading":"unihan_single_reading"}
@@ -1055,7 +1036,6 @@
 {"word":"两个凡是","pinyin":"liang ge fan shi","weight":267,"evidence":[["jieba",267]],"reading":"unihan_single_reading"}
 {"word":"两个指针","pinyin":"liang ge zhi zhen","weight":20,"evidence":[["thuocl_it_computing",12217]],"reading":"existing_word"}
 {"word":"两串","pinyin":"liang chuan","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
-{"word":"两代","pinyin":"liang dai","weight":500,"evidence":[["jieba",1630]],"reading":"unihan_single_reading"}
 {"word":"两任","pinyin":"liang ren","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"两份","pinyin":"liang fen","weight":233,"evidence":[["jieba",233]],"reading":"unihan_single_reading"}
 {"word":"两伊","pinyin":"liang yi","weight":71,"evidence":[["jieba",71]],"reading":"unihan_single_reading"}
@@ -1083,7 +1063,6 @@
 {"word":"两发","pinyin":"liang fa","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"两口","pinyin":"liang kou","weight":371,"evidence":[["jieba",371]],"reading":"unihan_single_reading"}
 {"word":"两台","pinyin":"liang tai","weight":162,"evidence":[["jieba",162]],"reading":"unihan_single_reading"}
-{"word":"两名","pinyin":"liang ming","weight":500,"evidence":[["jieba",1886]],"reading":"unihan_single_reading"}
 {"word":"两响","pinyin":"liang xiang","weight":124,"evidence":[["jieba",124]],"reading":"unihan_single_reading"}
 {"word":"两回","pinyin":"liang hui","weight":86,"evidence":[["jieba",86]],"reading":"unihan_single_reading"}
 {"word":"两团","pinyin":"liang tuan","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
@@ -1103,11 +1082,9 @@
 {"word":"两封","pinyin":"liang feng","weight":89,"evidence":[["jieba",89]],"reading":"unihan_single_reading"}
 {"word":"两尊","pinyin":"liang zun","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
 {"word":"两局","pinyin":"liang ju","weight":81,"evidence":[["jieba",81]],"reading":"unihan_single_reading"}
-{"word":"两届","pinyin":"liang jie","weight":500,"evidence":[["jieba",1149]],"reading":"unihan_single_reading"}
 {"word":"两岁","pinyin":"liang sui","weight":175,"evidence":[["jieba",175]],"reading":"unihan_single_reading"}
 {"word":"两峰","pinyin":"liang feng","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"两年制","pinyin":"liang nian zhi","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
-{"word":"两座","pinyin":"liang zuo","weight":500,"evidence":[["jieba",1396]],"reading":"unihan_single_reading"}
 {"word":"两成","pinyin":"liang cheng","weight":47,"evidence":[["jieba",47]],"reading":"unihan_single_reading"}
 {"word":"两所","pinyin":"liang suo","weight":86,"evidence":[["jieba",86]],"reading":"unihan_single_reading"}
 {"word":"两扇","pinyin":"liang shan","weight":167,"evidence":[["jieba",167]],"reading":"unihan_single_reading"}
@@ -1156,12 +1133,10 @@
 {"word":"两等","pinyin":"liang deng","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"两篇","pinyin":"liang pian","weight":125,"evidence":[["jieba",125]],"reading":"unihan_single_reading"}
 {"word":"两米","pinyin":"liang mi","weight":213,"evidence":[["jieba",213]],"reading":"unihan_single_reading"}
-{"word":"两类","pinyin":"liang lei","weight":500,"evidence":[["jieba",1341]],"reading":"unihan_single_reading"}
 {"word":"两粒","pinyin":"liang li","weight":119,"evidence":[["jieba",119]],"reading":"unihan_single_reading"}
 {"word":"两级","pinyin":"liang ji","weight":500,"evidence":[["jieba",948]],"reading":"unihan_single_reading"}
 {"word":"两线","pinyin":"liang xian","weight":107,"evidence":[["jieba",107]],"reading":"unihan_single_reading"}
 {"word":"两组","pinyin":"liang zu","weight":337,"evidence":[["jieba",337]],"reading":"unihan_single_reading"}
-{"word":"两者","pinyin":"liang zhe","weight":500,"evidence":[["jieba",3252]],"reading":"unihan_single_reading"}
 {"word":"两股","pinyin":"liang gu","weight":180,"evidence":[["jieba",180]],"reading":"unihan_single_reading"}
 {"word":"两节","pinyin":"liang jie","weight":67,"evidence":[["jieba",67]],"reading":"unihan_single_reading"}
 {"word":"两袋","pinyin":"liang dai","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
@@ -1222,7 +1197,6 @@
 {"word":"中保","pinyin":"zhong bao","weight":66,"evidence":[["jieba",66]],"reading":"existing_word"}
 {"word":"中储","pinyin":"zhong chu","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"中元","pinyin":"zhong yuan","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
-{"word":"中共中央","pinyin":"zhong gong zhong yang","weight":500,"evidence":[["jieba",3917]],"reading":"unihan_single_reading"}
 {"word":"中共中央书记处","pinyin":"zhong gong zhong yang shu ji chu","weight":65,"evidence":[["jieba",65]],"reading":"unihan_single_reading"}
 {"word":"中共中央办公厅","pinyin":"zhong gong zhong yang ban gong ting","weight":45,"evidence":[["jieba",45]],"reading":"unihan_single_reading"}
 {"word":"中共中央政治局","pinyin":"zhong gong zhong yang zheng zhi ju","weight":324,"evidence":[["jieba",324]],"reading":"unihan_single_reading"}
@@ -1264,7 +1238,6 @@
 {"word":"中国女队","pinyin":"zhong guo nv dui","weight":177,"evidence":[["jieba",177]],"reading":"unihan_single_reading"}
 {"word":"中国式","pinyin":"zhong guo shi","weight":131,"evidence":[["jieba",131]],"reading":"unihan_single_reading"}
 {"word":"中国政协","pinyin":"zhong guo zheng xie","weight":260,"evidence":[["jieba",260]],"reading":"unihan_single_reading"}
-{"word":"中国政府","pinyin":"zhong guo zheng fu","weight":500,"evidence":[["jieba",1232]],"reading":"unihan_single_reading"}
 {"word":"中国文联","pinyin":"zhong guo wen lian","weight":68,"evidence":[["jieba",68]],"reading":"unihan_single_reading"}
 {"word":"中国日报","pinyin":"zhong guo ri bao","weight":177,"evidence":[["jieba",177]],"reading":"unihan_single_reading"}
 {"word":"中国棋院","pinyin":"zhong guo qi yuan","weight":58,"evidence":[["jieba",58]],"reading":"unihan_single_reading"}
@@ -1290,7 +1263,6 @@
 {"word":"中国羽毛球队","pinyin":"zhong guo yu mao qiu dui","weight":81,"evidence":[["jieba",81]],"reading":"unihan_single_reading"}
 {"word":"中国致公党","pinyin":"zhong guo zhi gong dang","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"中国足协","pinyin":"zhong guo zu xie","weight":417,"evidence":[["jieba",417]],"reading":"unihan_single_reading"}
-{"word":"中国队","pinyin":"zhong guo dui","weight":500,"evidence":[["jieba",2029]],"reading":"unihan_single_reading"}
 {"word":"中国青年报","pinyin":"zhong guo qing nian bao","weight":99,"evidence":[["jieba",99]],"reading":"unihan_single_reading"}
 {"word":"中国青年报社","pinyin":"zhong guo qing nian bao she","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"中土","pinyin":"zhong tu","weight":276,"evidence":[["jieba",276]],"reading":"unihan_single_reading"}
@@ -1318,7 +1290,6 @@
 {"word":"中富","pinyin":"zhong fu","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
 {"word":"中小","pinyin":"zhong xiao","weight":500,"evidence":[["jieba",587]],"reading":"unihan_single_reading"}
 {"word":"中小城镇","pinyin":"zhong xiao cheng zhen","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
-{"word":"中小学","pinyin":"zhong xiao xue","weight":500,"evidence":[["jieba",1032]],"reading":"unihan_single_reading"}
 {"word":"中小学生","pinyin":"zhong xiao xue sheng","weight":210,"evidence":[["jieba",210]],"reading":"unihan_single_reading"}
 {"word":"中小板","pinyin":"zhong xiao ban","weight":20,"evidence":[["thuocl_finance",5101]],"reading":"existing_word"}
 {"word":"中山王","pinyin":"zhong shan wang","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
@@ -1361,10 +1332,8 @@
 {"word":"中新世","pinyin":"zhong xin shi","weight":99,"evidence":[["jieba",99]],"reading":"unihan_single_reading"}
 {"word":"中新社","pinyin":"zhong xin she","weight":155,"evidence":[["jieba",155]],"reading":"unihan_single_reading"}
 {"word":"中新网","pinyin":"zhong xin wang","weight":500,"evidence":[["jieba",532]],"reading":"unihan_single_reading"}
-{"word":"中方","pinyin":"zhong fang","weight":500,"evidence":[["jieba",1408]],"reading":"unihan_single_reading"}
 {"word":"中旅","pinyin":"zhong lv","weight":132,"evidence":[["jieba",132]],"reading":"unihan_single_reading"}
 {"word":"中旅总社","pinyin":"zhong lv zong she","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
-{"word":"中日","pinyin":"zhong ri","weight":500,"evidence":[["jieba",1005]],"reading":"unihan_single_reading"}
 {"word":"中日友好医院","pinyin":"zhong ri you hao yi yuan","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"中时","pinyin":"zhong shi","weight":91,"evidence":[["jieba",91]],"reading":"unihan_single_reading"}
 {"word":"中易","pinyin":"zhong yi","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
@@ -1409,7 +1378,6 @@
 {"word":"中试","pinyin":"zhong shi","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"中距离","pinyin":"zhong ju li","weight":71,"evidence":[["jieba",71]],"reading":"unihan_single_reading"}
 {"word":"中轴","pinyin":"zhong zhou","weight":70,"evidence":[["jieba",70]],"reading":"unihan_single_reading"}
-{"word":"中轴线","pinyin":"zhong zhou xian","weight":500,"evidence":[["jieba",1243]],"reading":"unihan_single_reading"}
 {"word":"中都","pinyin":"zhong du","weight":20,"evidence":[["thuocl_places",27644]],"reading":"existing_word"}
 {"word":"中金","pinyin":"zhong jin","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
 {"word":"中钨高新","pinyin":"zhong wu gao xin","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
@@ -1602,7 +1570,6 @@
 {"word":"九成","pinyin":"jiu cheng","weight":155,"evidence":[["jieba",155]],"reading":"unihan_single_reading"}
 {"word":"九日","pinyin":"jiu ri","weight":132,"evidence":[["jieba",132]],"reading":"unihan_single_reading"}
 {"word":"九曲","pinyin":"jiu qu","weight":314,"evidence":[["jieba",314]],"reading":"unihan_single_reading"}
-{"word":"九曲回肠","pinyin":"jiu qu hui chang","weight":500,"evidence":[["jieba",1030]],"reading":"unihan_single_reading"}
 {"word":"九月初","pinyin":"jiu yue chu","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"九条","pinyin":"jiu tiao","weight":61,"evidence":[["jieba",61]],"reading":"unihan_single_reading"}
 {"word":"九次","pinyin":"jiu ci","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
@@ -1706,7 +1673,6 @@
 {"word":"事务隔离","pinyin":"shi wu ge li","weight":20,"evidence":[["thuocl_it_computing",1092]],"reading":"existing_word"}
 {"word":"事务隔离级别","pinyin":"shi wu ge li ji bie","weight":20,"evidence":[["thuocl_it_computing",3422]],"reading":"existing_word"}
 {"word":"事发","pinyin":"shi fa","weight":175,"evidence":[["jieba",175]],"reading":"unihan_single_reading"}
-{"word":"事实上","pinyin":"shi shi shang","weight":500,"evidence":[["jieba",2752]],"reading":"unihan_single_reading"}
 {"word":"事实标准","pinyin":"shi shi biao zhun","weight":20,"evidence":[["thuocl_it_computing",1252]],"reading":"existing_word"}
 {"word":"事权","pinyin":"shi quan","weight":79,"evidence":[["jieba",79]],"reading":"unihan_single_reading"}
 {"word":"二一五","pinyin":"er yi wu","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
@@ -1791,7 +1757,6 @@
 {"word":"二十多岁","pinyin":"er shi duo sui","weight":89,"evidence":[["jieba",89]],"reading":"unihan_single_reading"}
 {"word":"二十多年","pinyin":"er shi duo nian","weight":321,"evidence":[["jieba",321]],"reading":"unihan_single_reading"}
 {"word":"二十天","pinyin":"er shi tian","weight":77,"evidence":[["jieba",77]],"reading":"unihan_single_reading"}
-{"word":"二十年","pinyin":"er shi nian","weight":500,"evidence":[["jieba",1227]],"reading":"unihan_single_reading"}
 {"word":"二十日","pinyin":"er shi ri","weight":125,"evidence":[["jieba",125]],"reading":"unihan_single_reading"}
 {"word":"二十米","pinyin":"er shi mi","weight":102,"evidence":[["jieba",102]],"reading":"unihan_single_reading"}
 {"word":"二十里","pinyin":"er shi li","weight":182,"evidence":[["jieba",182]],"reading":"unihan_single_reading"}
@@ -1821,13 +1786,11 @@
 {"word":"二寸","pinyin":"er cun","weight":61,"evidence":[["jieba",61]],"reading":"unihan_single_reading"}
 {"word":"二小","pinyin":"er xiao","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
 {"word":"二尖瓣","pinyin":"er jian ban","weight":54,"evidence":[["jieba",54]],"reading":"existing_word"}
-{"word":"二年","pinyin":"er nian","weight":500,"evidence":[["jieba",2328]],"reading":"unihan_single_reading"}
 {"word":"二斗","pinyin":"er dou","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"二斤","pinyin":"er jin","weight":47,"evidence":[["jieba",47]],"reading":"unihan_single_reading"}
 {"word":"二日","pinyin":"er ri","weight":114,"evidence":[["jieba",114]],"reading":"unihan_single_reading"}
 {"word":"二星","pinyin":"er xing","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"二星级","pinyin":"er xing ji","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
-{"word":"二月","pinyin":"er yue","weight":500,"evidence":[["jieba",1036]],"reading":"unihan_single_reading"}
 {"word":"二杆子","pinyin":"er gan zi","weight":26,"evidence":[["jieba",26]],"reading":"existing_word"}
 {"word":"二条","pinyin":"er tiao","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
 {"word":"二来","pinyin":"er lai","weight":500,"evidence":[["jieba",610]],"reading":"unihan_single_reading"}
@@ -1924,7 +1887,6 @@
 {"word":"五具","pinyin":"wu ju","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"五凤","pinyin":"wu feng","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
 {"word":"五凤楼","pinyin":"wu feng lou","weight":23,"evidence":[["jieba",23],["thuocl_food",1892]],"reading":"existing_word"}
-{"word":"五分","pinyin":"wu fen","weight":500,"evidence":[["jieba",1110]],"reading":"unihan_single_reading"}
 {"word":"五分钟","pinyin":"wu fen zhong","weight":88,"evidence":[["jieba",88]],"reading":"unihan_single_reading"}
 {"word":"五刑","pinyin":"wu xing","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"五加","pinyin":"wu jia","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
@@ -2012,7 +1974,6 @@
 {"word":"五部","pinyin":"wu bu","weight":76,"evidence":[["jieba",76]],"reading":"unihan_single_reading"}
 {"word":"五铢钱","pinyin":"wu zhu qian","weight":65,"evidence":[["jieba",65]],"reading":"unihan_single_reading"}
 {"word":"五门","pinyin":"wu men","weight":303,"evidence":[["jieba",303]],"reading":"unihan_single_reading"}
-{"word":"五间","pinyin":"wu jian","weight":500,"evidence":[["jieba",1103]],"reading":"unihan_single_reading"}
 {"word":"五霸","pinyin":"wu ba","weight":93,"evidence":[["jieba",93]],"reading":"unihan_single_reading"}
 {"word":"五颗","pinyin":"wu ke","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"五首","pinyin":"wu shou","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
@@ -2194,7 +2155,6 @@
 {"word":"人民政协","pinyin":"ren min zheng xie","weight":333,"evidence":[["jieba",333]],"reading":"unihan_single_reading"}
 {"word":"人民政权","pinyin":"ren min zheng quan","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
 {"word":"人民文学出版社","pinyin":"ren min wen xue chu ban she","weight":48,"evidence":[["jieba",48]],"reading":"unihan_single_reading"}
-{"word":"人民日报","pinyin":"ren min ri bao","weight":500,"evidence":[["jieba",1087]],"reading":"unihan_single_reading"}
 {"word":"人民日报社","pinyin":"ren min ri bao she","weight":67,"evidence":[["jieba",67]],"reading":"unihan_single_reading"}
 {"word":"人民武装","pinyin":"ren min wu zhuang","weight":302,"evidence":[["jieba",302]],"reading":"unihan_single_reading"}
 {"word":"人民民主党","pinyin":"ren min min zhu dang","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
@@ -2232,7 +2192,6 @@
 {"word":"亿千瓦","pinyin":"yi qian wa","weight":82,"evidence":[["jieba",82]],"reading":"unihan_single_reading"}
 {"word":"亿千瓦时","pinyin":"yi qian wa shi","weight":283,"evidence":[["jieba",283]],"reading":"unihan_single_reading"}
 {"word":"亿只","pinyin":"yi zhi","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
-{"word":"亿吨","pinyin":"yi dun","weight":500,"evidence":[["jieba",1135]],"reading":"unihan_single_reading"}
 {"word":"亿多","pinyin":"yi duo","weight":68,"evidence":[["jieba",68]],"reading":"unihan_single_reading"}
 {"word":"亿多元","pinyin":"yi duo yuan","weight":297,"evidence":[["jieba",297]],"reading":"unihan_single_reading"}
 {"word":"亿多吨","pinyin":"yi duo dun","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
@@ -2246,14 +2205,11 @@
 {"word":"亿法郎","pinyin":"yi fa lang","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"亿港元","pinyin":"yi gang yuan","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
 {"word":"亿片","pinyin":"yi pian","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
-{"word":"亿立方米","pinyin":"yi li fang mi","weight":500,"evidence":[["jieba",1534]],"reading":"unihan_single_reading"}
-{"word":"亿美元","pinyin":"yi mei yuan","weight":500,"evidence":[["jieba",3217]],"reading":"unihan_single_reading"}
 {"word":"亿英镑","pinyin":"yi ying bang","weight":52,"evidence":[["jieba",52]],"reading":"unihan_single_reading"}
 {"word":"亿部","pinyin":"yi bu","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"亿马克","pinyin":"yi ma ke","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"仁人","pinyin":"ren ren","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"仁者","pinyin":"ren zhe","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
-{"word":"仅次于","pinyin":"jin ci yu","weight":500,"evidence":[["jieba",2032]],"reading":"unihan_single_reading"}
 {"word":"仆妇","pinyin":"pu fu","weight":120,"evidence":[["jieba",120]],"reading":"unihan_single_reading"}
 {"word":"今冬","pinyin":"jin dong","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"今夏","pinyin":"jin xia","weight":58,"evidence":[["jieba",58]],"reading":"unihan_single_reading"}
@@ -2267,7 +2223,6 @@
 {"word":"介休","pinyin":"jie xiu","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"介子","pinyin":"jie zi","weight":125,"evidence":[["jieba",125]],"reading":"unihan_single_reading"}
 {"word":"介绍所","pinyin":"jie shao suo","weight":63,"evidence":[["jieba",63]],"reading":"unihan_single_reading"}
-{"word":"从不","pinyin":"cong bu","weight":500,"evidence":[["jieba",1386]],"reading":"unihan_single_reading"}
 {"word":"从业者","pinyin":"cong ye zhe","weight":126,"evidence":[["jieba",126]],"reading":"unihan_single_reading"}
 {"word":"从今","pinyin":"cong jin","weight":208,"evidence":[["jieba",208]],"reading":"unihan_single_reading"}
 {"word":"从今以后","pinyin":"cong jin yi hou","weight":130,"evidence":[["jieba",130]],"reading":"unihan_single_reading"}
@@ -2357,7 +2312,6 @@
 {"word":"代表人","pinyin":"dai biao ren","weight":220,"evidence":[["jieba",220]],"reading":"unihan_single_reading"}
 {"word":"代表作品","pinyin":"dai biao zuo pin","weight":65,"evidence":[["jieba",65]],"reading":"unihan_single_reading"}
 {"word":"代表制","pinyin":"dai biao zhi","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
-{"word":"代表团","pinyin":"dai biao tuan","weight":500,"evidence":[["jieba",1792]],"reading":"unihan_single_reading"}
 {"word":"代表处","pinyin":"dai biao chu","weight":124,"evidence":[["jieba",124]],"reading":"unihan_single_reading"}
 {"word":"代表者","pinyin":"dai biao zhe","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"代表队","pinyin":"dai biao dui","weight":89,"evidence":[["jieba",89]],"reading":"unihan_single_reading"}
@@ -2411,7 +2365,6 @@
 {"word":"价差","pinyin":"jia cha","weight":23,"evidence":[["jieba",23],["thuocl_finance",2651]],"reading":"existing_word"}
 {"word":"价格法","pinyin":"jia ge fa","weight":21,"evidence":[["jieba",21]],"reading":"existing_word"}
 {"word":"任一","pinyin":"ren yi","weight":113,"evidence":[["jieba",113]],"reading":"unihan_single_reading"}
-{"word":"任何人","pinyin":"ren he ren","weight":500,"evidence":[["jieba",1368]],"reading":"unihan_single_reading"}
 {"word":"任免权","pinyin":"ren mian quan","weight":269,"evidence":[["jieba",269]],"reading":"unihan_single_reading"}
 {"word":"任务分配","pinyin":"ren wu fen pei","weight":20,"evidence":[["thuocl_it_computing",3053]],"reading":"existing_word"}
 {"word":"任务处理","pinyin":"ren wu chu li","weight":20,"evidence":[["thuocl_it_computing",2630]],"reading":"existing_word"}
@@ -2537,7 +2490,6 @@
 {"word":"位运算","pinyin":"wei yun suan","weight":20,"evidence":[["thuocl_it_computing",9941]],"reading":"existing_word"}
 {"word":"位运算符","pinyin":"wei yun suan fu","weight":20,"evidence":[["thuocl_it_computing",3968]],"reading":"existing_word"}
 {"word":"低噪声","pinyin":"di zao sheng","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
-{"word":"低声","pinyin":"di sheng","weight":500,"evidence":[["jieba",3202]],"reading":"unihan_single_reading"}
 {"word":"低射","pinyin":"di she","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
 {"word":"低成本","pinyin":"di cheng ben","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"低扭","pinyin":"di niu","weight":20,"evidence":[["thuocl_automotive",2485]],"reading":"existing_word"}
@@ -2684,7 +2636,6 @@
 {"word":"侵染","pinyin":"qin ran","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
 {"word":"侵略军","pinyin":"qin lve jun","weight":500,"evidence":[["jieba",733]],"reading":"unihan_single_reading"}
 {"word":"侵略性","pinyin":"qin lve xing","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
-{"word":"侵略者","pinyin":"qin lve zhe","weight":500,"evidence":[["jieba",1912]],"reading":"unihan_single_reading"}
 {"word":"便利构造器","pinyin":"bian li gou zao qi","weight":20,"evidence":[["thuocl_it_computing",1170]],"reading":"existing_word"}
 {"word":"便宜坊","pinyin":"bian yi fang","weight":20,"evidence":[["thuocl_food",5219]],"reading":"existing_word"}
 {"word":"促生产","pinyin":"cu sheng chan","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
@@ -3020,7 +2971,6 @@
 {"word":"全乡","pinyin":"quan xiang","weight":43,"evidence":[["jieba",43]],"reading":"unihan_single_reading"}
 {"word":"全人类","pinyin":"quan ren lei","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
 {"word":"全保","pinyin":"quan bao","weight":20,"evidence":[["thuocl_automotive",346211]],"reading":"existing_word"}
-{"word":"全党","pinyin":"quan dang","weight":500,"evidence":[["jieba",1747]],"reading":"unihan_single_reading"}
 {"word":"全兴","pinyin":"quan xing","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"全军覆灭","pinyin":"quan jun fu mie","weight":38,"evidence":[["jieba",38]],"reading":"existing_word"}
 {"word":"全副武装","pinyin":"quan fu wu zhuang","weight":230,"evidence":[["jieba",230]],"reading":"unihan_single_reading"}
@@ -3031,7 +2981,6 @@
 {"word":"全国妇联","pinyin":"quan guo fu lian","weight":83,"evidence":[["jieba",83]],"reading":"unihan_single_reading"}
 {"word":"全国学联","pinyin":"quan guo xue lian","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"全国工商联","pinyin":"quan guo gong shang lian","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
-{"word":"全国政协","pinyin":"quan guo zheng xie","weight":500,"evidence":[["jieba",1500]],"reading":"unihan_single_reading"}
 {"word":"全国考委","pinyin":"quan guo kao wei","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"全城","pinyin":"quan cheng","weight":500,"evidence":[["jieba",595]],"reading":"unihan_single_reading"}
 {"word":"全天","pinyin":"quan tian","weight":289,"evidence":[["jieba",289]],"reading":"unihan_single_reading"}
@@ -3082,7 +3031,6 @@
 {"word":"八七","pinyin":"ba qi","weight":364,"evidence":[["jieba",364]],"reading":"unihan_single_reading"}
 {"word":"八下","pinyin":"ba xia","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"八两","pinyin":"ba liang","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
-{"word":"八个","pinyin":"ba ge","weight":500,"evidence":[["jieba",1299]],"reading":"unihan_single_reading"}
 {"word":"八中","pinyin":"ba zhong","weight":309,"evidence":[["jieba",309]],"reading":"existing_word"}
 {"word":"八九","pinyin":"ba jiu","weight":80,"evidence":[["jieba",80]],"reading":"unihan_single_reading"}
 {"word":"八九不离十","pinyin":"ba jiu bu li shi","weight":33,"evidence":[["jieba",33]],"reading":"existing_word"}
@@ -3105,7 +3053,6 @@
 {"word":"八卦阵","pinyin":"ba gua zhen","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"八只","pinyin":"ba zhi","weight":57,"evidence":[["jieba",57]],"reading":"unihan_single_reading"}
 {"word":"八品","pinyin":"ba pin","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
-{"word":"八国联军","pinyin":"ba guo lian jun","weight":500,"evidence":[["jieba",1623]],"reading":"unihan_single_reading"}
 {"word":"八天","pinyin":"ba tian","weight":72,"evidence":[["jieba",72]],"reading":"unihan_single_reading"}
 {"word":"八宝","pinyin":"ba bao","weight":303,"evidence":[["jieba",303]],"reading":"unihan_single_reading"}
 {"word":"八家","pinyin":"ba jia","weight":57,"evidence":[["jieba",57]],"reading":"existing_word"}
@@ -3421,7 +3368,6 @@
 {"word":"写明","pinyin":"xie ming","weight":145,"evidence":[["jieba",145]],"reading":"unihan_single_reading"}
 {"word":"写经","pinyin":"xie jing","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"写访问","pinyin":"xie fang wen","weight":20,"evidence":[["thuocl_it_computing",1591]],"reading":"existing_word"}
-{"word":"军中","pinyin":"jun zhong","weight":500,"evidence":[["jieba",1169]],"reading":"unihan_single_reading"}
 {"word":"军事史","pinyin":"jun shi shi","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
 {"word":"军事学","pinyin":"jun shi xue","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"军事学院","pinyin":"jun shi xue yuan","weight":122,"evidence":[["jieba",122]],"reading":"unihan_single_reading"}
@@ -3580,14 +3526,12 @@
 {"word":"凝立","pinyin":"ning li","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"凝聚态","pinyin":"ning ju tai","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"几丈","pinyin":"ji zhang","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
-{"word":"几下","pinyin":"ji xia","weight":500,"evidence":[["jieba",1229]],"reading":"unihan_single_reading"}
 {"word":"几丝","pinyin":"ji si","weight":61,"evidence":[["jieba",61]],"reading":"unihan_single_reading"}
 {"word":"几两","pinyin":"ji liang","weight":118,"evidence":[["jieba",118]],"reading":"unihan_single_reading"}
 {"word":"几亩","pinyin":"ji mu","weight":51,"evidence":[["jieba",51]],"reading":"unihan_single_reading"}
 {"word":"几亿","pinyin":"ji yi","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"几代","pinyin":"ji dai","weight":203,"evidence":[["jieba",203]],"reading":"unihan_single_reading"}
 {"word":"几份","pinyin":"ji fen","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
-{"word":"几位","pinyin":"ji wei","weight":500,"evidence":[["jieba",1376]],"reading":"unihan_single_reading"}
 {"word":"几何图形","pinyin":"ji he tu xing","weight":52,"evidence":[["jieba",52]],"reading":"unihan_single_reading"}
 {"word":"几何学","pinyin":"ji he xue","weight":431,"evidence":[["jieba",431]],"reading":"unihan_single_reading"}
 {"word":"几何形","pinyin":"ji he xing","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
@@ -3610,7 +3554,6 @@
 {"word":"几十名","pinyin":"ji shi ming","weight":92,"evidence":[["jieba",92]],"reading":"unihan_single_reading"}
 {"word":"几十块","pinyin":"ji shi kuai","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
 {"word":"几十天","pinyin":"ji shi tian","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
-{"word":"几十年","pinyin":"ji shi nian","weight":500,"evidence":[["jieba",1361]],"reading":"unihan_single_reading"}
 {"word":"几十年如一日","pinyin":"ji shi nian ru yi ri","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"几十张","pinyin":"ji shi zhang","weight":142,"evidence":[["jieba",142]],"reading":"unihan_single_reading"}
 {"word":"几十斤","pinyin":"ji shi jin","weight":285,"evidence":[["jieba",285]],"reading":"unihan_single_reading"}
@@ -3674,7 +3617,6 @@
 {"word":"几桌","pinyin":"ji zhuo","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"几棵","pinyin":"ji ke","weight":105,"evidence":[["jieba",105]],"reading":"unihan_single_reading"}
 {"word":"几款","pinyin":"ji kuan","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
-{"word":"几步","pinyin":"ji bu","weight":500,"evidence":[["jieba",1328]],"reading":"unihan_single_reading"}
 {"word":"几段","pinyin":"ji duan","weight":84,"evidence":[["jieba",84]],"reading":"unihan_single_reading"}
 {"word":"几毫米","pinyin":"ji hao mi","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"几滴","pinyin":"ji di","weight":95,"evidence":[["jieba",95]],"reading":"unihan_single_reading"}
@@ -3809,7 +3751,6 @@
 {"word":"刀美兰","pinyin":"dao mei lan","weight":260,"evidence":[["jieba",260]],"reading":"existing_word"}
 {"word":"刀身","pinyin":"dao shen","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
 {"word":"分中心","pinyin":"fen zhong xin","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
-{"word":"分为","pinyin":"fen wei","weight":500,"evidence":[["jieba",8259]],"reading":"unihan_single_reading"}
 {"word":"分争","pinyin":"fen zheng","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"分享功能","pinyin":"fen xiang gong neng","weight":20,"evidence":[["thuocl_it_computing",1336]],"reading":"existing_word"}
 {"word":"分付","pinyin":"fen fu","weight":292,"evidence":[["jieba",292]],"reading":"unihan_single_reading"}
@@ -3914,7 +3855,6 @@
 {"word":"刑徒","pinyin":"xing tu","weight":43,"evidence":[["jieba",43]],"reading":"unihan_single_reading"}
 {"word":"刑法学","pinyin":"xing fa xue","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"刑讯逼供","pinyin":"xing xun bi gong","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
-{"word":"列为","pinyin":"lie wei","weight":500,"evidence":[["jieba",4856]],"reading":"unihan_single_reading"}
 {"word":"列名","pinyin":"lie ming","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"列子","pinyin":"lie zi","weight":22,"evidence":[["jieba",22]],"reading":"existing_word"}
 {"word":"列宁主义","pinyin":"lie ning zhu yi","weight":47,"evidence":[["jieba",47]],"reading":"unihan_single_reading"}
@@ -3968,7 +3908,6 @@
 {"word":"创建用户","pinyin":"chuang jian yong hu","weight":20,"evidence":[["thuocl_it_computing",10115]],"reading":"existing_word"}
 {"word":"创建目录","pinyin":"chuang jian mu lu","weight":20,"evidence":[["thuocl_it_computing",10670]],"reading":"existing_word"}
 {"word":"创建线程","pinyin":"chuang jian xian cheng","weight":20,"evidence":[["thuocl_it_computing",14799]],"reading":"existing_word"}
-{"word":"创建者","pinyin":"chuang jian zhe","weight":500,"evidence":[["jieba",1117]],"reading":"unihan_single_reading"}
 {"word":"创建虚拟机","pinyin":"chuang jian xu ni ji","weight":20,"evidence":[["thuocl_it_computing",1763]],"reading":"existing_word"}
 {"word":"创建表","pinyin":"chuang jian biao","weight":20,"evidence":[["thuocl_it_computing",16769]],"reading":"existing_word"}
 {"word":"创建表空间","pinyin":"chuang jian biao kong jian","weight":20,"evidence":[["thuocl_it_computing",1417]],"reading":"existing_word"}
@@ -4537,7 +4476,6 @@
 {"word":"十方","pinyin":"shi fang","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"十日","pinyin":"shi ri","weight":244,"evidence":[["jieba",244]],"reading":"unihan_single_reading"}
 {"word":"十日谈","pinyin":"shi ri tan","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
-{"word":"十月","pinyin":"shi yue","weight":500,"evidence":[["jieba",1030]],"reading":"unihan_single_reading"}
 {"word":"十月份","pinyin":"shi yue fen","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"十有八九","pinyin":"shi you ba jiu","weight":94,"evidence":[["jieba",94]],"reading":"existing_word"}
 {"word":"十条","pinyin":"shi tiao","weight":95,"evidence":[["jieba",95]],"reading":"unihan_single_reading"}
@@ -4569,7 +4507,6 @@
 {"word":"千余年","pinyin":"qian yu nian","weight":64,"evidence":[["jieba",64]],"reading":"unihan_single_reading"}
 {"word":"千依百顺","pinyin":"qian yi bai shun","weight":27,"evidence":[["jieba",27]],"reading":"existing_word"}
 {"word":"千倍","pinyin":"qian bei","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
-{"word":"千公顷","pinyin":"qian gong qing","weight":500,"evidence":[["jieba",1026]],"reading":"unihan_single_reading"}
 {"word":"千刀","pinyin":"qian dao","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"千分","pinyin":"qian fen","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"千分之一","pinyin":"qian fen zhi yi","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
@@ -4580,7 +4517,6 @@
 {"word":"千多年","pinyin":"qian duo nian","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"千字文","pinyin":"qian zi wen","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
 {"word":"千层糕","pinyin":"qian ceng gao","weight":20,"evidence":[["thuocl_food",1011]],"reading":"existing_word"}
-{"word":"千年","pinyin":"qian nian","weight":500,"evidence":[["jieba",1040]],"reading":"unihan_single_reading"}
 {"word":"千手","pinyin":"qian shou","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
 {"word":"千手观音","pinyin":"qian shou guan yin","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
 {"word":"千把","pinyin":"qian ba","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
@@ -4624,7 +4560,6 @@
 {"word":"半招","pinyin":"ban zhao","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"半日","pinyin":"ban ri","weight":449,"evidence":[["jieba",449]],"reading":"unihan_single_reading"}
 {"word":"半旧","pinyin":"ban jiu","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
-{"word":"半晌","pinyin":"ban shang","weight":500,"evidence":[["jieba",1725]],"reading":"unihan_single_reading"}
 {"word":"半月","pinyin":"ban yue","weight":498,"evidence":[["jieba",498]],"reading":"unihan_single_reading"}
 {"word":"半月谈","pinyin":"ban yue tan","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"半本","pinyin":"ban ben","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
@@ -4633,7 +4568,6 @@
 {"word":"半枚","pinyin":"ban mei","weight":89,"evidence":[["jieba",89]],"reading":"unihan_single_reading"}
 {"word":"半根","pinyin":"ban gen","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"半步","pinyin":"ban bu","weight":222,"evidence":[["jieba",222]],"reading":"unihan_single_reading"}
-{"word":"半点","pinyin":"ban dian","weight":500,"evidence":[["jieba",1590]],"reading":"unihan_single_reading"}
 {"word":"半片","pinyin":"ban pian","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"半盏","pinyin":"ban zhan","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
 {"word":"半真半假","pinyin":"ban zhen ban jia","weight":29,"evidence":[["jieba",29]],"reading":"existing_word"}
@@ -4801,7 +4735,6 @@
 {"word":"即时通信","pinyin":"ji shi tong xin","weight":20,"evidence":[["thuocl_it_computing",1798]],"reading":"existing_word"}
 {"word":"即景","pinyin":"ji jing","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"即期","pinyin":"ji qi","weight":40,"evidence":[["jieba",40]],"reading":"existing_word"}
-{"word":"却是","pinyin":"que shi","weight":500,"evidence":[["jieba",7797]],"reading":"unihan_single_reading"}
 {"word":"卵巢癌","pinyin":"luan chao ai","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
 {"word":"卵泡","pinyin":"luan pao","weight":60,"evidence":[["jieba",60]],"reading":"existing_word"}
 {"word":"卵黄","pinyin":"luan huang","weight":52,"evidence":[["jieba",52]],"reading":"existing_word"}
@@ -4931,7 +4864,6 @@
 {"word":"参照完整性","pinyin":"can zhao wan zheng xing","weight":20,"evidence":[["thuocl_it_computing",1236]],"reading":"existing_word"}
 {"word":"参考文档","pinyin":"can kao wen dang","weight":20,"evidence":[["thuocl_it_computing",8605]],"reading":"existing_word"}
 {"word":"参考资源","pinyin":"can kao zi yuan","weight":20,"evidence":[["thuocl_it_computing",1067]],"reading":"existing_word"}
-{"word":"又名","pinyin":"you ming","weight":500,"evidence":[["jieba",2093]],"reading":"unihan_single_reading"}
 {"word":"又惊又喜","pinyin":"you jing you xi","weight":411,"evidence":[["jieba",411]],"reading":"unihan_single_reading"}
 {"word":"叉乘","pinyin":"cha cheng","weight":20,"evidence":[["thuocl_it_computing",1598]],"reading":"existing_word"}
 {"word":"叉开","pinyin":"cha kai","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
@@ -5011,7 +4943,6 @@
 {"word":"反射机制","pinyin":"fan she ji zhi","weight":20,"evidence":[["thuocl_it_computing",10474]],"reading":"existing_word"}
 {"word":"反射率","pinyin":"fan she lv","weight":21,"evidence":[["jieba",21]],"reading":"existing_word"}
 {"word":"反射镜","pinyin":"fan she jing","weight":80,"evidence":[["jieba",80]],"reading":"unihan_single_reading"}
-{"word":"反帝","pinyin":"fan di","weight":500,"evidence":[["jieba",1015]],"reading":"unihan_single_reading"}
 {"word":"反序列化","pinyin":"fan xu lie hua","weight":20,"evidence":[["thuocl_it_computing",12149]],"reading":"existing_word"}
 {"word":"反应器","pinyin":"fan ying qi","weight":60,"evidence":[["jieba",60]],"reading":"unihan_single_reading"}
 {"word":"反应物","pinyin":"fan ying wu","weight":173,"evidence":[["jieba",173]],"reading":"unihan_single_reading"}
@@ -5146,7 +5077,6 @@
 {"word":"变频","pinyin":"bian pin","weight":70,"evidence":[["jieba",70]],"reading":"unihan_single_reading"}
 {"word":"叛国罪","pinyin":"pan guo zui","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
 {"word":"叠压","pinyin":"die ya","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
-{"word":"口中","pinyin":"kou zhong","weight":500,"evidence":[["jieba",1617]],"reading":"unihan_single_reading"}
 {"word":"口前","pinyin":"kou qian","weight":38,"evidence":[["jieba",38]],"reading":"existing_word"}
 {"word":"口号声","pinyin":"kou hao sheng","weight":162,"evidence":[["jieba",162]],"reading":"unihan_single_reading"}
 {"word":"口唇","pinyin":"kou chun","weight":120,"evidence":[["jieba",120]],"reading":"unihan_single_reading"}
@@ -5195,7 +5125,6 @@
 {"word":"古镜","pinyin":"gu jing","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
 {"word":"古音","pinyin":"gu yin","weight":74,"evidence":[["jieba",74]],"reading":"unihan_single_reading"}
 {"word":"句柄","pinyin":"ju bing","weight":20,"evidence":[["thuocl_it_computing",31907]],"reading":"existing_word"}
-{"word":"另一方面","pinyin":"ling yi fang mian","weight":500,"evidence":[["jieba",3365]],"reading":"unihan_single_reading"}
 {"word":"另加","pinyin":"ling jia","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"另存为","pinyin":"ling cun wei","weight":20,"evidence":[["thuocl_it_computing",8206]],"reading":"existing_word"}
 {"word":"另选","pinyin":"ling xuan","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
@@ -5206,7 +5135,6 @@
 {"word":"只许","pinyin":"zhi xu","weight":153,"evidence":[["jieba",153]],"reading":"unihan_single_reading"}
 {"word":"只读属性","pinyin":"zhi du shu xing","weight":20,"evidence":[["thuocl_it_computing",4156]],"reading":"existing_word"}
 {"word":"叫住","pinyin":"jiao zhu","weight":141,"evidence":[["jieba",141]],"reading":"unihan_single_reading"}
-{"word":"叫作","pinyin":"jiao zuo","weight":500,"evidence":[["jieba",1057]],"reading":"unihan_single_reading"}
 {"word":"叫停","pinyin":"jiao ting","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"叫化","pinyin":"jiao hua","weight":417,"evidence":[["jieba",417]],"reading":"unihan_single_reading"}
 {"word":"叫化子","pinyin":"jiao hua zi","weight":140,"evidence":[["jieba",140]],"reading":"unihan_single_reading"}
@@ -5239,7 +5167,6 @@
 {"word":"可浓","pinyin":"ke nong","weight":20,"evidence":[["thuocl_food",1249]],"reading":"existing_word"}
 {"word":"可溶性","pinyin":"ke rong xing","weight":95,"evidence":[["jieba",95]],"reading":"unihan_single_reading"}
 {"word":"可燃性","pinyin":"ke ran xing","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
-{"word":"可用","pinyin":"ke yong","weight":500,"evidence":[["jieba",1835]],"reading":"unihan_single_reading"}
 {"word":"可用性","pinyin":"ke yong xing","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"可移植","pinyin":"ke yi zhi","weight":20,"evidence":[["thuocl_it_computing",3412]],"reading":"existing_word"}
 {"word":"可移植性","pinyin":"ke yi zhi xing","weight":20,"evidence":[["thuocl_it_computing",12346]],"reading":"existing_word"}
@@ -5248,7 +5175,6 @@
 {"word":"可维护性","pinyin":"ke wei hu xing","weight":20,"evidence":[["thuocl_it_computing",11476]],"reading":"existing_word"}
 {"word":"可编程","pinyin":"ke bian cheng","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"可编辑","pinyin":"ke bian ji","weight":20,"evidence":[["thuocl_it_computing",5422]],"reading":"existing_word"}
-{"word":"可能性","pinyin":"ke neng xing","weight":500,"evidence":[["jieba",1572]],"reading":"unihan_single_reading"}
 {"word":"可见性","pinyin":"ke jian xing","weight":20,"evidence":[["thuocl_it_computing",11484]],"reading":"existing_word"}
 {"word":"可视","pinyin":"ke shi","weight":71,"evidence":[["jieba",71]],"reading":"unihan_single_reading"}
 {"word":"可视化","pinyin":"ke shi hua","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
@@ -5316,7 +5242,6 @@
 {"word":"吃酒","pinyin":"chi jiu","weight":304,"evidence":[["jieba",304]],"reading":"unihan_single_reading"}
 {"word":"各业","pinyin":"ge ye","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
 {"word":"各为其主","pinyin":"ge wei qi zhu","weight":23,"evidence":[["jieba",23]],"reading":"existing_word"}
-{"word":"各人","pinyin":"ge ren","weight":500,"evidence":[["jieba",1727]],"reading":"unihan_single_reading"}
 {"word":"各党","pinyin":"ge dang","weight":65,"evidence":[["jieba",65]],"reading":"unihan_single_reading"}
 {"word":"各卷","pinyin":"ge juan","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
 {"word":"各县","pinyin":"ge xian","weight":253,"evidence":[["jieba",253]],"reading":"unihan_single_reading"}
@@ -5335,7 +5260,6 @@
 {"word":"各科","pinyin":"ge ke","weight":143,"evidence":[["jieba",143]],"reading":"unihan_single_reading"}
 {"word":"各章","pinyin":"ge zhang","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"各色人等","pinyin":"ge se ren deng","weight":44,"evidence":[["jieba",44]],"reading":"existing_word"}
-{"word":"各部","pinyin":"ge bu","weight":500,"evidence":[["jieba",2808]],"reading":"unihan_single_reading"}
 {"word":"各镇","pinyin":"ge zhen","weight":39,"evidence":[["jieba",39]],"reading":"unihan_single_reading"}
 {"word":"各门","pinyin":"ge men","weight":337,"evidence":[["jieba",337]],"reading":"unihan_single_reading"}
 {"word":"各队","pinyin":"ge dui","weight":129,"evidence":[["jieba",129]],"reading":"unihan_single_reading"}
@@ -5359,7 +5283,6 @@
 {"word":"吊篮","pinyin":"diao lan","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"吊舱","pinyin":"diao cang","weight":288,"evidence":[["jieba",288]],"reading":"unihan_single_reading"}
 {"word":"吊起","pinyin":"diao qi","weight":92,"evidence":[["jieba",92]],"reading":"unihan_single_reading"}
-{"word":"同一","pinyin":"tong yi","weight":500,"evidence":[["jieba",3327]],"reading":"unihan_single_reading"}
 {"word":"同一性","pinyin":"tong yi xing","weight":112,"evidence":[["jieba",112]],"reading":"unihan_single_reading"}
 {"word":"同义","pinyin":"tong yi","weight":66,"evidence":[["jieba",66]],"reading":"unihan_single_reading"}
 {"word":"同义语","pinyin":"tong yi yu","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
@@ -5402,7 +5325,6 @@
 {"word":"同轴","pinyin":"tong zhou","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"同里","pinyin":"tong li","weight":47,"evidence":[["jieba",47]],"reading":"unihan_single_reading"}
 {"word":"同音","pinyin":"tong yin","weight":43,"evidence":[["jieba",43]],"reading":"unihan_single_reading"}
-{"word":"名为","pinyin":"ming wei","weight":500,"evidence":[["jieba",1281]],"reading":"unihan_single_reading"}
 {"word":"名企","pinyin":"ming qi","weight":129,"evidence":[["jieba",129]],"reading":"unihan_single_reading"}
 {"word":"名利双收","pinyin":"ming li shuang shou","weight":22,"evidence":[["jieba",22]],"reading":"existing_word"}
 {"word":"名唤","pinyin":"ming huan","weight":90,"evidence":[["jieba",90]],"reading":"unihan_single_reading"}
@@ -5775,7 +5697,6 @@
 {"word":"喝声道","pinyin":"he sheng dao","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
 {"word":"喝彩声","pinyin":"he cai sheng","weight":45,"evidence":[["jieba",45]],"reading":"unihan_single_reading"}
 {"word":"喝斥","pinyin":"he chi","weight":48,"evidence":[["jieba",48]],"reading":"unihan_single_reading"}
-{"word":"喝道","pinyin":"he dao","weight":500,"evidence":[["jieba",3557]],"reading":"unihan_single_reading"}
 {"word":"喝采","pinyin":"he cai","weight":269,"evidence":[["jieba",269]],"reading":"unihan_single_reading"}
 {"word":"喧闹声","pinyin":"xuan nao sheng","weight":149,"evidence":[["jieba",149]],"reading":"unihan_single_reading"}
 {"word":"喷水","pinyin":"pen shui","weight":105,"evidence":[["jieba",105]],"reading":"unihan_single_reading"}
@@ -5809,7 +5730,6 @@
 {"word":"囊中","pinyin":"nang zhong","weight":196,"evidence":[["jieba",196]],"reading":"unihan_single_reading"}
 {"word":"囊中之物","pinyin":"nang zhong zhi wu","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"四丈","pinyin":"si zhang","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
-{"word":"四下","pinyin":"si xia","weight":500,"evidence":[["jieba",1166]],"reading":"unihan_single_reading"}
 {"word":"四两","pinyin":"si liang","weight":66,"evidence":[["jieba",66]],"reading":"unihan_single_reading"}
 {"word":"四两拨千斤","pinyin":"si liang bo qian jin","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
 {"word":"四五丈","pinyin":"si wu zhang","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
@@ -5961,7 +5881,6 @@
 {"word":"回调机制","pinyin":"hui tiao ji zhi","weight":20,"evidence":[["thuocl_it_computing",2840]],"reading":"existing_word"}
 {"word":"回车换行","pinyin":"hui che huan xing","weight":20,"evidence":[["thuocl_it_computing",4641]],"reading":"existing_word"}
 {"word":"回车符","pinyin":"hui che fu","weight":20,"evidence":[["thuocl_it_computing",6722]],"reading":"existing_word"}
-{"word":"回过","pinyin":"hui guo","weight":500,"evidence":[["jieba",1827]],"reading":"unihan_single_reading"}
 {"word":"回退栈","pinyin":"hui tui zhan","weight":20,"evidence":[["thuocl_it_computing",1150]],"reading":"existing_word"}
 {"word":"回銮","pinyin":"hui luan","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"回防","pinyin":"hui fang","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
@@ -6012,7 +5931,6 @@
 {"word":"固铂","pinyin":"gu bo","weight":20,"evidence":[["thuocl_automotive",1278]],"reading":"existing_word"}
 {"word":"国事访问","pinyin":"guo shi fang wen","weight":125,"evidence":[["jieba",125]],"reading":"unihan_single_reading"}
 {"word":"国光","pinyin":"guo guang","weight":51,"evidence":[["jieba",51]],"reading":"unihan_single_reading"}
-{"word":"国内外","pinyin":"guo nei wai","weight":500,"evidence":[["jieba",1889]],"reading":"unihan_single_reading"}
 {"word":"国内法","pinyin":"guo nei fa","weight":84,"evidence":[["jieba",84]],"reading":"unihan_single_reading"}
 {"word":"国务院令","pinyin":"guo wu yuan ling","weight":261,"evidence":[["jieba",261]],"reading":"unihan_single_reading"}
 {"word":"国务院办公厅","pinyin":"guo wu yuan ban gong ting","weight":75,"evidence":[["jieba",75]],"reading":"unihan_single_reading"}
@@ -6030,7 +5948,6 @@
 {"word":"国家工商总局","pinyin":"guo jia gong shang zong ju","weight":20,"evidence":[["thuocl_places",10409]],"reading":"existing_word"}
 {"word":"国家版权局","pinyin":"guo jia ban quan ju","weight":23,"evidence":[["jieba",23]],"reading":"existing_word"}
 {"word":"国家股","pinyin":"guo jia gu","weight":41,"evidence":[["jieba",41]],"reading":"existing_word"}
-{"word":"国师","pinyin":"guo shi","weight":500,"evidence":[["jieba",1214]],"reading":"unihan_single_reading"}
 {"word":"国庆日","pinyin":"guo qing ri","weight":140,"evidence":[["jieba",140]],"reading":"unihan_single_reading"}
 {"word":"国投","pinyin":"guo tou","weight":40,"evidence":[["jieba",40],["thuocl_finance",1392]],"reading":"existing_word"}
 {"word":"国旅","pinyin":"guo lv","weight":177,"evidence":[["jieba",177]],"reading":"unihan_single_reading"}
@@ -6042,7 +5959,6 @@
 {"word":"国民党中央","pinyin":"guo min dang zhong yang","weight":373,"evidence":[["jieba",373]],"reading":"unihan_single_reading"}
 {"word":"国民军","pinyin":"guo min jun","weight":166,"evidence":[["jieba",166]],"reading":"unihan_single_reading"}
 {"word":"国民性","pinyin":"guo min xing","weight":44,"evidence":[["jieba",44]],"reading":"unihan_single_reading"}
-{"word":"国民政府","pinyin":"guo min zheng fu","weight":500,"evidence":[["jieba",1359]],"reading":"unihan_single_reading"}
 {"word":"国泰君安","pinyin":"guo tai jun an","weight":20,"evidence":[["thuocl_finance",3024]],"reading":"existing_word"}
 {"word":"国电","pinyin":"guo dian","weight":20,"evidence":[["thuocl_finance",2941]],"reading":"existing_word"}
 {"word":"国籍法","pinyin":"guo ji fa","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
@@ -6055,7 +5971,6 @@
 {"word":"国资","pinyin":"guo zi","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
 {"word":"国防科工委","pinyin":"guo fang ke gong wei","weight":86,"evidence":[["jieba",86]],"reading":"unihan_single_reading"}
 {"word":"国防费","pinyin":"guo fang fei","weight":101,"evidence":[["jieba",101]],"reading":"unihan_single_reading"}
-{"word":"国防部","pinyin":"guo fang bu","weight":500,"evidence":[["jieba",1306]],"reading":"unihan_single_reading"}
 {"word":"国际主义","pinyin":"guo ji zhu yi","weight":92,"evidence":[["jieba",92]],"reading":"unihan_single_reading"}
 {"word":"国际共产主义运动","pinyin":"guo ji gong chan zhu yi yun dong","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
 {"word":"国际共运","pinyin":"guo ji gong yun","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
@@ -6085,7 +6000,6 @@
 {"word":"图像检索","pinyin":"tu xiang jian suo","weight":20,"evidence":[["thuocl_it_computing",1150]],"reading":"existing_word"}
 {"word":"图像特征","pinyin":"tu xiang te zheng","weight":20,"evidence":[["thuocl_it_computing",1837]],"reading":"existing_word"}
 {"word":"图像识别","pinyin":"tu xiang shi bie","weight":20,"evidence":[["thuocl_it_computing",3143]],"reading":"existing_word"}
-{"word":"图库","pinyin":"tu ku","weight":500,"evidence":[["jieba",1272]],"reading":"unihan_single_reading"}
 {"word":"图式","pinyin":"tu shi","weight":49,"evidence":[["jieba",49]],"reading":"unihan_single_reading"}
 {"word":"图形上下文","pinyin":"tu xing shang xia wen","weight":20,"evidence":[["thuocl_it_computing",1594]],"reading":"existing_word"}
 {"word":"图形化界面","pinyin":"tu xing hua jie mian","weight":20,"evidence":[["thuocl_it_computing",3486]],"reading":"existing_word"}
@@ -6216,7 +6130,6 @@
 {"word":"均田制","pinyin":"jun tian zhi","weight":86,"evidence":[["jieba",86]],"reading":"unihan_single_reading"}
 {"word":"均线","pinyin":"jun xian","weight":61,"evidence":[["jieba",61],["thuocl_finance",1015]],"reading":"existing_word"}
 {"word":"均达","pinyin":"jun da","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
-{"word":"坐下","pinyin":"zuo xia","weight":500,"evidence":[["jieba",2589]],"reading":"unihan_single_reading"}
 {"word":"坐坐","pinyin":"zuo zuo","weight":192,"evidence":[["jieba",192]],"reading":"unihan_single_reading"}
 {"word":"坐定","pinyin":"zuo ding","weight":349,"evidence":[["jieba",349]],"reading":"unihan_single_reading"}
 {"word":"坐收","pinyin":"zuo shou","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
@@ -6364,7 +6277,6 @@
 {"word":"增删改","pinyin":"zeng shan gai","weight":20,"evidence":[["thuocl_it_computing",5088]],"reading":"existing_word"}
 {"word":"增删改查","pinyin":"zeng shan gai cha","weight":20,"evidence":[["thuocl_it_computing",14555]],"reading":"existing_word"}
 {"word":"增删查改","pinyin":"zeng shan cha gai","weight":20,"evidence":[["thuocl_it_computing",1505]],"reading":"existing_word"}
-{"word":"增加值","pinyin":"zeng jia zhi","weight":500,"evidence":[["jieba",1861]],"reading":"unihan_single_reading"}
 {"word":"增加字段","pinyin":"zeng jia zi duan","weight":20,"evidence":[["thuocl_it_computing",1589]],"reading":"existing_word"}
 {"word":"增加节点","pinyin":"zeng jia jie dian","weight":20,"evidence":[["thuocl_it_computing",1352]],"reading":"existing_word"}
 {"word":"增加额","pinyin":"zeng jia e","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
@@ -6445,7 +6357,6 @@
 {"word":"夏秋季","pinyin":"xia qiu ji","weight":58,"evidence":[["jieba",58]],"reading":"unihan_single_reading"}
 {"word":"外交史","pinyin":"wai jiao shi","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
 {"word":"外交学院","pinyin":"wai jiao xue yuan","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
-{"word":"外交部","pinyin":"wai jiao bu","weight":500,"evidence":[["jieba",7223]],"reading":"unihan_single_reading"}
 {"word":"外交部亚洲司","pinyin":"wai jiao bu ya zhou si","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"外交部办公厅","pinyin":"wai jiao bu ban gong ting","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"外交部新闻司","pinyin":"wai jiao bu xin wen si","weight":378,"evidence":[["jieba",378]],"reading":"unihan_single_reading"}
@@ -6539,7 +6450,6 @@
 {"word":"多口","pinyin":"duo kou","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
 {"word":"多只","pinyin":"duo zhi","weight":188,"evidence":[["jieba",188]],"reading":"unihan_single_reading"}
 {"word":"多台","pinyin":"duo tai","weight":66,"evidence":[["jieba",66]],"reading":"unihan_single_reading"}
-{"word":"多名","pinyin":"duo ming","weight":500,"evidence":[["jieba",1103]],"reading":"unihan_single_reading"}
 {"word":"多吨","pinyin":"duo dun","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"多场","pinyin":"duo chang","weight":70,"evidence":[["jieba",70]],"reading":"unihan_single_reading"}
 {"word":"多址","pinyin":"duo zhi","weight":22,"evidence":[["jieba",22]],"reading":"existing_word"}
@@ -6914,12 +6824,10 @@
 {"word":"好胜心","pinyin":"hao sheng xin","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"好色之徒","pinyin":"hao se zhi tu","weight":26,"evidence":[["jieba",26]],"reading":"existing_word"}
 {"word":"好言相劝","pinyin":"hao yan xiang quan","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
-{"word":"好象","pinyin":"hao xiang","weight":500,"evidence":[["jieba",1046]],"reading":"unihan_single_reading"}
 {"word":"如上所述","pinyin":"ru shang suo shu","weight":60,"evidence":[["jieba",60]],"reading":"unihan_single_reading"}
 {"word":"如之奈何","pinyin":"ru zhi nai he","weight":126,"evidence":[["jieba",126]],"reading":"existing_word"}
 {"word":"如入无人之境","pinyin":"ru ru wu ren zhi jing","weight":49,"evidence":[["jieba",49]],"reading":"existing_word"}
 {"word":"如春","pinyin":"ru chun","weight":57,"evidence":[["jieba",57]],"reading":"unihan_single_reading"}
-{"word":"如是","pinyin":"ru shi","weight":500,"evidence":[["jieba",1207]],"reading":"unihan_single_reading"}
 {"word":"如月","pinyin":"ru yue","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"如此一来","pinyin":"ru ci yi lai","weight":116,"evidence":[["jieba",116]],"reading":"unihan_single_reading"}
 {"word":"如痴如狂","pinyin":"ru chi ru kuang","weight":31,"evidence":[["jieba",31]],"reading":"existing_word"}
@@ -7226,7 +7134,6 @@
 {"word":"官人","pinyin":"guan ren","weight":430,"evidence":[["jieba",430]],"reading":"unihan_single_reading"}
 {"word":"官僚资本主义","pinyin":"guan liao zi ben zhu yi","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
 {"word":"官兵们","pinyin":"guan bing men","weight":223,"evidence":[["jieba",223]],"reading":"unihan_single_reading"}
-{"word":"官军","pinyin":"guan jun","weight":500,"evidence":[["jieba",2103]],"reading":"unihan_single_reading"}
 {"word":"官厅","pinyin":"guan ting","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"官寨","pinyin":"guan zhai","weight":104,"evidence":[["jieba",104]],"reading":"unihan_single_reading"}
 {"word":"官方教程","pinyin":"guan fang jiao cheng","weight":20,"evidence":[["thuocl_it_computing",2306]],"reading":"existing_word"}
@@ -7241,7 +7148,6 @@
 {"word":"官道","pinyin":"guan dao","weight":116,"evidence":[["jieba",116]],"reading":"unihan_single_reading"}
 {"word":"官面","pinyin":"guan mian","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"定下","pinyin":"ding xia","weight":297,"evidence":[["jieba",297]],"reading":"unihan_single_reading"}
-{"word":"定为","pinyin":"ding wei","weight":500,"evidence":[["jieba",1060]],"reading":"unihan_single_reading"}
 {"word":"定义数据类型","pinyin":"ding yi shu ju lei xing","weight":20,"evidence":[["thuocl_it_computing",1401]],"reading":"existing_word"}
 {"word":"定义类","pinyin":"ding yi lei","weight":20,"evidence":[["thuocl_it_computing",12310]],"reading":"existing_word"}
 {"word":"定于","pinyin":"ding yu","weight":255,"evidence":[["jieba",255]],"reading":"unihan_single_reading"}
@@ -7363,11 +7269,9 @@
 {"word":"宪兵队","pinyin":"xian bing dui","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
 {"word":"宪法学","pinyin":"xian fa xue","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"宪法法院","pinyin":"xian fa fa yuan","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
-{"word":"宫中","pinyin":"gong zhong","weight":500,"evidence":[["jieba",1884]],"reading":"unihan_single_reading"}
 {"word":"宫保鸡","pinyin":"gong bao ji","weight":20,"evidence":[["thuocl_food",3741]],"reading":"existing_word"}
 {"word":"宫保鸡丁","pinyin":"gong bao ji ding","weight":20,"evidence":[["thuocl_food",3523]],"reading":"existing_word"}
 {"word":"宫前","pinyin":"gong qian","weight":57,"evidence":[["jieba",57]],"reading":"unihan_single_reading"}
-{"word":"宫女","pinyin":"gong nv","weight":500,"evidence":[["jieba",2181]],"reading":"unihan_single_reading"}
 {"word":"宫娥","pinyin":"gong e","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"宫来","pinyin":"gong lai","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"宫腔","pinyin":"gong qiang","weight":39,"evidence":[["jieba",39]],"reading":"existing_word"}
@@ -7437,7 +7341,6 @@
 {"word":"对公","pinyin":"dui gong","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"对内","pinyin":"dui nei","weight":274,"evidence":[["jieba",274]],"reading":"unihan_single_reading"}
 {"word":"对华","pinyin":"dui hua","weight":392,"evidence":[["jieba",392]],"reading":"unihan_single_reading"}
-{"word":"对外开放","pinyin":"dui wai kai fang","weight":500,"evidence":[["jieba",1360]],"reading":"unihan_single_reading"}
 {"word":"对外部","pinyin":"dui wai bu","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"对射","pinyin":"dui she","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"对应性","pinyin":"dui ying xing","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
@@ -7546,7 +7449,6 @@
 {"word":"小城","pinyin":"xiao cheng","weight":495,"evidence":[["jieba",495]],"reading":"unihan_single_reading"}
 {"word":"小孔","pinyin":"xiao kong","weight":500,"evidence":[["jieba",679]],"reading":"unihan_single_reading"}
 {"word":"小室","pinyin":"xiao shi","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
-{"word":"小小","pinyin":"xiao xiao","weight":500,"evidence":[["jieba",1108]],"reading":"unihan_single_reading"}
 {"word":"小山包","pinyin":"xiao shan bao","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"小帽","pinyin":"xiao mao","weight":63,"evidence":[["jieba",63]],"reading":"unihan_single_reading"}
 {"word":"小幅","pinyin":"xiao fu","weight":98,"evidence":[["jieba",98]],"reading":"unihan_single_reading"}
@@ -7631,7 +7533,6 @@
 {"word":"尖端放电","pinyin":"jian duan fang dian","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"尖端科学","pinyin":"jian duan ke xue","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"尘沙","pinyin":"chen sha","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
-{"word":"尚有","pinyin":"shang you","weight":500,"evidence":[["jieba",1213]],"reading":"unihan_single_reading"}
 {"word":"尝到","pinyin":"chang dao","weight":186,"evidence":[["jieba",186]],"reading":"unihan_single_reading"}
 {"word":"尝尝","pinyin":"chang chang","weight":280,"evidence":[["jieba",280]],"reading":"unihan_single_reading"}
 {"word":"就业处","pinyin":"jiu ye chu","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
@@ -7805,7 +7706,6 @@
 {"word":"工业部门","pinyin":"gong ye bu men","weight":500,"evidence":[["jieba",551]],"reading":"unihan_single_reading"}
 {"word":"工人党","pinyin":"gong ren dang","weight":170,"evidence":[["jieba",170]],"reading":"unihan_single_reading"}
 {"word":"工人运动","pinyin":"gong ren yun dong","weight":485,"evidence":[["jieba",485]],"reading":"unihan_single_reading"}
-{"word":"工人阶级","pinyin":"gong ren jie ji","weight":500,"evidence":[["jieba",1189]],"reading":"unihan_single_reading"}
 {"word":"工作制","pinyin":"gong zuo zhi","weight":58,"evidence":[["jieba",58]],"reading":"unihan_single_reading"}
 {"word":"工作区","pinyin":"gong zuo qu","weight":20,"evidence":[["thuocl_it_computing",9128]],"reading":"existing_word"}
 {"word":"工作台","pinyin":"gong zuo tai","weight":39,"evidence":[["jieba",39]],"reading":"unihan_single_reading"}
@@ -7854,7 +7754,6 @@
 {"word":"工矿业","pinyin":"gong kuang ye","weight":69,"evidence":[["jieba",69]],"reading":"unihan_single_reading"}
 {"word":"工矿企业","pinyin":"gong kuang qi ye","weight":143,"evidence":[["jieba",143]],"reading":"unihan_single_reading"}
 {"word":"工程学","pinyin":"gong cheng xue","weight":100,"evidence":[["jieba",100]],"reading":"unihan_single_reading"}
-{"word":"工程学院","pinyin":"gong cheng xue yuan","weight":500,"evidence":[["jieba",1162]],"reading":"unihan_single_reading"}
 {"word":"工程建设","pinyin":"gong cheng jian she","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"工程文件","pinyin":"gong cheng wen jian","weight":20,"evidence":[["thuocl_it_computing",9156]],"reading":"existing_word"}
 {"word":"工程款","pinyin":"gong cheng kuan","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
@@ -7933,7 +7832,6 @@
 {"word":"布线","pinyin":"bu xian","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
 {"word":"帅位","pinyin":"shuai wei","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"师师","pinyin":"shi shi","weight":271,"evidence":[["jieba",271]],"reading":"unihan_single_reading"}
-{"word":"师范学院","pinyin":"shi fan xue yuan","weight":500,"evidence":[["jieba",1191]],"reading":"unihan_single_reading"}
 {"word":"师部","pinyin":"shi bu","weight":129,"evidence":[["jieba",129]],"reading":"unihan_single_reading"}
 {"word":"希尔排序","pinyin":"xi er pai xu","weight":20,"evidence":[["thuocl_it_computing",5156]],"reading":"existing_word"}
 {"word":"帐房","pinyin":"zhang fang","weight":78,"evidence":[["jieba",78]],"reading":"unihan_single_reading"}
@@ -7969,7 +7867,6 @@
 {"word":"常抓不懈","pinyin":"chang zhua bu xie","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"常指针","pinyin":"chang zhi zhen","weight":20,"evidence":[["thuocl_it_computing",1127]],"reading":"existing_word"}
 {"word":"常时","pinyin":"chang shi","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
-{"word":"常有","pinyin":"chang you","weight":500,"evidence":[["jieba",1026]],"reading":"unihan_single_reading"}
 {"word":"常用函数","pinyin":"chang yong han shu","weight":20,"evidence":[["thuocl_it_computing",3764]],"reading":"existing_word"}
 {"word":"常用功能","pinyin":"chang yong gong neng","weight":20,"evidence":[["thuocl_it_computing",2986]],"reading":"existing_word"}
 {"word":"常用命令","pinyin":"chang yong ming ling","weight":20,"evidence":[["thuocl_it_computing",11870]],"reading":"existing_word"}
@@ -8041,7 +7938,6 @@
 {"word":"平平淡淡","pinyin":"ping ping dan dan","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"平平静静","pinyin":"ping ping jing jing","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"平放","pinyin":"ping fang","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
-{"word":"平方千米","pinyin":"ping fang qian mi","weight":500,"evidence":[["jieba",7232]],"reading":"unihan_single_reading"}
 {"word":"平方厘米","pinyin":"ping fang li mi","weight":333,"evidence":[["jieba",333]],"reading":"unihan_single_reading"}
 {"word":"平方毫米","pinyin":"ping fang hao mi","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"平方英里","pinyin":"ping fang ying li","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
@@ -8150,7 +8046,6 @@
 {"word":"应急灯","pinyin":"ying ji deng","weight":20,"evidence":[["thuocl_automotive",9616]],"reading":"existing_word"}
 {"word":"应收","pinyin":"ying shou","weight":101,"evidence":[["jieba",101]],"reading":"unihan_single_reading"}
 {"word":"应收款","pinyin":"ying shou kuan","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
-{"word":"应有","pinyin":"ying you","weight":500,"evidence":[["jieba",1159]],"reading":"unihan_single_reading"}
 {"word":"应激","pinyin":"ying ji","weight":64,"evidence":[["jieba",64]],"reading":"existing_word"}
 {"word":"应用名称","pinyin":"ying yong ming cheng","weight":20,"evidence":[["thuocl_it_computing",3302]],"reading":"existing_word"}
 {"word":"应用图标","pinyin":"ying yong tu biao","weight":20,"evidence":[["thuocl_it_computing",2194]],"reading":"existing_word"}
@@ -8206,7 +8101,6 @@
 {"word":"延迟执行","pinyin":"yan chi zhi xing","weight":20,"evidence":[["thuocl_it_computing",3177]],"reading":"existing_word"}
 {"word":"延迟时间","pinyin":"yan chi shi jian","weight":20,"evidence":[["thuocl_it_computing",6088]],"reading":"existing_word"}
 {"word":"延髓","pinyin":"yan sui","weight":100,"evidence":[["jieba",100]],"reading":"unihan_single_reading"}
-{"word":"廷杖","pinyin":"ting zhang","weight":500,"evidence":[["jieba",1129]],"reading":"unihan_single_reading"}
 {"word":"建业队","pinyin":"jian ye dui","weight":60,"evidence":[["jieba",60]],"reading":"unihan_single_reading"}
 {"word":"建中","pinyin":"jian zhong","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
 {"word":"建交国","pinyin":"jian jiao guo","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
@@ -8216,7 +8110,6 @@
 {"word":"建工","pinyin":"jian gong","weight":500,"evidence":[["jieba",664]],"reading":"unihan_single_reading"}
 {"word":"建房","pinyin":"jian fang","weight":128,"evidence":[["jieba",128]],"reading":"unihan_single_reading"}
 {"word":"建政","pinyin":"jian zheng","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
-{"word":"建有","pinyin":"jian you","weight":500,"evidence":[["jieba",2610]],"reading":"unihan_single_reading"}
 {"word":"建桥","pinyin":"jian qiao","weight":222,"evidence":[["jieba",222]],"reading":"unihan_single_reading"}
 {"word":"建模工具","pinyin":"jian mo gong ju","weight":20,"evidence":[["thuocl_it_computing",1208]],"reading":"existing_word"}
 {"word":"建瓯","pinyin":"jian ou","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
@@ -8292,7 +8185,6 @@
 {"word":"开时","pinyin":"kai shi","weight":299,"evidence":[["jieba",299]],"reading":"unihan_single_reading"}
 {"word":"开机启动","pinyin":"kai ji qi dong","weight":20,"evidence":[["thuocl_it_computing",8988]],"reading":"existing_word"}
 {"word":"开机自启动","pinyin":"kai ji zi qi dong","weight":20,"evidence":[["thuocl_it_computing",2826]],"reading":"existing_word"}
-{"word":"开来","pinyin":"kai lai","weight":500,"evidence":[["jieba",1178]],"reading":"unihan_single_reading"}
 {"word":"开源中国","pinyin":"kai yuan zhong guo","weight":20,"evidence":[["thuocl_it_computing",2924]],"reading":"existing_word"}
 {"word":"开源代码","pinyin":"kai yuan dai ma","weight":20,"evidence":[["thuocl_it_computing",5582]],"reading":"existing_word"}
 {"word":"开源协议","pinyin":"kai yuan xie yi","weight":20,"evidence":[["thuocl_it_computing",1715]],"reading":"existing_word"}
@@ -8519,7 +8411,6 @@
 {"word":"御史台","pinyin":"yu shi tai","weight":108,"evidence":[["jieba",108]],"reading":"unihan_single_reading"}
 {"word":"御林军","pinyin":"yu lin jun","weight":366,"evidence":[["jieba",366]],"reading":"unihan_single_reading"}
 {"word":"御览","pinyin":"yu lan","weight":85,"evidence":[["jieba",85]],"reading":"unihan_single_reading"}
-{"word":"御道","pinyin":"yu dao","weight":500,"evidence":[["jieba",1222]],"reading":"unihan_single_reading"}
 {"word":"循序","pinyin":"xun xu","weight":39,"evidence":[["jieba",39]],"reading":"unihan_single_reading"}
 {"word":"循环右移","pinyin":"xun huan you yi","weight":20,"evidence":[["thuocl_it_computing",1084]],"reading":"existing_word"}
 {"word":"循环嵌套","pinyin":"xun huan qian tao","weight":20,"evidence":[["thuocl_it_computing",1678]],"reading":"existing_word"}
@@ -8589,7 +8480,6 @@
 {"word":"心惊","pinyin":"xin jing","weight":394,"evidence":[["jieba",394]],"reading":"unihan_single_reading"}
 {"word":"心有余而力不足","pinyin":"xin you yu er li bu zu","weight":31,"evidence":[["jieba",31]],"reading":"existing_word"}
 {"word":"心法","pinyin":"xin fa","weight":196,"evidence":[["jieba",196]],"reading":"unihan_single_reading"}
-{"word":"心理学","pinyin":"xin li xue","weight":500,"evidence":[["jieba",1268]],"reading":"unihan_single_reading"}
 {"word":"心电","pinyin":"xin dian","weight":22,"evidence":[["jieba",22]],"reading":"existing_word"}
 {"word":"心皮","pinyin":"xin pi","weight":109,"evidence":[["jieba",109]],"reading":"unihan_single_reading"}
 {"word":"心知肚明","pinyin":"xin zhi du ming","weight":48,"evidence":[["jieba",48]],"reading":"unihan_single_reading"}
@@ -8657,7 +8547,6 @@
 {"word":"忿忿不平","pinyin":"fen fen bu ping","weight":20,"evidence":[["jieba",20]],"reading":"existing_word"}
 {"word":"忿怒","pinyin":"fen nu","weight":171,"evidence":[["jieba",171]],"reading":"unihan_single_reading"}
 {"word":"怀上","pinyin":"huai shang","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
-{"word":"怀中","pinyin":"huai zhong","weight":500,"evidence":[["jieba",1236]],"reading":"unihan_single_reading"}
 {"word":"怀揣","pinyin":"huai chuai","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
 {"word":"怀疑论","pinyin":"huai yi lun","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"怀素","pinyin":"huai su","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
@@ -8703,8 +8592,6 @@
 {"word":"怪招","pinyin":"guai zhao","weight":78,"evidence":[["jieba",78]],"reading":"unihan_single_reading"}
 {"word":"怯怯","pinyin":"qie qie","weight":85,"evidence":[["jieba",85]],"reading":"unihan_single_reading"}
 {"word":"怯薛","pinyin":"qie xue","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
-{"word":"总产量","pinyin":"zong chan liang","weight":500,"evidence":[["jieba",1643]],"reading":"unihan_single_reading"}
-{"word":"总人口","pinyin":"zong ren kou","weight":500,"evidence":[["jieba",3295]],"reading":"unihan_single_reading"}
 {"word":"总代理","pinyin":"zong dai li","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
 {"word":"总任务","pinyin":"zong ren wu","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
 {"word":"总体性","pinyin":"zong ti xing","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
@@ -8735,7 +8622,6 @@
 {"word":"总能","pinyin":"zong neng","weight":244,"evidence":[["jieba",244]],"reading":"unihan_single_reading"}
 {"word":"总装备部","pinyin":"zong zhuang bei bu","weight":61,"evidence":[["jieba",61]],"reading":"unihan_single_reading"}
 {"word":"总需求","pinyin":"zong xu qiu","weight":20,"evidence":[["thuocl_finance",2572]],"reading":"existing_word"}
-{"word":"总面积","pinyin":"zong mian ji","weight":500,"evidence":[["jieba",2679]],"reading":"unihan_single_reading"}
 {"word":"总领事馆","pinyin":"zong ling shi guan","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"恍恍惚惚","pinyin":"huang huang hu hu","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
 {"word":"恐怖症","pinyin":"kong bu zheng","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
@@ -8806,7 +8692,6 @@
 {"word":"想尽","pinyin":"xiang jin","weight":118,"evidence":[["jieba",118]],"reading":"unihan_single_reading"}
 {"word":"想当初","pinyin":"xiang dang chu","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
 {"word":"想当年","pinyin":"xiang dang nian","weight":134,"evidence":[["jieba",134]],"reading":"unihan_single_reading"}
-{"word":"想想","pinyin":"xiang xiang","weight":500,"evidence":[["jieba",1494]],"reading":"unihan_single_reading"}
 {"word":"想想也是","pinyin":"xiang xiang ye shi","weight":39,"evidence":[["jieba",39]],"reading":"unihan_single_reading"}
 {"word":"惴惴","pinyin":"zhui zhui","weight":89,"evidence":[["jieba",89]],"reading":"unihan_single_reading"}
 {"word":"惶急","pinyin":"huang ji","weight":157,"evidence":[["jieba",157]],"reading":"unihan_single_reading"}
@@ -8895,8 +8780,6 @@
 {"word":"成鱼","pinyin":"cheng yu","weight":43,"evidence":[["jieba",43]],"reading":"unihan_single_reading"}
 {"word":"我一语","pinyin":"wo yi yu","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"我党","pinyin":"wo dang","weight":129,"evidence":[["jieba",129]],"reading":"unihan_single_reading"}
-{"word":"我军","pinyin":"wo jun","weight":500,"evidence":[["jieba",1853]],"reading":"unihan_single_reading"}
-{"word":"我国","pinyin":"wo guo","weight":500,"evidence":[["jieba",22114]],"reading":"unihan_single_reading"}
 {"word":"我方","pinyin":"wo fang","weight":194,"evidence":[["jieba",194]],"reading":"unihan_single_reading"}
 {"word":"我辈","pinyin":"wo bei","weight":246,"evidence":[["jieba",246]],"reading":"unihan_single_reading"}
 {"word":"我院","pinyin":"wo yuan","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
@@ -8956,7 +8839,6 @@
 {"word":"所有物","pinyin":"suo you wu","weight":109,"evidence":[["jieba",109]],"reading":"unihan_single_reading"}
 {"word":"所欲","pinyin":"suo yu","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"所求","pinyin":"suo qiu","weight":103,"evidence":[["jieba",103]],"reading":"unihan_single_reading"}
-{"word":"所用","pinyin":"suo yong","weight":500,"evidence":[["jieba",1131]],"reading":"unihan_single_reading"}
 {"word":"所见即所得","pinyin":"suo jian ji suo de","weight":20,"evidence":[["thuocl_it_computing",2406]],"reading":"existing_word"}
 {"word":"所里","pinyin":"suo li","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
 {"word":"扁桃体炎","pinyin":"bian tao ti yan","weight":34,"evidence":[["jieba",34]],"reading":"existing_word"}
@@ -8965,7 +8847,6 @@
 {"word":"扇骨","pinyin":"shan gu","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"扈从","pinyin":"hu cong","weight":66,"evidence":[["jieba",66]],"reading":"unihan_single_reading"}
 {"word":"手下人","pinyin":"shou xia ren","weight":265,"evidence":[["jieba",265]],"reading":"unihan_single_reading"}
-{"word":"手中","pinyin":"shou zhong","weight":500,"evidence":[["jieba",6721]],"reading":"unihan_single_reading"}
 {"word":"手写代码","pinyin":"shou xie dai ma","weight":20,"evidence":[["thuocl_it_computing",1194]],"reading":"existing_word"}
 {"word":"手到拿来","pinyin":"shou dao na lai","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"手动变速箱","pinyin":"shou dong bian su xiang","weight":20,"evidence":[["thuocl_automotive",26975]],"reading":"existing_word"}
@@ -9026,7 +8907,6 @@
 {"word":"打打","pinyin":"da da","weight":110,"evidence":[["jieba",110]],"reading":"unihan_single_reading"}
 {"word":"打打闹闹","pinyin":"da da nao nao","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"打散","pinyin":"da san","weight":49,"evidence":[["jieba",49]],"reading":"unihan_single_reading"}
-{"word":"打死","pinyin":"da si","weight":500,"evidence":[["jieba",1643]],"reading":"unihan_single_reading"}
 {"word":"打江山","pinyin":"da jiang shan","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
 {"word":"打法","pinyin":"da fa","weight":321,"evidence":[["jieba",321]],"reading":"unihan_single_reading"}
 {"word":"打滚","pinyin":"da gun","weight":91,"evidence":[["jieba",91]],"reading":"unihan_single_reading"}
@@ -9185,7 +9065,6 @@
 {"word":"抗力","pinyin":"kang li","weight":30,"evidence":[["jieba",30]],"reading":"existing_word"}
 {"word":"抗原性","pinyin":"kang yuan xing","weight":33,"evidence":[["jieba",33]],"reading":"existing_word"}
 {"word":"抗坏血酸","pinyin":"kang huai xue suan","weight":62,"evidence":[["jieba",62],["thuocl_food",5600]],"reading":"existing_word"}
-{"word":"抗日战争","pinyin":"kang ri zhan zheng","weight":500,"evidence":[["jieba",2153]],"reading":"unihan_single_reading"}
 {"word":"抗日救亡","pinyin":"kang ri jiu wang","weight":493,"evidence":[["jieba",493]],"reading":"unihan_single_reading"}
 {"word":"抗日救亡运动","pinyin":"kang ri jiu wang yun dong","weight":259,"evidence":[["jieba",259]],"reading":"unihan_single_reading"}
 {"word":"抗日民族统一战线","pinyin":"kang ri min zu tong yi zhan xian","weight":291,"evidence":[["jieba",291]],"reading":"unihan_single_reading"}
@@ -9527,7 +9406,6 @@
 {"word":"掠夺性","pinyin":"lve duo xing","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"掠走","pinyin":"lve zou","weight":147,"evidence":[["jieba",147]],"reading":"unihan_single_reading"}
 {"word":"探底","pinyin":"tan di","weight":20,"evidence":[["thuocl_finance",3766]],"reading":"existing_word"}
-{"word":"探明","pinyin":"tan ming","weight":500,"evidence":[["jieba",1246]],"reading":"unihan_single_reading"}
 {"word":"探测仪器","pinyin":"tan ce yi qi","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"探知","pinyin":"tan zhi","weight":115,"evidence":[["jieba",115]],"reading":"unihan_single_reading"}
 {"word":"探空火箭","pinyin":"tan kong huo jian","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
@@ -9538,7 +9416,6 @@
 {"word":"接上","pinyin":"jie shang","weight":273,"evidence":[["jieba",273]],"reading":"unihan_single_reading"}
 {"word":"接下","pinyin":"jie xia","weight":81,"evidence":[["jieba",81]],"reading":"unihan_single_reading"}
 {"word":"接入网","pinyin":"jie ru wang","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
-{"word":"接到","pinyin":"jie dao","weight":500,"evidence":[["jieba",1490]],"reading":"unihan_single_reading"}
 {"word":"接发球","pinyin":"jie fa qiu","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
 {"word":"接受者","pinyin":"jie shou zhe","weight":27,"evidence":[["jieba",27],["thuocl_it_computing",6607]],"reading":"existing_word"}
 {"word":"接口回调","pinyin":"jie kou hui tiao","weight":20,"evidence":[["thuocl_it_computing",2011]],"reading":"existing_word"}
@@ -9565,7 +9442,6 @@
 {"word":"接触式","pinyin":"jie chu shi","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"接触性","pinyin":"jie chu xing","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"接触面","pinyin":"jie chu mian","weight":59,"evidence":[["jieba",59]],"reading":"existing_word"}
-{"word":"接过","pinyin":"jie guo","weight":500,"evidence":[["jieba",1850]],"reading":"unihan_single_reading"}
 {"word":"接连不断","pinyin":"jie lian bu duan","weight":352,"evidence":[["jieba",352]],"reading":"existing_word"}
 {"word":"控件使用","pinyin":"kong jian shi yong","weight":20,"evidence":[["thuocl_it_computing",1510]],"reading":"existing_word"}
 {"word":"控件属性","pinyin":"kong jian shu xing","weight":20,"evidence":[["thuocl_it_computing",1902]],"reading":"existing_word"}
@@ -9687,7 +9563,6 @@
 {"word":"摇头叹息","pinyin":"yao tou tan xi","weight":35,"evidence":[["jieba",35]],"reading":"existing_word"}
 {"word":"摇摆不定","pinyin":"yao bai bu ding","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
 {"word":"摇摇","pinyin":"yao yao","weight":167,"evidence":[["jieba",167]],"reading":"unihan_single_reading"}
-{"word":"摇摇头","pinyin":"yao yao tou","weight":500,"evidence":[["jieba",1211]],"reading":"unihan_single_reading"}
 {"word":"摇摇摆摆","pinyin":"yao yao bai bai","weight":67,"evidence":[["jieba",67]],"reading":"existing_word"}
 {"word":"摇摇晃晃","pinyin":"yao yao huang huang","weight":241,"evidence":[["jieba",241]],"reading":"unihan_single_reading"}
 {"word":"摇窗","pinyin":"yao chuang","weight":20,"evidence":[["thuocl_automotive",1297]],"reading":"existing_word"}
@@ -9728,7 +9603,6 @@
 {"word":"撩开","pinyin":"liao kai","weight":70,"evidence":[["jieba",70]],"reading":"unihan_single_reading"}
 {"word":"撬动","pinyin":"qiao dong","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"播下","pinyin":"bo xia","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
-{"word":"播放器","pinyin":"bo fang qi","weight":118,"evidence":[["jieba",118]],"reading":"unihan_single_reading"}
 {"word":"播放声音","pinyin":"bo fang sheng yin","weight":20,"evidence":[["thuocl_it_computing",2135]],"reading":"existing_word"}
 {"word":"播放机","pinyin":"bo fang ji","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
 {"word":"播放视频","pinyin":"bo fang shi pin","weight":20,"evidence":[["thuocl_it_computing",4312]],"reading":"existing_word"}
@@ -10231,8 +10105,6 @@
 {"word":"新凯越","pinyin":"xin kai yue","weight":20,"evidence":[["thuocl_automotive",45766]],"reading":"existing_word"}
 {"word":"新制","pinyin":"xin zhi","weight":67,"evidence":[["jieba",67]],"reading":"unihan_single_reading"}
 {"word":"新加坡人","pinyin":"xin jia po ren","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
-{"word":"新华社","pinyin":"xin hua she","weight":500,"evidence":[["jieba",4854]],"reading":"unihan_single_reading"}
-{"word":"新华网","pinyin":"xin hua wang","weight":500,"evidence":[["jieba",1079]],"reading":"unihan_single_reading"}
 {"word":"新华通讯社","pinyin":"xin hua tong xun she","weight":25,"evidence":[["jieba",25]],"reading":"existing_word"}
 {"word":"新卡","pinyin":"xin ka","weight":20,"evidence":[["thuocl_finance",1353]],"reading":"existing_word"}
 {"word":"新古典主义","pinyin":"xin gu dian zhu yi","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
@@ -10556,7 +10428,6 @@
 {"word":"春草","pinyin":"chun cao","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"春酒","pinyin":"chun jiu","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"昭告","pinyin":"zhao gao","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
-{"word":"是从","pinyin":"shi cong","weight":500,"evidence":[["jieba",4054]],"reading":"unihan_single_reading"}
 {"word":"是夜","pinyin":"shi ye","weight":166,"evidence":[["jieba",166]],"reading":"unihan_single_reading"}
 {"word":"昼间","pinyin":"zhou jian","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"显像","pinyin":"xian xiang","weight":45,"evidence":[["jieba",45]],"reading":"unihan_single_reading"}
@@ -10651,7 +10522,6 @@
 {"word":"更新源","pinyin":"geng xin yuan","weight":20,"evidence":[["thuocl_it_computing",1889]],"reading":"existing_word"}
 {"word":"更新索引","pinyin":"geng xin suo yin","weight":20,"evidence":[["thuocl_it_computing",1461]],"reading":"existing_word"}
 {"word":"更新过程","pinyin":"geng xin guo cheng","weight":20,"evidence":[["thuocl_it_computing",1344]],"reading":"existing_word"}
-{"word":"更是","pinyin":"geng shi","weight":500,"evidence":[["jieba",5290]],"reading":"unihan_single_reading"}
 {"word":"更深","pinyin":"geng shen","weight":304,"evidence":[["jieba",304]],"reading":"unihan_single_reading"}
 {"word":"更胜一筹","pinyin":"geng sheng yi chou","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
 {"word":"更进一步","pinyin":"geng jin yi bu","weight":186,"evidence":[["jieba",186]],"reading":"unihan_single_reading"}
@@ -10682,7 +10552,6 @@
 {"word":"最大深度","pinyin":"zui da shen du","weight":20,"evidence":[["thuocl_it_computing",1950]],"reading":"existing_word"}
 {"word":"最大独立集","pinyin":"zui da du li ji","weight":20,"evidence":[["thuocl_it_computing",1267]],"reading":"existing_word"}
 {"word":"最大连接数","pinyin":"zui da lian jie shu","weight":20,"evidence":[["thuocl_it_computing",7859]],"reading":"existing_word"}
-{"word":"最小","pinyin":"zui xiao","weight":500,"evidence":[["jieba",1364]],"reading":"unihan_single_reading"}
 {"word":"最小二乘","pinyin":"zui xiao er cheng","weight":20,"evidence":[["thuocl_it_computing",2120]],"reading":"existing_word"}
 {"word":"最小二乘法","pinyin":"zui xiao er cheng fa","weight":20,"evidence":[["thuocl_it_computing",2712]],"reading":"existing_word"}
 {"word":"最小公倍数","pinyin":"zui xiao gong bei shu","weight":20,"evidence":[["thuocl_it_computing",3772]],"reading":"existing_word"}
@@ -10742,7 +10611,6 @@
 {"word":"有何面目","pinyin":"you he mian mu","weight":66,"evidence":[["jieba",66]],"reading":"unihan_single_reading"}
 {"word":"有假","pinyin":"you jia","weight":120,"evidence":[["jieba",120]],"reading":"unihan_single_reading"}
 {"word":"有分寸","pinyin":"you fen cun","weight":52,"evidence":[["jieba",52]],"reading":"unihan_single_reading"}
-{"word":"有利于","pinyin":"you li yu","weight":500,"evidence":[["jieba",3074]],"reading":"unihan_single_reading"}
 {"word":"有别于","pinyin":"you bie yu","weight":154,"evidence":[["jieba",154]],"reading":"unihan_single_reading"}
 {"word":"有加","pinyin":"you jia","weight":230,"evidence":[["jieba",230]],"reading":"unihan_single_reading"}
 {"word":"有助","pinyin":"you zhu","weight":87,"evidence":[["jieba",87]],"reading":"unihan_single_reading"}
@@ -10782,7 +10650,6 @@
 {"word":"有机肥料","pinyin":"you ji fei liao","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"有机质","pinyin":"you ji zhi","weight":178,"evidence":[["jieba",178]],"reading":"unihan_single_reading"}
 {"word":"有机酸","pinyin":"you ji suan","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
-{"word":"有权","pinyin":"you quan","weight":500,"evidence":[["jieba",2343]],"reading":"unihan_single_reading"}
 {"word":"有权有势","pinyin":"you quan you shi","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"有步骤","pinyin":"you bu zhou","weight":191,"evidence":[["jieba",191]],"reading":"unihan_single_reading"}
 {"word":"有求","pinyin":"you qiu","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
@@ -10934,14 +10801,12 @@
 {"word":"本城","pinyin":"ben cheng","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
 {"word":"本州","pinyin":"ben zhou","weight":178,"evidence":[["jieba",178]],"reading":"unihan_single_reading"}
 {"word":"本性难移","pinyin":"ben xing nan yi","weight":21,"evidence":[["jieba",21]],"reading":"existing_word"}
-{"word":"本报","pinyin":"ben bao","weight":500,"evidence":[["jieba",5675]],"reading":"unihan_single_reading"}
 {"word":"本方","pinyin":"ben fang","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"本本","pinyin":"ben ben","weight":84,"evidence":[["jieba",84]],"reading":"unihan_single_reading"}
 {"word":"本村","pinyin":"ben cun","weight":124,"evidence":[["jieba",124]],"reading":"unihan_single_reading"}
 {"word":"本条","pinyin":"ben tiao","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"本来面目","pinyin":"ben lai mian mu","weight":143,"evidence":[["jieba",143]],"reading":"existing_word"}
 {"word":"本栏","pinyin":"ben lan","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
-{"word":"本次","pinyin":"ben ci","weight":500,"evidence":[["jieba",3039]],"reading":"unihan_single_reading"}
 {"word":"本法","pinyin":"ben fa","weight":153,"evidence":[["jieba",153]],"reading":"unihan_single_reading"}
 {"word":"本港","pinyin":"ben gang","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
 {"word":"本版","pinyin":"ben ban","weight":500,"evidence":[["jieba",635]],"reading":"unihan_single_reading"}
@@ -10950,7 +10815,6 @@
 {"word":"本社","pinyin":"ben she","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"本科段","pinyin":"ben ke duan","weight":244,"evidence":[["jieba",244]],"reading":"unihan_single_reading"}
 {"word":"本类对象","pinyin":"ben lei dui xiang","weight":20,"evidence":[["thuocl_it_computing",2606]],"reading":"existing_word"}
-{"word":"本级","pinyin":"ben ji","weight":500,"evidence":[["jieba",10813]],"reading":"unihan_single_reading"}
 {"word":"本职工作","pinyin":"ben zhi gong zuo","weight":136,"evidence":[["jieba",136]],"reading":"unihan_single_reading"}
 {"word":"本草","pinyin":"ben cao","weight":92,"evidence":[["jieba",92]],"reading":"unihan_single_reading"}
 {"word":"本草纲目","pinyin":"ben cao gang mu","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
@@ -11526,7 +11390,6 @@
 {"word":"次声","pinyin":"ci sheng","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"次声波","pinyin":"ci sheng bo","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"次席","pinyin":"ci xi","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
-{"word":"次年","pinyin":"ci nian","weight":500,"evidence":[["jieba",1482]],"reading":"unihan_single_reading"}
 {"word":"次月","pinyin":"ci yue","weight":20,"evidence":[["thuocl_finance",3190]],"reading":"existing_word"}
 {"word":"次生林","pinyin":"ci sheng lin","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
 {"word":"次级","pinyin":"ci ji","weight":101,"evidence":[["jieba",101]],"reading":"unihan_single_reading"}
@@ -11654,7 +11517,6 @@
 {"word":"武穴市","pinyin":"wu xue shi","weight":264,"evidence":[["jieba",264]],"reading":"existing_word"}
 {"word":"武经","pinyin":"wu jing","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"武职","pinyin":"wu zhi","weight":223,"evidence":[["jieba",223]],"reading":"unihan_single_reading"}
-{"word":"武装力量","pinyin":"wu zhuang li liang","weight":500,"evidence":[["jieba",1830]],"reading":"unihan_single_reading"}
 {"word":"武装起义","pinyin":"wu zhuang qi yi","weight":478,"evidence":[["jieba",478]],"reading":"unihan_single_reading"}
 {"word":"武装部","pinyin":"wu zhuang bu","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"武装部队","pinyin":"wu zhuang bu dui","weight":323,"evidence":[["jieba",323]],"reading":"unihan_single_reading"}
@@ -11669,7 +11531,6 @@
 {"word":"死不足惜","pinyin":"si bu zu xi","weight":23,"evidence":[["jieba",23]],"reading":"existing_word"}
 {"word":"死光","pinyin":"si guang","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
 {"word":"死刑犯","pinyin":"si xing fan","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
-{"word":"死去","pinyin":"si qu","weight":500,"evidence":[["jieba",1154]],"reading":"unihan_single_reading"}
 {"word":"死城","pinyin":"si cheng","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"死循环","pinyin":"si xun huan","weight":20,"evidence":[["thuocl_it_computing",19036]],"reading":"existing_word"}
 {"word":"死心眼","pinyin":"si xin yan","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
@@ -11702,7 +11563,6 @@
 {"word":"母马","pinyin":"mu ma","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"母鹿","pinyin":"mu lu","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"每亩","pinyin":"mei mu","weight":69,"evidence":[["jieba",69]],"reading":"unihan_single_reading"}
-{"word":"每人","pinyin":"mei ren","weight":500,"evidence":[["jieba",1441]],"reading":"unihan_single_reading"}
 {"word":"每份","pinyin":"mei fen","weight":44,"evidence":[["jieba",44]],"reading":"unihan_single_reading"}
 {"word":"每位","pinyin":"mei wei","weight":196,"evidence":[["jieba",196]],"reading":"unihan_single_reading"}
 {"word":"每场","pinyin":"mei chang","weight":182,"evidence":[["jieba",182]],"reading":"unihan_single_reading"}
@@ -11713,11 +11573,9 @@
 {"word":"每张","pinyin":"mei zhang","weight":77,"evidence":[["jieba",77]],"reading":"unihan_single_reading"}
 {"word":"每户","pinyin":"mei hu","weight":106,"evidence":[["jieba",106]],"reading":"unihan_single_reading"}
 {"word":"每支","pinyin":"mei zhi","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
-{"word":"每日","pinyin":"mei ri","weight":500,"evidence":[["jieba",1941]],"reading":"unihan_single_reading"}
 {"word":"每日经济新闻","pinyin":"mei ri jing ji xin wen","weight":20,"evidence":[["thuocl_finance",2345]],"reading":"existing_word"}
 {"word":"每时每刻","pinyin":"mei shi mei ke","weight":66,"evidence":[["jieba",66]],"reading":"unihan_single_reading"}
 {"word":"每晚","pinyin":"mei wan","weight":192,"evidence":[["jieba",192]],"reading":"unihan_single_reading"}
-{"word":"每月","pinyin":"mei yue","weight":500,"evidence":[["jieba",1307]],"reading":"unihan_single_reading"}
 {"word":"每桶","pinyin":"mei tong","weight":85,"evidence":[["jieba",85]],"reading":"unihan_single_reading"}
 {"word":"每盒","pinyin":"mei he","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
 {"word":"每篇","pinyin":"mei pian","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
@@ -11797,14 +11655,12 @@
 {"word":"民政部门","pinyin":"min zheng bu men","weight":87,"evidence":[["jieba",87]],"reading":"unihan_single_reading"}
 {"word":"民族主义者","pinyin":"min zu zhu yi zhe","weight":83,"evidence":[["jieba",83]],"reading":"unihan_single_reading"}
 {"word":"民族之林","pinyin":"min zu zhi lin","weight":44,"evidence":[["jieba",44]],"reading":"unihan_single_reading"}
-{"word":"民族乡","pinyin":"min zu xiang","weight":500,"evidence":[["jieba",3357]],"reading":"unihan_single_reading"}
 {"word":"民族党","pinyin":"min zu dang","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"民族化","pinyin":"min zu hua","weight":52,"evidence":[["jieba",52]],"reading":"unihan_single_reading"}
 {"word":"民族史","pinyin":"min zu shi","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"民族学","pinyin":"min zu xue","weight":124,"evidence":[["jieba",124]],"reading":"unihan_single_reading"}
 {"word":"民族性","pinyin":"min zu xing","weight":47,"evidence":[["jieba",47]],"reading":"unihan_single_reading"}
 {"word":"民族所","pinyin":"min zu suo","weight":73,"evidence":[["jieba",73]],"reading":"unihan_single_reading"}
-{"word":"民族自治","pinyin":"min zu zi zhi","weight":500,"evidence":[["jieba",1348]],"reading":"unihan_single_reading"}
 {"word":"民机","pinyin":"min ji","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"民权主义","pinyin":"min quan zhu yi","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"民法典","pinyin":"min fa dian","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
@@ -11872,8 +11728,6 @@
 {"word":"氰化","pinyin":"qing hua","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"水上","pinyin":"shui shang","weight":500,"evidence":[["jieba",727]],"reading":"unihan_single_reading"}
 {"word":"水上飞机","pinyin":"shui shang fei ji","weight":48,"evidence":[["jieba",48]],"reading":"unihan_single_reading"}
-{"word":"水下","pinyin":"shui xia","weight":500,"evidence":[["jieba",1093]],"reading":"unihan_single_reading"}
-{"word":"水中","pinyin":"shui zhong","weight":500,"evidence":[["jieba",2184]],"reading":"unihan_single_reading"}
 {"word":"水云","pinyin":"shui yun","weight":53,"evidence":[["jieba",53]],"reading":"unihan_single_reading"}
 {"word":"水产业","pinyin":"shui chan ye","weight":284,"evidence":[["jieba",284]],"reading":"unihan_single_reading"}
 {"word":"水产局","pinyin":"shui chan ju","weight":261,"evidence":[["jieba",261]],"reading":"unihan_single_reading"}
@@ -12408,7 +12262,6 @@
 {"word":"消费主义","pinyin":"xiao fei zhu yi","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"消费国","pinyin":"xiao fei guo","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"消费类","pinyin":"xiao fei lei","weight":20,"evidence":[["jieba",20],["thuocl_finance",2741]],"reading":"existing_word"}
-{"word":"消费者","pinyin":"xiao fei zhe","weight":500,"evidence":[["jieba",3140]],"reading":"unihan_single_reading"}
 {"word":"消费资料","pinyin":"xiao fei zi liao","weight":190,"evidence":[["jieba",190]],"reading":"unihan_single_reading"}
 {"word":"消费量","pinyin":"xiao fei liang","weight":93,"evidence":[["jieba",93]],"reading":"unihan_single_reading"}
 {"word":"消防中队","pinyin":"xiao fang zhong dui","weight":20,"evidence":[["thuocl_places",15373]],"reading":"existing_word"}
@@ -12501,7 +12354,6 @@
 {"word":"清唱剧","pinyin":"qing chang ju","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
 {"word":"清客","pinyin":"qing ke","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
 {"word":"清扬","pinyin":"qing yang","weight":107,"evidence":[["jieba",107]],"reading":"unihan_single_reading"}
-{"word":"清政府","pinyin":"qing zheng fu","weight":500,"evidence":[["jieba",1647]],"reading":"unihan_single_reading"}
 {"word":"清明上河图","pinyin":"qing ming shang he tu","weight":75,"evidence":[["jieba",75]],"reading":"unihan_single_reading"}
 {"word":"清波","pinyin":"qing bo","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"清洁剂","pinyin":"qing jie ji","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
@@ -12750,7 +12602,6 @@
 {"word":"点中","pinyin":"dian zhong","weight":241,"evidence":[["jieba",241]],"reading":"unihan_single_reading"}
 {"word":"点乘","pinyin":"dian cheng","weight":20,"evidence":[["thuocl_it_computing",1766]],"reading":"existing_word"}
 {"word":"点云","pinyin":"dian yun","weight":20,"evidence":[["thuocl_it_computing",1007]],"reading":"existing_word"}
-{"word":"点亮","pinyin":"dian liang","weight":500,"evidence":[["jieba",3266]],"reading":"unihan_single_reading"}
 {"word":"点位","pinyin":"dian wei","weight":63,"evidence":[["jieba",63]],"reading":"existing_word"}
 {"word":"点修改","pinyin":"dian xiu gai","weight":20,"evidence":[["thuocl_it_computing",1562]],"reading":"existing_word"}
 {"word":"点光源","pinyin":"dian guang yuan","weight":20,"evidence":[["thuocl_it_computing",1075]],"reading":"existing_word"}
@@ -12761,7 +12612,6 @@
 {"word":"点火线圈","pinyin":"dian huo xian quan","weight":20,"evidence":[["thuocl_automotive",4476]],"reading":"existing_word"}
 {"word":"点火钥匙","pinyin":"dian huo yao shi","weight":20,"evidence":[["thuocl_automotive",1356]],"reading":"existing_word"}
 {"word":"点点","pinyin":"dian dian","weight":316,"evidence":[["jieba",316]],"reading":"unihan_single_reading"}
-{"word":"点点头","pinyin":"dian dian tou","weight":500,"evidence":[["jieba",1807]],"reading":"unihan_single_reading"}
 {"word":"点点滴滴","pinyin":"dian dian di di","weight":52,"evidence":[["jieba",52]],"reading":"unihan_single_reading"}
 {"word":"点状","pinyin":"dian zhuang","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
 {"word":"点电荷","pinyin":"dian dian he","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
@@ -12984,7 +12834,6 @@
 {"word":"物理介质","pinyin":"wu li jie zhi","weight":20,"evidence":[["thuocl_it_computing",1242]],"reading":"existing_word"}
 {"word":"物理内存","pinyin":"wu li nei cun","weight":20,"evidence":[["thuocl_it_computing",17489]],"reading":"existing_word"}
 {"word":"物理地址","pinyin":"wu li di zhi","weight":20,"evidence":[["thuocl_it_computing",12237]],"reading":"existing_word"}
-{"word":"物理学","pinyin":"wu li xue","weight":500,"evidence":[["jieba",1181]],"reading":"unihan_single_reading"}
 {"word":"物理引擎","pinyin":"wu li yin qing","weight":20,"evidence":[["thuocl_it_computing",2526]],"reading":"existing_word"}
 {"word":"物理性质","pinyin":"wu li xing zhi","weight":142,"evidence":[["jieba",142]],"reading":"unihan_single_reading"}
 {"word":"物理意义","pinyin":"wu li yi yi","weight":20,"evidence":[["thuocl_it_computing",2347]],"reading":"existing_word"}
@@ -13292,7 +13141,6 @@
 {"word":"生产型","pinyin":"sheng chan xing","weight":105,"evidence":[["jieba",105]],"reading":"unihan_single_reading"}
 {"word":"生产工艺技术","pinyin":"sheng chan gong yi ji shu","weight":20,"evidence":[["thuocl_automotive",5008]],"reading":"existing_word"}
 {"word":"生产性","pinyin":"sheng chan xing","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
-{"word":"生产总值","pinyin":"sheng chan zong zhi","weight":500,"evidence":[["jieba",1937]],"reading":"unihan_single_reading"}
 {"word":"生产环境","pinyin":"sheng chan huan jing","weight":20,"evidence":[["thuocl_it_computing",15891]],"reading":"existing_word"}
 {"word":"生产者","pinyin":"sheng chan zhe","weight":500,"evidence":[["jieba",629]],"reading":"unihan_single_reading"}
 {"word":"生产者消费者","pinyin":"sheng chan zhe xiao fei zhe","weight":20,"evidence":[["thuocl_it_computing",1079]],"reading":"existing_word"}
@@ -13674,7 +13522,6 @@
 {"word":"百条","pinyin":"bai tiao","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"百次","pinyin":"bai ci","weight":45,"evidence":[["jieba",45]],"reading":"unihan_single_reading"}
 {"word":"百眼","pinyin":"bai yan","weight":151,"evidence":[["jieba",151]],"reading":"unihan_single_reading"}
-{"word":"百科","pinyin":"bai ke","weight":500,"evidence":[["jieba",16728]],"reading":"unihan_single_reading"}
 {"word":"百端","pinyin":"bai duan","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
 {"word":"百篇","pinyin":"bai pian","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"百级","pinyin":"bai ji","weight":130,"evidence":[["jieba",130]],"reading":"unihan_single_reading"}
@@ -13905,7 +13752,6 @@
 {"word":"瞄准镜","pinyin":"miao zhun jing","weight":190,"evidence":[["jieba",190]],"reading":"unihan_single_reading"}
 {"word":"瞟一眼","pinyin":"piao yi yan","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"瞥一眼","pinyin":"pie yi yan","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
-{"word":"瞧瞧","pinyin":"qiao qiao","weight":500,"evidence":[["jieba",2034]],"reading":"unihan_single_reading"}
 {"word":"瞪视","pinyin":"deng shi","weight":159,"evidence":[["jieba",159]],"reading":"unihan_single_reading"}
 {"word":"瞬即","pinyin":"shun ji","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"瞬息间","pinyin":"shun xi jian","weight":50,"evidence":[["jieba",50]],"reading":"unihan_single_reading"}
@@ -14138,7 +13984,6 @@
 {"word":"示例代码","pinyin":"shi li dai ma","weight":20,"evidence":[["thuocl_it_computing",34374]],"reading":"existing_word"}
 {"word":"示例程序","pinyin":"shi li cheng xu","weight":20,"evidence":[["thuocl_it_computing",10474]],"reading":"existing_word"}
 {"word":"示威者","pinyin":"shi wei zhe","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
-{"word":"示范县","pinyin":"shi fan xian","weight":500,"evidence":[["jieba",1028]],"reading":"unihan_single_reading"}
 {"word":"示范性","pinyin":"shi fan xing","weight":60,"evidence":[["jieba",60]],"reading":"unihan_single_reading"}
 {"word":"示范点","pinyin":"shi fan dian","weight":58,"evidence":[["jieba",58]],"reading":"unihan_single_reading"}
 {"word":"礼义","pinyin":"li yi","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
@@ -14159,7 +14004,6 @@
 {"word":"神乎其技","pinyin":"shen hu qi ji","weight":20,"evidence":[["jieba",20]],"reading":"existing_word"}
 {"word":"神伤","pinyin":"shen shang","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
 {"word":"神光","pinyin":"shen guang","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
-{"word":"神农架","pinyin":"shen nong jia","weight":500,"evidence":[["jieba",2114]],"reading":"unihan_single_reading"}
 {"word":"神农溪","pinyin":"shen nong xi","weight":259,"evidence":[["jieba",259]],"reading":"unihan_single_reading"}
 {"word":"神功","pinyin":"shen gong","weight":500,"evidence":[["jieba",628]],"reading":"unihan_single_reading"}
 {"word":"神助","pinyin":"shen zhu","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
@@ -14225,7 +14069,6 @@
 {"word":"禾本科","pinyin":"he ben ke","weight":127,"evidence":[["jieba",127]],"reading":"unihan_single_reading"}
 {"word":"禾草","pinyin":"he cao","weight":53,"evidence":[["jieba",53]],"reading":"unihan_single_reading"}
 {"word":"秀润","pinyin":"xiu run","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
-{"word":"私信","pinyin":"si xin","weight":500,"evidence":[["jieba",1061]],"reading":"unihan_single_reading"}
 {"word":"私分","pinyin":"si fen","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
 {"word":"私有云","pinyin":"si you yun","weight":20,"evidence":[["thuocl_it_computing",1664]],"reading":"existing_word"}
 {"word":"私有化","pinyin":"si you hua","weight":140,"evidence":[["jieba",140]],"reading":"unihan_single_reading"}
@@ -14533,7 +14376,6 @@
 {"word":"第一年","pinyin":"di yi nian","weight":181,"evidence":[["jieba",181]],"reading":"unihan_single_reading"}
 {"word":"第一座","pinyin":"di yi zuo","weight":277,"evidence":[["jieba",277]],"reading":"unihan_single_reading"}
 {"word":"第一所","pinyin":"di yi suo","weight":70,"evidence":[["jieba",70]],"reading":"unihan_single_reading"}
-{"word":"第一批","pinyin":"di yi pi","weight":500,"evidence":[["jieba",1068]],"reading":"unihan_single_reading"}
 {"word":"第一把","pinyin":"di yi ba","weight":42,"evidence":[["jieba",42]],"reading":"unihan_single_reading"}
 {"word":"第一招","pinyin":"di yi zhao","weight":73,"evidence":[["jieba",73]],"reading":"unihan_single_reading"}
 {"word":"第一排","pinyin":"di yi pai","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
@@ -14817,7 +14659,6 @@
 {"word":"筒式","pinyin":"tong shi","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"答理","pinyin":"da li","weight":48,"evidence":[["jieba",48]],"reading":"unihan_single_reading"}
 {"word":"答腔","pinyin":"da qiang","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
-{"word":"答道","pinyin":"da dao","weight":500,"evidence":[["jieba",1272]],"reading":"unihan_single_reading"}
 {"word":"策略模式","pinyin":"ce lve mo shi","weight":20,"evidence":[["thuocl_it_computing",6950]],"reading":"existing_word"}
 {"word":"策论","pinyin":"ce lun","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
 {"word":"筛分","pinyin":"shai fen","weight":35,"evidence":[["jieba",35]],"reading":"existing_word"}
@@ -15105,7 +14946,6 @@
 {"word":"紧张性","pinyin":"jin zhang xing","weight":29,"evidence":[["jieba",29]],"reading":"existing_word"}
 {"word":"紧扣","pinyin":"jin kou","weight":39,"evidence":[["jieba",39]],"reading":"unihan_single_reading"}
 {"word":"紧握","pinyin":"jin wo","weight":104,"evidence":[["jieba",104]],"reading":"unihan_single_reading"}
-{"word":"紧紧","pinyin":"jin jin","weight":500,"evidence":[["jieba",2190]],"reading":"unihan_single_reading"}
 {"word":"紧要关头","pinyin":"jin yao guan tou","weight":243,"evidence":[["jieba",243]],"reading":"unihan_single_reading"}
 {"word":"紧追不舍","pinyin":"jin zhui bu she","weight":39,"evidence":[["jieba",39]],"reading":"unihan_single_reading"}
 {"word":"紧靠","pinyin":"jin kao","weight":129,"evidence":[["jieba",129]],"reading":"unihan_single_reading"}
@@ -15242,13 +15082,11 @@
 {"word":"组合模式","pinyin":"zu he mo shi","weight":20,"evidence":[["thuocl_it_computing",4256]],"reading":"existing_word"}
 {"word":"组合表","pinyin":"zu he biao","weight":20,"evidence":[["thuocl_automotive",2908]],"reading":"existing_word"}
 {"word":"组团社","pinyin":"zu tuan she","weight":48,"evidence":[["jieba",48]],"reading":"unihan_single_reading"}
-{"word":"组成部分","pinyin":"zu cheng bu fen","weight":500,"evidence":[["jieba",2299]],"reading":"unihan_single_reading"}
 {"word":"组接","pinyin":"zu jie","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"组播","pinyin":"zu bo","weight":20,"evidence":[["thuocl_it_computing",3662]],"reading":"existing_word"}
 {"word":"组方","pinyin":"zu fang","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
 {"word":"组组","pinyin":"zu zu","weight":77,"evidence":[["jieba",77]],"reading":"unihan_single_reading"}
 {"word":"组织奖","pinyin":"zu zhi jiang","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
-{"word":"组织法","pinyin":"zu zhi fa","weight":500,"evidence":[["jieba",1083]],"reading":"unihan_single_reading"}
 {"word":"组织者","pinyin":"zu zhi zhe","weight":219,"evidence":[["jieba",219]],"reading":"unihan_single_reading"}
 {"word":"组织部","pinyin":"zu zhi bu","weight":213,"evidence":[["jieba",213]],"reading":"unihan_single_reading"}
 {"word":"组织部门","pinyin":"zu zhi bu men","weight":49,"evidence":[["jieba",49]],"reading":"unihan_single_reading"}
@@ -15308,7 +15146,6 @@
 {"word":"经济学界","pinyin":"jing ji xue jie","weight":32,"evidence":[["jieba",32],["thuocl_finance",1181]],"reading":"existing_word"}
 {"word":"经济性","pinyin":"jing ji xing","weight":91,"evidence":[["jieba",91]],"reading":"unihan_single_reading"}
 {"word":"经济损失","pinyin":"jing ji sun shi","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
-{"word":"经济效益","pinyin":"jing ji xiao yi","weight":500,"evidence":[["jieba",1109]],"reading":"unihan_single_reading"}
 {"word":"经济林木","pinyin":"jing ji lin mu","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
 {"word":"经济模型","pinyin":"jing ji mo xing","weight":23,"evidence":[["jieba",23]],"reading":"existing_word"}
 {"word":"经济界","pinyin":"jing ji jie","weight":95,"evidence":[["jieba",95]],"reading":"unihan_single_reading"}
@@ -15368,7 +15205,6 @@
 {"word":"绕组","pinyin":"rao zu","weight":104,"evidence":[["jieba",104]],"reading":"unihan_single_reading"}
 {"word":"绘制图形","pinyin":"hui zhi tu xing","weight":20,"evidence":[["thuocl_it_computing",3643]],"reading":"existing_word"}
 {"word":"绘画史","pinyin":"hui hua shi","weight":34,"evidence":[["jieba",34]],"reading":"unihan_single_reading"}
-{"word":"绝不","pinyin":"jue bu","weight":500,"evidence":[["jieba",1382]],"reading":"unihan_single_reading"}
 {"word":"绝口","pinyin":"jue kou","weight":99,"evidence":[["jieba",99]],"reading":"unihan_single_reading"}
 {"word":"绝命诗","pinyin":"jue ming shi","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
 {"word":"绝品","pinyin":"jue pin","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
@@ -15387,7 +15223,6 @@
 {"word":"统一方便面","pinyin":"tong yi fang bian mian","weight":100,"evidence":[["project_reviewed",0]],"reading":"reviewed"}
 {"word":"统揽全局","pinyin":"tong lan quan ju","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
 {"word":"统治权","pinyin":"tong zhi quan","weight":258,"evidence":[["jieba",258]],"reading":"unihan_single_reading"}
-{"word":"统治者","pinyin":"tong zhi zhe","weight":500,"evidence":[["jieba",3561]],"reading":"unihan_single_reading"}
 {"word":"统治阶级","pinyin":"tong zhi jie ji","weight":500,"evidence":[["jieba",614]],"reading":"unihan_single_reading"}
 {"word":"统计学习","pinyin":"tong ji xue xi","weight":20,"evidence":[["thuocl_it_computing",2047]],"reading":"existing_word"}
 {"word":"统计局","pinyin":"tong ji ju","weight":136,"evidence":[["jieba",136]],"reading":"unihan_single_reading"}
@@ -15500,7 +15335,6 @@
 {"word":"编辑工具","pinyin":"bian ji gong ju","weight":20,"evidence":[["thuocl_it_computing",2789]],"reading":"existing_word"}
 {"word":"编辑文件","pinyin":"bian ji wen jian","weight":20,"evidence":[["thuocl_it_computing",5430]],"reading":"existing_word"}
 {"word":"编辑框","pinyin":"bian ji kuang","weight":20,"evidence":[["thuocl_it_computing",5616]],"reading":"existing_word"}
-{"word":"编辑者","pinyin":"bian ji zhe","weight":500,"evidence":[["jieba",1061]],"reading":"unihan_single_reading"}
 {"word":"编辑距离","pinyin":"bian ji ju li","weight":20,"evidence":[["thuocl_it_computing",1137]],"reading":"existing_word"}
 {"word":"编辑页面","pinyin":"bian ji ye mian","weight":20,"evidence":[["thuocl_it_computing",1558]],"reading":"existing_word"}
 {"word":"编配","pinyin":"bian pei","weight":79,"evidence":[["jieba",79]],"reading":"unihan_single_reading"}
@@ -15918,7 +15752,6 @@
 {"word":"胆碱","pinyin":"dan jian","weight":97,"evidence":[["jieba",97]],"reading":"unihan_single_reading"}
 {"word":"胆碱能","pinyin":"dan jian neng","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"胆酸","pinyin":"dan suan","weight":24,"evidence":[["jieba",24]],"reading":"existing_word"}
-{"word":"背上","pinyin":"bei shang","weight":500,"evidence":[["jieba",1760]],"reading":"unihan_single_reading"}
 {"word":"背包问题","pinyin":"bei bao wen ti","weight":20,"evidence":[["thuocl_it_computing",3997]],"reading":"existing_word"}
 {"word":"背向","pinyin":"bei xiang","weight":86,"evidence":[["jieba",86]],"reading":"unihan_single_reading"}
 {"word":"背对","pinyin":"bei dui","weight":105,"evidence":[["jieba",105]],"reading":"unihan_single_reading"}
@@ -16143,7 +15976,6 @@
 {"word":"自律性","pinyin":"zi lv xing","weight":20,"evidence":[["jieba",20]],"reading":"existing_word"}
 {"word":"自性","pinyin":"zi xing","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
 {"word":"自感","pinyin":"zi gan","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
-{"word":"自成","pinyin":"zi cheng","weight":500,"evidence":[["jieba",1735]],"reading":"unihan_single_reading"}
 {"word":"自旋锁","pinyin":"zi xuan suo","weight":20,"evidence":[["thuocl_it_computing",3562]],"reading":"existing_word"}
 {"word":"自治机关","pinyin":"zi zhi ji guan","weight":500,"evidence":[["jieba",1060]],"reading":"existing_word"}
 {"word":"自治权","pinyin":"zi zhi quan","weight":500,"evidence":[["jieba",611]],"reading":"unihan_single_reading"}
@@ -16154,9 +15986,7 @@
 {"word":"自然物","pinyin":"zi ran wu","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"自然环境","pinyin":"zi ran huan jing","weight":373,"evidence":[["jieba",373]],"reading":"unihan_single_reading"}
 {"word":"自然观","pinyin":"zi ran guan","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
-{"word":"自然资源","pinyin":"zi ran zi yuan","weight":500,"evidence":[["jieba",1277]],"reading":"unihan_single_reading"}
 {"word":"自然辩证法","pinyin":"zi ran bian zheng fa","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
-{"word":"自由人","pinyin":"zi you ren","weight":500,"evidence":[["jieba",1062]],"reading":"unihan_single_reading"}
 {"word":"自由党","pinyin":"zi you dang","weight":184,"evidence":[["jieba",184]],"reading":"unihan_single_reading"}
 {"word":"自由式","pinyin":"zi you shi","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
 {"word":"自由放任","pinyin":"zi you fang ren","weight":33,"evidence":[["jieba",33]],"reading":"existing_word"}
@@ -16470,7 +16300,6 @@
 {"word":"菜根香","pinyin":"cai gen xiang","weight":20,"evidence":[["thuocl_food",2348]],"reading":"existing_word"}
 {"word":"菜豆腐","pinyin":"cai dou fu","weight":20,"evidence":[["thuocl_food",5668]],"reading":"existing_word"}
 {"word":"菩萨心肠","pinyin":"pu sa xin chang","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
-{"word":"菱花","pinyin":"ling hua","weight":500,"evidence":[["jieba",1429]],"reading":"unihan_single_reading"}
 {"word":"菱铁矿","pinyin":"ling tie kuang","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"菱镁矿","pinyin":"ling mei kuang","weight":44,"evidence":[["jieba",44]],"reading":"unihan_single_reading"}
 {"word":"萎靡不振","pinyin":"wei mi bu zhen","weight":38,"evidence":[["jieba",38]],"reading":"existing_word"}
@@ -16663,7 +16492,6 @@
 {"word":"行星齿轮","pinyin":"xing xing chi lun","weight":20,"evidence":[["thuocl_automotive",2478]],"reading":"existing_word"}
 {"word":"行车灯","pinyin":"xing che deng","weight":20,"evidence":[["thuocl_automotive",1228]],"reading":"existing_word"}
 {"word":"行间距","pinyin":"hang jian ju","weight":20,"evidence":[["thuocl_it_computing",2734]],"reading":"existing_word"}
-{"word":"行高","pinyin":"hang gao","weight":20,"evidence":[["thuocl_it_computing",5632]],"reading":"existing_word"}
 {"word":"衍变","pinyin":"yan bian","weight":44,"evidence":[["jieba",44]],"reading":"unihan_single_reading"}
 {"word":"街亭","pinyin":"jie ting","weight":45,"evidence":[["jieba",45]],"reading":"existing_word"}
 {"word":"衙内","pinyin":"ya nei","weight":89,"evidence":[["jieba",89]],"reading":"unihan_single_reading"}
@@ -16768,7 +16596,6 @@
 {"word":"装备部","pinyin":"zhuang bei bu","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
 {"word":"装孙子","pinyin":"zhuang sun zi","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
 {"word":"装料","pinyin":"zhuang liao","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
-{"word":"装有","pinyin":"zhuang you","weight":500,"evidence":[["jieba",1076]],"reading":"unihan_single_reading"}
 {"word":"装机容量","pinyin":"zhuang ji rong liang","weight":254,"evidence":[["jieba",254]],"reading":"unihan_single_reading"}
 {"word":"装睡","pinyin":"zhuang shui","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
 {"word":"装船","pinyin":"zhuang chuan","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
@@ -17005,7 +16832,6 @@
 {"word":"论文集","pinyin":"lun wen ji","weight":58,"evidence":[["jieba",58]],"reading":"unihan_single_reading"}
 {"word":"论衡","pinyin":"lun heng","weight":63,"evidence":[["jieba",63]],"reading":"unihan_single_reading"}
 {"word":"论集","pinyin":"lun ji","weight":52,"evidence":[["jieba",52]],"reading":"unihan_single_reading"}
-{"word":"设在","pinyin":"she zai","weight":500,"evidence":[["jieba",1465]],"reading":"unihan_single_reading"}
 {"word":"设备信息","pinyin":"she bei xin xi","weight":20,"evidence":[["thuocl_it_computing",4528]],"reading":"existing_word"}
 {"word":"设备号","pinyin":"she bei hao","weight":20,"evidence":[["thuocl_it_computing",5168]],"reading":"existing_word"}
 {"word":"设备名","pinyin":"she bei ming","weight":20,"evidence":[["thuocl_it_computing",3787]],"reading":"existing_word"}
@@ -17054,7 +16880,6 @@
 {"word":"诈败","pinyin":"zha bai","weight":53,"evidence":[["jieba",53]],"reading":"unihan_single_reading"}
 {"word":"诊病","pinyin":"zhen bing","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"词坛","pinyin":"ci tan","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
-{"word":"词条","pinyin":"ci tiao","weight":500,"evidence":[["jieba",10441]],"reading":"unihan_single_reading"}
 {"word":"词法分析","pinyin":"ci fa fen xi","weight":20,"evidence":[["thuocl_it_computing",2510]],"reading":"existing_word"}
 {"word":"词话","pinyin":"ci hua","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
 {"word":"词频统计","pinyin":"ci pin tong ji","weight":20,"evidence":[["thuocl_it_computing",1027]],"reading":"existing_word"}
@@ -17209,7 +17034,6 @@
 {"word":"谆谆告诫","pinyin":"zhun zhun gao jie","weight":29,"evidence":[["jieba",29]],"reading":"existing_word"}
 {"word":"谈不上","pinyin":"tan bu shang","weight":311,"evidence":[["jieba",311]],"reading":"unihan_single_reading"}
 {"word":"谈判桌","pinyin":"tan pan zhuo","weight":83,"evidence":[["jieba",83]],"reading":"unihan_single_reading"}
-{"word":"谈到","pinyin":"tan dao","weight":500,"evidence":[["jieba",1263]],"reading":"unihan_single_reading"}
 {"word":"谈笑","pinyin":"tan xiao","weight":96,"evidence":[["jieba",96]],"reading":"unihan_single_reading"}
 {"word":"谈谈","pinyin":"tan tan","weight":500,"evidence":[["jieba",691]],"reading":"unihan_single_reading"}
 {"word":"谈起","pinyin":"tan qi","weight":388,"evidence":[["jieba",388]],"reading":"unihan_single_reading"}
@@ -17266,7 +17090,6 @@
 {"word":"负反馈","pinyin":"fu fan kui","weight":41,"evidence":[["jieba",41]],"reading":"unihan_single_reading"}
 {"word":"负电荷","pinyin":"fu dian he","weight":80,"evidence":[["jieba",80]],"reading":"unihan_single_reading"}
 {"word":"负累","pinyin":"fu lei","weight":23,"evidence":[["jieba",23]],"reading":"unihan_single_reading"}
-{"word":"负责制","pinyin":"fu ze zhi","weight":500,"evidence":[["jieba",1916]],"reading":"unihan_single_reading"}
 {"word":"负载均衡","pinyin":"fu zai jun heng","weight":20,"evidence":[["thuocl_it_computing",23382]],"reading":"existing_word"}
 {"word":"负载均衡技术","pinyin":"fu zai jun heng ji shu","weight":20,"evidence":[["thuocl_it_computing",1335]],"reading":"existing_word"}
 {"word":"负鼠","pinyin":"fu shu","weight":21,"evidence":[["jieba",21]],"reading":"unihan_single_reading"}
@@ -17416,19 +17239,15 @@
 {"word":"赤铁矿","pinyin":"chi tie kuang","weight":53,"evidence":[["jieba",53]],"reading":"unihan_single_reading"}
 {"word":"赤霉素","pinyin":"chi mei su","weight":36,"evidence":[["jieba",36]],"reading":"unihan_single_reading"}
 {"word":"赫尔岑","pinyin":"he er cen","weight":30,"evidence":[["jieba",30]],"reading":"existing_word"}
-{"word":"走上","pinyin":"zou shang","weight":500,"evidence":[["jieba",2107]],"reading":"unihan_single_reading"}
 {"word":"走入","pinyin":"zou ru","weight":335,"evidence":[["jieba",335]],"reading":"unihan_single_reading"}
-{"word":"走出","pinyin":"zou chu","weight":500,"evidence":[["jieba",3073]],"reading":"unihan_single_reading"}
 {"word":"走回头路","pinyin":"zou hui tou lu","weight":20,"evidence":[["jieba",20]],"reading":"unihan_single_reading"}
 {"word":"走掉","pinyin":"zou diao","weight":71,"evidence":[["jieba",71]],"reading":"unihan_single_reading"}
-{"word":"走来","pinyin":"zou lai","weight":500,"evidence":[["jieba",1041]],"reading":"unihan_single_reading"}
 {"word":"走法","pinyin":"zou fa","weight":31,"evidence":[["jieba",31]],"reading":"unihan_single_reading"}
 {"word":"走漏风声","pinyin":"zou lou feng sheng","weight":25,"evidence":[["jieba",25]],"reading":"unihan_single_reading"}
 {"word":"走神","pinyin":"zou shen","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"走走","pinyin":"zou zou","weight":366,"evidence":[["jieba",366]],"reading":"unihan_single_reading"}
 {"word":"走走停停","pinyin":"zou zou ting ting","weight":29,"evidence":[["jieba",29]],"reading":"unihan_single_reading"}
 {"word":"走近","pinyin":"zou jin","weight":500,"evidence":[["jieba",962]],"reading":"unihan_single_reading"}
-{"word":"走进","pinyin":"zou jin","weight":500,"evidence":[["jieba",2742]],"reading":"unihan_single_reading"}
 {"word":"走马岭","pinyin":"zou ma ling","weight":500,"evidence":[["jieba",768]],"reading":"existing_word"}
 {"word":"赴法","pinyin":"fu fa","weight":37,"evidence":[["jieba",37]],"reading":"unihan_single_reading"}
 {"word":"赵一荻","pinyin":"zhao yi di","weight":233,"evidence":[["jieba",233]],"reading":"existing_word"}
@@ -17443,9 +17262,7 @@
 {"word":"赵飞燕","pinyin":"zhao fei yan","weight":22,"evidence":[["jieba",22]],"reading":"existing_word"}
 {"word":"赶趟","pinyin":"gan tang","weight":22,"evidence":[["jieba",22]],"reading":"unihan_single_reading"}
 {"word":"赶跑","pinyin":"gan pao","weight":54,"evidence":[["jieba",54]],"reading":"unihan_single_reading"}
-{"word":"起义军","pinyin":"qi yi jun","weight":500,"evidence":[["jieba",1190]],"reading":"unihan_single_reading"}
 {"word":"起义者","pinyin":"qi yi zhe","weight":110,"evidence":[["jieba",110]],"reading":"unihan_single_reading"}
-{"word":"起到","pinyin":"qi dao","weight":500,"evidence":[["jieba",1406]],"reading":"unihan_single_reading"}
 {"word":"起动","pinyin":"qi dong","weight":106,"evidence":[["jieba",106]],"reading":"unihan_single_reading"}
 {"word":"起司蛋糕","pinyin":"qi si dan gao","weight":20,"evidence":[["thuocl_food",1216]],"reading":"existing_word"}
 {"word":"起名","pinyin":"qi ming","weight":33,"evidence":[["jieba",33]],"reading":"unihan_single_reading"}
@@ -17682,7 +17499,6 @@
 {"word":"轻点","pinyin":"qing dian","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"轻质","pinyin":"qing zhi","weight":49,"evidence":[["jieba",49]],"reading":"unihan_single_reading"}
 {"word":"轻质碳酸钙","pinyin":"qing zhi tan suan gai","weight":20,"evidence":[["thuocl_food",1460]],"reading":"existing_word"}
-{"word":"轻轻","pinyin":"qing qing","weight":500,"evidence":[["jieba",4408]],"reading":"unihan_single_reading"}
 {"word":"轻轻松松","pinyin":"qing qing song song","weight":47,"evidence":[["jieba",47]],"reading":"unihan_single_reading"}
 {"word":"载人","pinyin":"zai ren","weight":282,"evidence":[["jieba",282]],"reading":"unihan_single_reading"}
 {"word":"载文","pinyin":"zai wen","weight":28,"evidence":[["jieba",28]],"reading":"unihan_single_reading"}
@@ -17995,10 +17811,8 @@
 {"word":"送与","pinyin":"song yu","weight":113,"evidence":[["jieba",113]],"reading":"unihan_single_reading"}
 {"word":"送信","pinyin":"song xin","weight":165,"evidence":[["jieba",165]],"reading":"unihan_single_reading"}
 {"word":"送入","pinyin":"song ru","weight":277,"evidence":[["jieba",277]],"reading":"unihan_single_reading"}
-{"word":"送到","pinyin":"song dao","weight":500,"evidence":[["jieba",1885]],"reading":"unihan_single_reading"}
 {"word":"送回","pinyin":"song hui","weight":270,"evidence":[["jieba",270]],"reading":"unihan_single_reading"}
 {"word":"送料","pinyin":"song liao","weight":131,"evidence":[["jieba",131]],"reading":"unihan_single_reading"}
-{"word":"送来","pinyin":"song lai","weight":500,"evidence":[["jieba",1049]],"reading":"unihan_single_reading"}
 {"word":"送走","pinyin":"song zou","weight":285,"evidence":[["jieba",285]],"reading":"unihan_single_reading"}
 {"word":"适者生存","pinyin":"shi zhe sheng cun","weight":51,"evidence":[["jieba",51]],"reading":"existing_word"}
 {"word":"适配器模式","pinyin":"shi pei qi mo shi","weight":20,"evidence":[["thuocl_it_computing",5522]],"reading":"existing_word"}
@@ -18610,7 +18424,6 @@
 {"word":"长骨","pinyin":"chang gu","weight":24,"evidence":[["jieba",24]],"reading":"existing_word"}
 {"word":"门上","pinyin":"men shang","weight":500,"evidence":[["jieba",527]],"reading":"unihan_single_reading"}
 {"word":"门内","pinyin":"men nei","weight":500,"evidence":[["jieba",575]],"reading":"unihan_single_reading"}
-{"word":"门前","pinyin":"men qian","weight":500,"evidence":[["jieba",2960]],"reading":"unihan_single_reading"}
 {"word":"门坎","pinyin":"men kan","weight":62,"evidence":[["jieba",62]],"reading":"unihan_single_reading"}
 {"word":"门墙","pinyin":"men qiang","weight":194,"evidence":[["jieba",194]],"reading":"unihan_single_reading"}
 {"word":"门客","pinyin":"men ke","weight":78,"evidence":[["jieba",78]],"reading":"unihan_single_reading"}
@@ -18634,7 +18447,6 @@
 {"word":"问清","pinyin":"wen qing","weight":48,"evidence":[["jieba",48]],"reading":"unihan_single_reading"}
 {"word":"问计","pinyin":"wen ji","weight":46,"evidence":[["jieba",46]],"reading":"unihan_single_reading"}
 {"word":"问起","pinyin":"wen qi","weight":500,"evidence":[["jieba",587]],"reading":"unihan_single_reading"}
-{"word":"问道","pinyin":"wen dao","weight":500,"evidence":[["jieba",7484]],"reading":"unihan_single_reading"}
 {"word":"问问","pinyin":"wen wen","weight":500,"evidence":[["jieba",561]],"reading":"unihan_single_reading"}
 {"word":"问题分析","pinyin":"wen ti fen xi","weight":20,"evidence":[["thuocl_it_computing",8380]],"reading":"existing_word"}
 {"word":"问题定位","pinyin":"wen ti ding wei","weight":20,"evidence":[["thuocl_it_computing",1160]],"reading":"existing_word"}
@@ -18863,7 +18675,6 @@
 {"word":"集合类","pinyin":"ji he lei","weight":20,"evidence":[["thuocl_it_computing",11212]],"reading":"existing_word"}
 {"word":"集合类型","pinyin":"ji he lei xing","weight":20,"evidence":[["thuocl_it_computing",5001]],"reading":"existing_word"}
 {"word":"集合运算","pinyin":"ji he yun suan","weight":20,"evidence":[["thuocl_it_computing",1463]],"reading":"existing_word"}
-{"word":"集团公司","pinyin":"ji tuan gong si","weight":500,"evidence":[["jieba",1297]],"reading":"unihan_single_reading"}
 {"word":"集安","pinyin":"ji an","weight":26,"evidence":[["jieba",26]],"reading":"unihan_single_reading"}
 {"word":"集成开发环境","pinyin":"ji cheng kai fa huan jing","weight":20,"evidence":[["thuocl_it_computing",6396]],"reading":"existing_word"}
 {"word":"集成测试","pinyin":"ji cheng ce shi","weight":20,"evidence":[["thuocl_it_computing",3699]],"reading":"existing_word"}
@@ -19167,7 +18978,6 @@
 {"word":"领头人","pinyin":"ling tou ren","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"领头羊","pinyin":"ling tou yang","weight":97,"evidence":[["jieba",97]],"reading":"unihan_single_reading"}
 {"word":"领奖台","pinyin":"ling jiang tai","weight":75,"evidence":[["jieba",75]],"reading":"unihan_single_reading"}
-{"word":"领导人","pinyin":"ling dao ren","weight":500,"evidence":[["jieba",4726]],"reading":"unihan_single_reading"}
 {"word":"领导力","pinyin":"ling dao li","weight":69,"evidence":[["jieba",69]],"reading":"unihan_single_reading"}
 {"word":"领导层","pinyin":"ling dao ceng","weight":215,"evidence":[["jieba",215]],"reading":"unihan_single_reading"}
 {"word":"领导权","pinyin":"ling dao quan","weight":450,"evidence":[["jieba",450]],"reading":"unihan_single_reading"}
@@ -19277,7 +19087,6 @@
 {"word":"首站","pinyin":"shou zhan","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"首艘","pinyin":"shou sou","weight":35,"evidence":[["jieba",35]],"reading":"unihan_single_reading"}
 {"word":"首节","pinyin":"shou jie","weight":32,"evidence":[["jieba",32]],"reading":"unihan_single_reading"}
-{"word":"首辅","pinyin":"shou fu","weight":500,"evidence":[["jieba",1445]],"reading":"unihan_single_reading"}
 {"word":"首选项","pinyin":"shou xuan xiang","weight":20,"evidence":[["thuocl_it_computing",4574]],"reading":"existing_word"}
 {"word":"首道","pinyin":"shou dao","weight":30,"evidence":[["jieba",30]],"reading":"unihan_single_reading"}
 {"word":"首钢","pinyin":"shou gang","weight":27,"evidence":[["jieba",27]],"reading":"unihan_single_reading"}
@@ -19383,7 +19192,6 @@
 {"word":"高位刹车灯","pinyin":"gao wei sha che deng","weight":20,"evidence":[["thuocl_automotive",8067]],"reading":"existing_word"}
 {"word":"高内聚","pinyin":"gao nei ju","weight":20,"evidence":[["thuocl_it_computing",4367]],"reading":"existing_word"}
 {"word":"高凤阁","pinyin":"gao feng ge","weight":33,"evidence":[["jieba",33]],"reading":"existing_word"}
-{"word":"高出","pinyin":"gao chu","weight":500,"evidence":[["jieba",1295]],"reading":"unihan_single_reading"}
 {"word":"高出一筹","pinyin":"gao chu yi chou","weight":22,"evidence":[["jieba",22]],"reading":"existing_word"}
 {"word":"高分子","pinyin":"gao fen zi","weight":489,"evidence":[["jieba",489]],"reading":"unihan_single_reading"}
 {"word":"高利","pinyin":"gao li","weight":56,"evidence":[["jieba",56]],"reading":"unihan_single_reading"}
@@ -19426,7 +19234,6 @@
 {"word":"高照","pinyin":"gao zhao","weight":24,"evidence":[["jieba",24]],"reading":"unihan_single_reading"}
 {"word":"高球","pinyin":"gao qiu","weight":38,"evidence":[["jieba",38]],"reading":"unihan_single_reading"}
 {"word":"高等级","pinyin":"gao deng ji","weight":59,"evidence":[["jieba",59]],"reading":"unihan_single_reading"}
-{"word":"高级中学","pinyin":"gao ji zhong xue","weight":500,"evidence":[["jieba",1300]],"reading":"unihan_single_reading"}
 {"word":"高级人民法院","pinyin":"gao ji ren min fa yuan","weight":40,"evidence":[["jieba",40]],"reading":"unihan_single_reading"}
 {"word":"高级技术","pinyin":"gao ji ji shu","weight":20,"evidence":[["thuocl_it_computing",1123]],"reading":"existing_word"}
 {"word":"高级查询","pinyin":"gao ji cha xun","weight":20,"evidence":[["thuocl_it_computing",1320]],"reading":"existing_word"}

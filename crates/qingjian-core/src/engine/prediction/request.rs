@@ -8,6 +8,9 @@ pub struct PredictionRequest {
     /// 请求序号，单调递增；回来的结果序号对不上就是过期结果。
     pub sequence: u64,
 
+    /// 显式触发，跳过停键防抖；仍受最短请求间隔限制。
+    pub manual: bool,
+
     /// 组句联想还是问字。
     pub kind: PredictionKind,
 
@@ -38,7 +41,7 @@ pub struct PredictionRequest {
     /// 是否还要整句补全。
     pub want_sentence: bool,
 
-    /// 翻译请求的原文（应用里选中的文字）；其他种类为空。
+    /// 翻译请求的原文；其他种类为空。
     pub text: String,
 
     /// 翻译请求的目标语言代码（`en` / `ja`，学习语言）；其他种类为空。

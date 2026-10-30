@@ -6,6 +6,8 @@ use super::super::batch::ScoreBatch;
 pub(crate) struct Scored {
     pub epoch: u64,
 
+    pub serial: u64,
+
     pub batches: Vec<ScoreBatch>,
 
     /// 生成用的按键与生成出来的整句，对应任务里的 `generate`。

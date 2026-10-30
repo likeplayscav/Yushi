@@ -1,0 +1,31 @@
+[meta]
+name = "繁體中文"
+
+[languages]
+en = "英語"
+ja = "日語"
+es = "西班牙語"
+vi = "越南語"
+de = "德語"
+off = "不顯示"
+
+[traditional]
+off = "簡體"
+taiwan = "繁體（臺灣）"
+hongkong = "繁體（香港）"
+standard = "繁體（通用字形）"
+taiwan_short = "臺灣"
+hongkong_short = "香港"
+standard_short = "通用"
+
+[phrases]
+position = "候選位置須為 1–9"
+weight = "權重須為 {min}–{max} 的整數"
+code = "輸入碼須為 1–{max} 個小寫英文字母"
+empty = "自定義短語不能為空"
+duplicate = "輸入碼 {code} 下已經有這條短語"
+
+[forget]
+user_word = "已刪除用戶詞「{text}」"
+learning = "已忘掉對「{text}」的學習記錄"
+nothing = "「{text}」是詞庫裡的詞，也沒有學習記錄，沒什麼可刪"

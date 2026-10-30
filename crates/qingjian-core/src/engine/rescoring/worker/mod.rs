@@ -1,5 +1,6 @@
 //! 合并同一查询的各读法，后台一次完成；排队时只保留最新输入任务。
 
+use std::cell::Cell;
 use std::sync::mpsc::{Receiver, Sender, channel};
 use std::sync::{
     Arc,
@@ -9,6 +10,7 @@ use std::thread::JoinHandle;
 
 use crate::sentence::SentenceScorer;
 
+use super::WakeSlot;
 use super::batch::ScoreBatch;
 use super::{GENERATE_BEAM, GENERATE_MAX_CHARS};
 
@@ -29,10 +31,11 @@ pub(crate) struct RescoreWorker {
 
     /// 最新输入代；换输入或卸载模型后停止后续批次。
     latest: Arc<AtomicU64>,
+    serial: Cell<u64>,
 }
 
 impl RescoreWorker {
-    pub fn spawn(scorer: Box<dyn SentenceScorer>) -> Self {
+    pub fn spawn(scorer: Box<dyn SentenceScorer>, wake: WakeSlot) -> Self {
         let (jobs, job_rx) = channel::<Job>();
         let (result_tx, results) = channel::<Scored>();
         let latest = Arc::new(AtomicU64::new(0));
@@ -75,6 +78,7 @@ impl RescoreWorker {
                     });
                     let done = Scored {
                         epoch: job.epoch,
+                        serial: job.serial,
                         batches: job.batches,
                         generated,
                     };
@@ -84,6 +88,7 @@ impl RescoreWorker {
                     if result_tx.send(done).is_err() {
                         break;
                     }
+                    wake.ring();
                 }
             })
             .ok();
@@ -95,6 +100,7 @@ impl RescoreWorker {
             results,
             handle,
             latest,
+            serial: Cell::new(0),
         }
     }
 
@@ -115,11 +121,14 @@ impl RescoreWorker {
         generate: Option<String>,
     ) {
         self.latest.store(epoch, Ordering::Release);
+        let serial = self.serial.get().wrapping_add(1);
+        self.serial.set(serial);
         if self
             .jobs
             .send(Job {
                 context,
                 epoch,
+                serial,
                 batches,
                 generate,
             })
@@ -127,6 +136,10 @@ impl RescoreWorker {
         {
             tracing::warn!("神经重打分线程已退出");
         }
+    }
+
+    pub fn latest(&self) -> u64 {
+        self.serial.get()
     }
 
     /// 取一条打好的分；没有就 `None`。

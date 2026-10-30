@@ -1,6 +1,7 @@
 //! 云服务连通性测试：偏好设置「云服务」页的「测试连接」按钮用。
 //! 起一个线程用当前配置发一条最小的聊天请求，结果经通道回来；调用方在主线程轮询 [`ConnectionTest::poll`]。
 
+use std::path::PathBuf;
 use std::sync::mpsc;
 use std::time::Instant;
 
@@ -8,6 +9,7 @@ use super::report::ConnectionReport;
 use crate::chat_client::ChatClient;
 use crate::config::PredictConfig;
 use crate::error::PredictError;
+use crate::reply::{self, ReplySchema};
 
 /// 系统提示：告诉模型这只是探活。
 const SYSTEM_PROMPT: &str = "你是输入法的连通性测试。";
@@ -27,10 +29,18 @@ pub struct ConnectionTest {
 impl ConnectionTest {
     /// 按配置发起测试。密钥缺失、线程起不来这两种情况当场报错，其余错误从 [`poll`](Self::poll) 回来。
     pub fn start(config: &PredictConfig) -> Result<Self, PredictError> {
+        Self::start_with_usage(config, None)
+    }
+
+    /// 将实际请求和接口用量累计到壳指定的本机文件。
+    pub fn start_with_usage(
+        config: &PredictConfig,
+        usage_path: Option<PathBuf>,
+    ) -> Result<Self, PredictError> {
         let api_key = config
             .resolve_api_key()
             .ok_or_else(|| PredictError::MissingApiKey(config.api_key_env.clone()))?;
-        let client = ChatClient::new(config, api_key);
+        let client = ChatClient::new(config, api_key).with_usage(usage_path);
         let model = config.model.clone();
         let (sender, result) = mpsc::channel();
         std::thread::Builder::new()
@@ -52,10 +62,27 @@ impl ConnectionTest {
         Ok(Self { result })
     }
 
+    /// 一直等到结果（在自己的线程里等，等到了再去叫醒界面）。请求有超时，不会永远等下去。
+    pub fn wait(self) -> Result<ConnectionReport, PredictError> {
+        self.result.recv().unwrap_or_else(|_| {
+            Err(PredictError::Runtime(std::io::Error::other(
+                "connection test thread exited without a result",
+            )))
+        })
+    }
+
     /// 结果到了就取走；没到返回 `None`。取走之后再调永远是 `None`。
     pub fn poll(&self) -> Option<Result<ConnectionReport, PredictError>> {
         self.result.try_recv().ok()
     }
+}
+
+/// 回复的 JSON 形状：`{"ok": true}`。
+fn reply_schema() -> ReplySchema {
+    ReplySchema::new(
+        "connection_test",
+        reply::object(serde_json::json!({ "ok": { "type": "boolean" } }), &["ok"]),
+    )
 }
 
 /// 在测试线程里跑：建一个单线程运行时，发一条请求，计时。
@@ -64,7 +91,8 @@ fn run(client: &ChatClient, model: String) -> Result<ConnectionReport, PredictEr
         .enable_all()
         .build()?;
     let started = Instant::now();
-    let reply = runtime.block_on(client.chat(SYSTEM_PROMPT, USER_PROMPT, MAX_TOKENS))?;
+    let reply =
+        runtime.block_on(client.chat(SYSTEM_PROMPT, USER_PROMPT, MAX_TOKENS, &reply_schema()))?;
     Ok(ConnectionReport {
         model,
         elapsed: started.elapsed(),

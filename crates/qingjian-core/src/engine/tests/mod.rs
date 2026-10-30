@@ -1,20 +1,36 @@
 //! Engine 的测试：共用的样例词库、辅助函数与 mock 在这里，用例按主题分文件。
 
 mod aux_code;
+mod candidate_menu;
+mod chaizi;
 mod cloud;
 mod code;
 mod correction;
 mod custom;
+mod email;
 mod emoji;
 mod english;
 mod fuzzy_sequences;
+mod general;
+mod generated;
 mod generation_priority;
+mod held;
 mod input_quality;
 mod learning;
 mod lookup;
+mod nine_key;
+mod p2c_placement;
+mod panel;
+mod polyphone;
 mod privacy;
 mod raw;
+mod reading;
 mod shuangpin;
+mod spacing;
+mod spelling;
+mod traditional;
+mod vocabulary;
+mod voice;
 mod zhuyin;
 
 use std::collections::HashMap;
@@ -23,9 +39,13 @@ use std::sync::{Arc, Mutex};
 
 use super::*;
 
-use crate::candidate::{PartOfSpeech, Sense, Translation};
+use crate::candidate::{Candidate, CandidateKind, PartOfSpeech, Sense, Translation};
+use crate::shuangpin::Scheme;
 
 const SAMPLE: &str = "开发\tkai fa\t9000\n开发者\tkai fa zhe\t3000\n开饭\tkai fan\t800\n开放\tkai fang\t20000\n西安\txi an\t4000\n先\txian\t10000\n下\txia\t8000\n想\txiang\t9000\n开\tkai\t20000\n咖啡\tka fei\t5000\n不\tbu\t1000\n";
+
+/// 带「时间」的小词库，试全拼出快捷写法。
+const KEYWORDS: &str = "时间\tshi jian\t12000\n是\tshi\t9000\n见\tjian\t5000\n";
 
 fn engine() -> Engine {
     Engine::new(Dictionary::parse(SAMPLE).unwrap())
@@ -67,7 +87,7 @@ impl Learner for CountingLearner {
         self.0.get(text).copied().unwrap_or(0)
     }
 
-    fn record_choice(&mut self, input: &str, text: &str) {
+    fn record_choice(&mut self, input: &str, _reading: &str, text: &str) {
         *self.0.entry(format!("{input}\t{text}")).or_default() += 1;
     }
 
@@ -108,7 +128,7 @@ impl Learner for CountingLearner {
         }
     }
 
-    fn unrecord_choice(&mut self, input: &str, text: &str) {
+    fn unrecord_choice(&mut self, input: &str, _reading: &str, text: &str) {
         if let Some(count) = self.0.get_mut(&format!("{input}\t{text}")) {
             *count = count.saturating_sub(1);
         }
@@ -116,6 +136,24 @@ impl Learner for CountingLearner {
 
     fn raw_count(&self, input: &str) -> u32 {
         self.0.get(&format!("{input}\t<raw>")).copied().unwrap_or(0)
+    }
+
+    fn demote(&mut self, input: &str, text: &str) {
+        *self
+            .0
+            .entry(format!("demote\t{input}\t{text}"))
+            .or_default() += 1;
+    }
+
+    fn undemote(&mut self, input: &str, text: &str) -> bool {
+        self.0.remove(&format!("demote\t{input}\t{text}")).is_some()
+    }
+
+    fn demotion(&self, input: &str, text: &str) -> u32 {
+        self.0
+            .get(&format!("demote\t{input}\t{text}"))
+            .copied()
+            .unwrap_or(0)
     }
 }
 
@@ -154,6 +192,7 @@ unsafe impl Send for EchoPredictor {}
 impl Predictor for EchoPredictor {
     fn policy(&self) -> PredictionPolicy {
         PredictionPolicy {
+            automatic: true,
             before: 4,
             after: 2,
             slots: 2,
@@ -296,7 +335,7 @@ struct WordLearner {
 impl Learner for WordLearner {
     fn record(&mut self, _candidate: &Candidate) {}
 
-    fn record_choice(&mut self, input: &str, text: &str) {
+    fn record_choice(&mut self, input: &str, _reading: &str, text: &str) {
         *self.choices.entry(format!("{input}\t{text}")).or_default() += 1;
     }
 
@@ -307,7 +346,7 @@ impl Learner for WordLearner {
             .unwrap_or(0)
     }
 
-    fn unrecord_choice(&mut self, input: &str, text: &str) {
+    fn unrecord_choice(&mut self, input: &str, _reading: &str, text: &str) {
         if let Some(count) = self.choices.get_mut(&format!("{input}\t{text}")) {
             *count = count.saturating_sub(1);
         }

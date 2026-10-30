@@ -1,8 +1,13 @@
 //! 形码查询：编码按前缀查码表，没有切分、没有整句；以及与拼音的混输。
 
 use std::collections::HashSet;
+use std::time::Instant;
 
-use super::*;
+use crate::engine::{Learner, MAX_CANDIDATES, choice_key};
+use crate::ranking::Scored;
+use crate::{
+    Candidate, CandidateKind, CandidateList, Engine, ParseError, Query, Timings, ranking, sentence,
+};
 
 impl Engine {
     /// 形码方案（五笔）的候选：编码打全的词排在同前缀的更长编码词前面，其余按词频与上下文。
@@ -16,7 +21,7 @@ impl Engine {
 
     /// 同 [`Self::query_code`]，另带回排在最前面的「编码打全」的候选有几条（混输按它分两段）。
     fn query_code_counted(&self, keys: &str, rest: String, start: Instant) -> (Query, usize) {
-        let table = self.code.as_ref().expect("只在形码方案下调用");
+        let table = &self.code.as_ref().expect("只在形码方案下调用").table;
         // 编码以外的字符（`no-way` 的 `-`）不是编码，交给原样上屏那条路
         if !keys.chars().all(|c| c.is_ascii_lowercase()) {
             return (self.query_raw(keys, rest, start), 0);
@@ -25,8 +30,14 @@ impl Engine {
 
         let start = Instant::now();
         let log_total = (table.total_frequency() as f64).max(1.0).ln();
-        let mut scored: Vec<Scored<'_>> = table
-            .lookup(keys, MAX_CANDIDATES)
+        let hits = table.lookup(keys, MAX_CANDIDATES);
+        let single_letter_order = (keys.len() == 1).then(|| {
+            hits.iter()
+                .filter(|hit| hit.exact)
+                .map(|hit| hit.text.to_owned())
+                .collect::<Vec<_>>()
+        });
+        let mut scored: Vec<Scored<'_>> = hits
             .into_iter()
             .map(|hit| Scored {
                 hit,
@@ -36,6 +47,8 @@ impl Engine {
                 abbreviated: 0,
                 weight: self.learner.weight(hit.text),
                 penalty: 0.0,
+                tone_cost: 0,
+                split: false,
             })
             .collect();
         let lookup = start.elapsed();
@@ -52,10 +65,24 @@ impl Engine {
                 self.personal(),
                 self.chain.context(),
                 item.hit.text,
-                sentence::fallback_log_prob(item.hit.frequency, log_total),
+                sentence::fallback_log_prob(item.hit.frequency, item.hit.secondary, log_total),
             );
             (choice, log_prob)
         });
+        // 一级简码的码表顺序优先于个人选择与上下文排序。
+        if let Some(order) = single_letter_order {
+            let mut first_level = Vec::with_capacity(order.len());
+            for text in order {
+                if let Some(position) = scored
+                    .iter()
+                    .position(|item| item.hit.text == text && item.hit.exact)
+                {
+                    first_level.push(scored.remove(position));
+                }
+            }
+            first_level.append(&mut scored);
+            scored = first_level;
+        }
         let rank = start.elapsed();
         // `exact` 是排序的最高位，打全的都在最前面
         let exact = scored.iter().take_while(|s| s.hit.exact).count();
@@ -74,6 +101,7 @@ impl Engine {
         let query = Query {
             // 形码没有切分：preedit 的显示串靠 `tail` 原样带出去（见 `Query::marked_text`）
             segmentations: Vec::new(),
+            spelled: 0,
             candidates: CandidateList { items },
             tail: keys.to_owned(),
             text: self.composition.text().to_owned(),
@@ -81,9 +109,13 @@ impl Engine {
             rest,
             decoded_keys: false,
             shuangpin_raw_preedit: false,
+            shuangpin_raw_window: false,
             typed_display: None,
+            typed_case: None,
+            pinyin_choices: Vec::new(),
             correction: None,
             aux: None,
+            held: String::new(),
             timings: Timings {
                 parse,
                 lookup,

@@ -133,6 +133,7 @@ fn named_pipe_round_trips_the_open_type_loop() {
     let Some(ServerMessage::Update {
         frame,
         session: SESSION,
+        commit: None,
     }) = read_message(&mut client).unwrap()
     else {
         panic!("expected victim Update");

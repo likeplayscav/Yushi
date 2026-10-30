@@ -15,7 +15,8 @@ SPEC = importlib.util.spec_from_file_location('preview', Path(__file__).with_nam
 preview = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(preview)
 REPO = preview.ROOT
-RELEASE = re.search(r'^version = "([^"]+)"$', (REPO/'apps/windows/server/Cargo.toml').read_text(encoding='utf-8'), re.MULTILINE)[1]
+# 测试用固定预发布版本，不依赖当前开发分支是否已经改成发行版本。
+RELEASE = '0.3.2-beta.1'
 
 
 class PreviewTests(unittest.TestCase):
@@ -24,7 +25,9 @@ class PreviewTests(unittest.TestCase):
         for app in ['server','tsf','settings']:
             target=root/f'apps/windows/{app}/Cargo.toml'
             target.parent.mkdir(parents=True)
-            shutil.copy2(REPO/f'apps/windows/{app}/Cargo.toml',target)
+            manifest = (REPO/f'apps/windows/{app}/Cargo.toml').read_text(encoding='utf-8')
+            manifest = re.sub(r'^version = "[^"]+"$', f'version = "{RELEASE}"', manifest, count=1, flags=re.MULTILINE)
+            target.write_text(manifest, encoding='utf-8')
         for name in ['assets/eval/journal','assets/eval/input-quality','assets/eval/daily-reading','assets/lexicon/supplement']:
             shutil.copytree(REPO/name,root/name)
         license_path=root/'assets/lexicon/00_meta/THUOCL_LICENSE.txt'

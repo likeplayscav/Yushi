@@ -38,6 +38,7 @@ fn unparseable_queries_reduce_sentence_and_character_accuracy() {
             },
             &mut report,
             3,
+            None,
         );
     }
     assert_eq!((report.total, report.unparsable, report.top1), (2, 1, 1));
@@ -63,6 +64,7 @@ fn wrong_length_top_candidate_is_counted_without_looking_at_gold_length() {
         },
         &mut report,
         3,
+        None,
     );
     let top = row["top"].as_str().unwrap();
     assert_eq!(

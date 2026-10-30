@@ -22,8 +22,7 @@ pub fn show(engine: &mut Engine, input: &str, limit: usize) -> Option<Query> {
     }
     let mut query = match engine.query() {
         // 异步重打分：等后台的分回来再查一次，输出的就是重排后的
-        Ok(query) if crate::rescoring::settle(engine) => engine.query().unwrap_or(query),
-        Ok(query) => query,
+        Ok(query) => crate::rescoring::settled(engine, query),
         Err(error) => {
             println!("  {error}");
             return None;
@@ -233,7 +232,9 @@ fn format_candidate(candidate: &Candidate, width: usize) -> String {
         qingjian_core::CandidateKind::Custom(_) => "[custom] ",
         qingjian_core::CandidateKind::Sentence => "[句] ",
         qingjian_core::CandidateKind::Generated => "[生成] ",
-        qingjian_core::CandidateKind::Emoji => "",
+        qingjian_core::CandidateKind::Emoji
+        | qingjian_core::CandidateKind::Kaomoji
+        | qingjian_core::CandidateKind::Symbol => "",
     };
     format!(
         "{}{padding}{marker}{reading}{aux}{annotation}",

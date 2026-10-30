@@ -35,6 +35,9 @@ pub enum InputSource {
 
     /// Tab 接受的云端整句补全。
     CloudSentence,
+
+    /// 语音识别出的一段文字（见 [`crate::Engine::commit_voice`]）。
+    Voice,
 }
 
 impl From<CandidateKind> for InputSource {
@@ -48,7 +51,8 @@ impl From<CandidateKind> for InputSource {
             CandidateKind::English => Self::English,
             CandidateKind::Shortcut => Self::Shortcut,
             CandidateKind::Custom(_) => Self::Custom,
-            CandidateKind::Emoji => Self::Emoji,
+            // 颜文字、符号与 emoji 同是跟在词后面配出来的，回放时一类看
+            CandidateKind::Emoji | CandidateKind::Kaomoji | CandidateKind::Symbol => Self::Emoji,
         }
     }
 }

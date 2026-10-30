@@ -77,6 +77,27 @@ fn keypad_punctuation_is_half_width_and_regular_punctuation_is_full_width() {
         Some("。")
     );
 }
+/// 关掉 `[general] punct_commits`：组句中的标点回到老行为——进英文直输段，不再上屏候选；开回来恢复。
+#[test]
+fn punct_commits_off_keeps_punctuation_in_raw_segment() {
+    let mut router = router(5);
+    let normal = KeyModifiers::default();
+    router.config.punct_commits = false;
+    compose(&mut router, "ni", normal);
+    assert_eq!(key(&mut router, b',' as u32, Some(','), normal).1, None);
+    assert_eq!(
+        key(&mut router, 32, Some(' '), normal).1.as_deref(),
+        Some("ni, ")
+    );
+    router.config.punct_commits = true;
+    compose(&mut router, "ni", normal);
+    assert_eq!(
+        key(&mut router, b',' as u32, Some(','), normal)
+            .1
+            .as_deref(),
+        Some("你，")
+    );
+}
 #[test]
 fn shift_letter_configuration_does_not_change_caps_or_english() {
     let mut router = router(5);
@@ -104,4 +125,34 @@ fn shift_letter_configuration_does_not_change_caps_or_english() {
         Some("N")
     );
     assert!(router.engine.composition().is_empty());
+}
+
+/// 上屏键换过（`[shortcut] commit_candidate = "enter"`、`commit_raw = "shift+enter"`）：回车上屏高亮候选、
+/// Shift + 回车原样上屏字母，让出去的空格组句中吃掉不做事；一个符号键也能当上屏键。
+#[test]
+fn rebound_commit_keys_commit_and_free_space_does_nothing() {
+    use qingjian_platform::{CommitKey, CommitKeys};
+    let normal = KeyModifiers::default();
+    let shift = KeyModifiers {
+        shift: true,
+        ..normal
+    };
+    let mut r = router(4);
+    r.config.commit_keys = CommitKeys {
+        candidate: CommitKey::ENTER,
+        raw: CommitKey::Enter { shift: true },
+    };
+    compose(&mut r, "qq", normal);
+    assert_eq!(key(&mut r, 0x0D, None, normal).1.as_deref(), Some("第1项"));
+    compose(&mut r, "qq", normal);
+    assert_eq!(key(&mut r, 0x0D, None, shift).1.as_deref(), Some("qq"));
+    compose(&mut r, "qq", normal);
+    let (outcome, commit, _) = key(&mut r, 0x20, Some(' '), normal);
+    assert_eq!((outcome, commit), (KeyOutcome::Consumed, None));
+    assert_eq!(r.engine.composition().text(), "qq");
+    r.config.commit_keys.candidate = CommitKey::Symbol(';');
+    assert_eq!(
+        key(&mut r, 0xBA, Some(';'), normal).1.as_deref(),
+        Some("第1项")
+    );
 }

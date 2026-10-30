@@ -36,7 +36,11 @@ pub fn config_summary(source: &str) -> Result<String, toml::de::Error> {
     };
     output["general"]["scheme"] = value(scheme.map_or("unrecognized", Scheme::key));
     output["general"]["page_size"] = value(general.page_size() as i64);
-    output["general"]["theme"] = value(general.theme.key());
+    let theme = match general.theme.trim() {
+        "system" | "light" | "dark" | "qingjian" => general.theme.trim(),
+        _ => "custom",
+    };
+    output["general"]["theme"] = value(theme);
     output["general"]["layout"] = value(general.layout.key());
     output["general"]["preedit"] = value(general.preedit.key());
     output["general"]["english_mode"] = value(general.english_mode);

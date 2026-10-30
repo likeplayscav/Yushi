@@ -4,18 +4,24 @@ mod language_model;
 mod spec;
 
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use std::time::Instant;
 
 use qingjian_core::{EmojiTable, Engine, Language};
 use qingjian_dictionary::{Dictionary, WordList};
-use qingjian_learning::{FrequencyLearner, InputLog, UsageStats, VocabularyBook};
-use qingjian_platform::{Config, code_tables, extra_dictionaries};
-use qingjian_translate::{Glossary, LayeredTranslator, LevelTable, PersonalGlossary};
+use qingjian_learning::{FrequencyLearner, InputLog, PanelUsage, UsageStats, VocabularyBook};
+use qingjian_lm::{MixedModel, TRIGRAM_WEIGHT, TrigramModel};
+use qingjian_platform::code_tables::AuxCodeSources;
+use qingjian_platform::{Config, extra_dictionaries, model_words};
+use qingjian_translate::{Glossary, LayeredTranslator, PersonalGlossary};
 
 use crate::error::ServerError;
 
 pub use self::language_model::LanguageModelFiles;
 pub use self::spec::AssemblySpec;
+
+/// 知意三元模型在用户目录里的位置（与 `models/zhiyi-onnx` 并列）。
+const ZHIYI_NGRAM: &str = "models/zhiyi-ngram/zh.ngram";
 
 pub fn assemble(spec: &AssemblySpec) -> Result<Engine, ServerError> {
     let started = Instant::now();
@@ -40,8 +46,9 @@ pub fn assemble(spec: &AssemblySpec) -> Result<Engine, ServerError> {
     }
     if let Some(dir) = &spec.user_dir {
         engine = engine
-            .with_usage_meter(Box::new(UsageStats::open(dir.join("usage.tsv"))))
-            .with_vocabulary_tracker(Box::new(load_vocabulary(dir, spec.levels_dir.as_deref())));
+            .with_usage_meter(Box::new(UsageStats::open(dir)))
+            .with_panel_history(Box::new(PanelUsage::open(dir)))
+            .with_vocabulary_tracker(Box::new(VocabularyBook::open(dir.join("user-vocab.tsv"))));
         if spec.input_log {
             let path = dir.join("input-log.jsonl");
             tracing::info!(path = %path.display(), "输入日志开着");
@@ -55,11 +62,13 @@ pub fn assemble(spec: &AssemblySpec) -> Result<Engine, ServerError> {
     );
     dictionaries.push(Dictionary::builtin_patch()?);
     engine.set_extra_dictionaries(dictionaries);
-    engine.set_aux_codes(code_tables::load(
-        spec.bundled_codes_dir.as_deref(),
-        user_codes_dir(spec.user_dir.as_deref()).as_deref(),
-        &spec.aux_code,
-    ));
+    let aux_sources = AuxCodeSources {
+        bundled_codes: spec.bundled_codes_dir.clone(),
+        user_codes: user_codes_dir(spec.user_dir.as_deref()),
+        bundled_schemes: spec.bundled_schemes_dir.clone(),
+        user_dir: spec.user_dir.clone(),
+    };
+    engine.set_aux_codes(aux_sources.load(&spec.aux_code));
     if let Some(path) = &spec.english_glossary {
         match Glossary::from_path(Language::Chinese, path) {
             Ok(glossary) => {
@@ -78,6 +87,7 @@ pub fn assemble(spec: &AssemblySpec) -> Result<Engine, ServerError> {
         tracing::info!(words = table.len(), "emoji 表已加载");
         engine = engine.with_emoji(table);
     }
+    let mut bigram = None;
     if let Some(files) = &spec.language_model {
         let started = Instant::now();
         let model = files.load()?;
@@ -87,9 +97,70 @@ pub fn assemble(spec: &AssemblySpec) -> Result<Engine, ServerError> {
             load_ms = started.elapsed().as_millis(),
             "语言模型已加载"
         );
-        engine = engine.with_language_model(Box::new(model));
+        bigram = Some(model);
+    }
+    match (spec.user_dir.as_deref().and_then(load_trigram), bigram) {
+        (Some((phrase, lattice)), bigram) => {
+            if let Some(dir) = &spec.user_dir {
+                let words = load_model_words(&engine, &phrase, &dir.join(ZHIYI_NGRAM), &spec.dict);
+                engine.set_model_words(words);
+            }
+            engine.set_phrase_model(Some(Arc::new(phrase)));
+            engine = engine.with_language_model(match bigram {
+                Some(bigram) => Box::new(MixedModel::new(
+                    Box::new(lattice),
+                    Box::new(bigram),
+                    TRIGRAM_WEIGHT,
+                )),
+                None => Box::new(lattice),
+            });
+        }
+        (None, Some(bigram)) => engine = engine.with_language_model(Box::new(bigram)),
+        (None, None) => {}
     }
     Ok(engine)
+}
+
+/// 用户放进 `models/zhiyi-ngram/` 的知意三元模型：映射两份，一份给选词重排、一份进整句词图（同一文件，页面共用）。
+fn load_trigram(user_dir: &Path) -> Option<(TrigramModel, TrigramModel)> {
+    let path = user_dir.join(ZHIYI_NGRAM);
+    if !path.is_file() {
+        return None;
+    }
+    let started = Instant::now();
+    match TrigramModel::open(&path).and_then(|a| Ok((a, TrigramModel::open(&path)?))) {
+        Ok((phrase, lattice)) => {
+            tracing::info!(
+                unigrams = phrase.unigram_count(),
+                trigrams = phrase.trigram_count(),
+                load_ms = started.elapsed().as_millis(),
+                "三元模型已加载"
+            );
+            Some((phrase, lattice))
+        }
+        Err(error) => {
+            tracing::warn!(path = %path.display(), %error, "三元模型加载失败，整句只用二元模型");
+            None
+        }
+    }
+}
+
+/// 三元模型词表里词库没有的词（摸鱼、老梗），作补充词库：缓存在模型旁边，模型或主词库换了才重建（第一次约一秒）。
+/// 判断哪些词已有时参照主词库与已装的附加词库；戳只看模型与主词库：导入一本词库不该让缓存作废。
+fn load_model_words(
+    engine: &Engine,
+    model: &TrigramModel,
+    model_path: &Path,
+    dict: &Path,
+) -> Option<Dictionary> {
+    let stamp = model_words::stamp(&[model_path, dict]);
+    model_words::load(&model_words::cache_path(model_path), &stamp, || {
+        let mut references = vec![engine.dictionary()];
+        references.extend(engine.extra_dictionaries());
+        qingjian_dictionary::supplement(model.vocabulary(), &references)
+            .inspect_err(|error| tracing::warn!(%error, "三元模型词表补词失败"))
+            .ok()
+    })
 }
 
 /// 用户导入词库目录 `dicts/`，不存在则创建；建不了当没有。
@@ -131,16 +202,31 @@ pub fn learning_language(config: &Config) -> Option<Language> {
 }
 
 /// 某语言的释义表：`<root>/data/generated/` 打包过的 `.qj` 优先，否则随 git 的 `assets/glossary/` TSV；都没有为 `None`。
+///
+/// 启动装配（main）与热加载（swap_translator）都走这里。中文那张是英→中表，缺失本就可选、保持静默；
+/// 其他学习语言两张候选都缺时警告一条——只陈述「两张候选都没找到」的查找事实，不断言后果，
+/// 因为两种语境后果不同：启动装配时是候选旁不显示译文；热加载时旧译文继续显示（由
+/// reload/mod.rs 那条「没有这门语言的释义表，学习语言不变」说明）。
 pub fn glossary_file(root: &Path, language: Language) -> Option<PathBuf> {
     let code = language.code();
-    [
+    let candidates = [
         root.join("data/generated")
             .join(format!("glossary-{code}.qj")),
         root.join("assets/glossary")
             .join(format!("glossary-{code}.tsv")),
-    ]
-    .into_iter()
-    .find(|path| path.is_file())
+    ];
+    if let Some(path) = candidates.iter().find(|path| path.is_file()) {
+        return Some(path.clone());
+    }
+    if language != Language::Chinese {
+        tracing::warn!(
+            language = code,
+            qj = %candidates[0].display(),
+            tsv = %candidates[1].display(),
+            "学习语言的释义表两张候选都没找到"
+        );
+    }
+    None
 }
 
 /// 随包释义表叠上个人释义表（`user-glossary-<语言>.tsv`）。启动装配与热加载换语言共用。
@@ -165,27 +251,6 @@ pub(crate) fn load_glossary(
         );
     }
     Ok(LayeredTranslator::new(bundled, personal))
-}
-
-/// 词汇记录（`user-vocab.tsv`），有等级表就按级统计。
-fn load_vocabulary(user_dir: &Path, levels_dir: Option<&Path>) -> VocabularyBook {
-    let mut vocabulary = VocabularyBook::open(user_dir.join("user-vocab.tsv"));
-    let Some(levels_dir) = levels_dir else {
-        return vocabulary;
-    };
-    for language in [Language::English, Language::Japanese, Language::Spanish] {
-        let path = levels_dir.join(format!("levels-{}.tsv", language.code()));
-        if !path.is_file() {
-            continue;
-        }
-        match LevelTable::from_path(&path) {
-            Ok(table) => vocabulary = vocabulary.with_levels(language, table),
-            Err(error) => {
-                tracing::warn!(path = %path.display(), %error, "词汇等级表读不了，不分级");
-            }
-        }
-    }
-    vocabulary
 }
 
 /// 几张 emoji 表合成一张；坏的跳过。

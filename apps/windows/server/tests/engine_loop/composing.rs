@@ -1,6 +1,160 @@
 //! 中文组句：出候选、选词、上屏、翻页键、直输段、失焦与学习落盘。
 
 use crate::support::*;
+use qingjian_core::{
+    CandidateKind, Prediction, PredictionKind, PredictionPolicy, PredictionRequest, Predictor,
+};
+
+pub(crate) struct SentenceTranslator {
+    replies: Vec<Prediction>,
+
+    submitted: Arc<Mutex<Vec<PredictionRequest>>>,
+}
+
+impl SentenceTranslator {
+    pub(crate) fn new(submitted: Arc<Mutex<Vec<PredictionRequest>>>) -> Self {
+        Self {
+            replies: Vec::new(),
+            submitted,
+        }
+    }
+}
+
+impl Predictor for SentenceTranslator {
+    fn policy(&self) -> PredictionPolicy {
+        PredictionPolicy {
+            slots: 0,
+            max_items: 0,
+            sentence: false,
+            ..PredictionPolicy::default()
+        }
+    }
+
+    fn submit(&mut self, request: PredictionRequest) {
+        self.submitted.lock().unwrap().push(request.clone());
+        if request.kind == PredictionKind::Translate {
+            self.replies.push(Prediction {
+                sequence: request.sequence,
+                words: Vec::new(),
+                sentence: Some("It seems not to work.".to_owned()),
+            });
+        }
+    }
+
+    fn poll(&mut self) -> Option<Prediction> {
+        self.replies.pop()
+    }
+}
+
+#[test]
+fn sentence_candidates_receive_an_async_translation_without_cloud_completion() {
+    let submitted = Arc::new(Mutex::new(Vec::new()));
+    let mut local = router_with(RouterConfig {
+        cloud_slots: 0,
+        sentence_translation: false,
+        ..RouterConfig::default()
+    });
+    let (_, _, expected) = type_letters(&mut local, "xiangkaifa");
+    let expected_texts = candidate_texts(&expected);
+
+    let mut router = router_with(RouterConfig {
+        cloud_slots: 0,
+        sentence_translation: true,
+        ..RouterConfig::default()
+    });
+    router
+        .engine_mut()
+        .set_predictor(Box::new(SentenceTranslator::new(submitted.clone())));
+
+    let (_, _, frame) = type_letters(&mut router, "xiangkaifa");
+    let sentence = frame
+        .candidates
+        .items
+        .iter()
+        .find(|candidate| candidate.kind == CandidateKind::Sentence)
+        .expect("应有本地整句候选「想开发」");
+    assert_eq!(sentence.text, "想开发");
+    assert_eq!(
+        sentence.translation.as_ref().unwrap().senses()[0].text,
+        "It seems not to work."
+    );
+    assert_eq!(candidate_texts(&frame), expected_texts);
+    assert_eq!(frame.candidates.items[0].text, "想开发");
+    let (_, commit, _) = press(&mut router, letter(' '));
+    assert_eq!(commit.as_deref(), Some("想开发"));
+    let requests = submitted.lock().unwrap();
+    let translations: Vec<&str> = requests
+        .iter()
+        .filter(|request| request.kind == PredictionKind::Translate)
+        .map(|request| request.text.as_str())
+        .collect();
+    assert_eq!(translations.last(), Some(&"想开发"));
+    assert!(
+        translations.windows(2).all(|pair| pair[0] != pair[1]),
+        "{translations:?}"
+    );
+    assert_eq!(frame.sentence, None, "关闭整句补全时不应显示补全文本");
+}
+
+#[test]
+fn disabled_sentence_translation_never_sends_a_translation_request() {
+    let submitted = Arc::new(Mutex::new(Vec::new()));
+    let mut router = router_with(RouterConfig {
+        cloud_enabled: true,
+        cloud_slots: 0,
+        sentence_translation: false,
+        ..RouterConfig::default()
+    });
+    router
+        .engine_mut()
+        .set_predictor(Box::new(SentenceTranslator::new(submitted.clone())));
+
+    let _ = type_letters(&mut router, "xiangkaifa");
+
+    assert!(
+        submitted
+            .lock()
+            .unwrap()
+            .iter()
+            .all(|request| request.kind != PredictionKind::Translate)
+    );
+}
+
+#[test]
+fn private_input_does_not_reuse_or_request_sentence_translation() {
+    let submitted = Arc::new(Mutex::new(Vec::new()));
+    let mut router = router_with(RouterConfig {
+        sentence_translation: true,
+        ..RouterConfig::default()
+    });
+    router
+        .engine_mut()
+        .set_predictor(Box::new(SentenceTranslator::new(submitted.clone())));
+    let (_, _, first) = type_letters(&mut router, "xiangk");
+    assert!(
+        first
+            .candidates
+            .items
+            .iter()
+            .any(|candidate| candidate.kind == CandidateKind::Sentence
+                && candidate.translation.is_some())
+    );
+    let before = submitted.lock().unwrap().len();
+    router.handle(ClientMessage::Privacy {
+        session: SESSION,
+        private: true,
+    });
+    let (_, _, frame) = type_letters(&mut router, "ai");
+    assert!(
+        frame
+            .candidates
+            .items
+            .iter()
+            .filter(|candidate| candidate.kind == CandidateKind::Sentence)
+            .all(|candidate| candidate.translation.is_none())
+    );
+    assert_eq!(submitted.lock().unwrap().len(), before);
+}
 
 #[test]
 fn typing_pinyin_shows_candidates() {
@@ -175,13 +329,14 @@ fn page_keys_follow_config() {
         });
         let (_, _, first) = type_letters(&mut router, "ni");
         assert!(first.page_count > 1);
-        for _ in 0..first.page_count + 2 {
+        // `-` / `=` 在页边界按上游规则作为字符输入；只检验可翻的范围。
+        for _ in 1..first.page_count {
             let (outcome, commit, frame) = press(&mut router, punct(next));
             assert_eq!((outcome, commit), (KeyOutcome::Consumed, None));
             assert!(frame.page < frame.page_count);
             assert_eq!(preedit(&frame), "ni");
         }
-        for _ in 0..first.page_count + 2 {
+        for _ in 1..first.page_count {
             let (outcome, commit, frame) = press(&mut router, punct(previous));
             assert_eq!((outcome, commit), (KeyOutcome::Consumed, None));
             assert!(frame.page < frame.page_count);
@@ -196,6 +351,41 @@ fn page_keys_follow_config() {
         );
         assert!(frame.is_empty());
     }
+}
+
+#[test]
+fn page_keys_preserve_literal_punctuation() {
+    // 每页 1 条保证多页；翻页键改成 `,` `.`。
+    // 组句中标点进直输段的老行为（`punct_commits` 关），`]` 才会留在拼音行里
+    let mut router = router_with(RouterConfig {
+        page_size: 1,
+        page_keys: (',', '.'),
+        punct_commits: false,
+        ..RouterConfig::default()
+    });
+    let (_, _, frame) = type_letters(&mut router, "ni");
+    assert!(frame.page_count > 1, "样例词库里 ni 应不止一个候选");
+    assert_eq!(frame.page, 0);
+
+    let key = |router: &mut Router, c| {
+        key_result(router.handle(ClientMessage::Key {
+            session: SESSION,
+            event: punct(c),
+        }))
+    };
+    let (outcome, commit, frame) = key(&mut router, '.');
+    assert_eq!((outcome, commit), (KeyOutcome::Consumed, None));
+    assert_eq!(frame.page, 1, "`.` 应翻到下一页");
+    let (_, _, frame) = key(&mut router, ',');
+    assert_eq!(frame.page, 0, "`,` 应翻回上一页");
+    // 缺省的 `]` 此时不再翻页，进直输段。
+    let (_, _, frame) = key(&mut router, ']');
+    assert_eq!(frame.page, 0);
+    assert!(
+        preedit(&frame).contains(']'),
+        "`]` 应进直输段：{}",
+        preedit(&frame)
+    );
 }
 
 #[test]
@@ -286,7 +476,10 @@ fn learning_data_persists_to_user_dir() {
 
     let user = std::fs::read_to_string(user_dir.join("user.tsv")).expect("user.tsv 应已写出");
     assert!(user.contains("你好"), "user.tsv 里应记了「你好」：{user}");
-    assert!(user_dir.join("usage.tsv").is_file(), "usage.tsv 应已写出");
+    assert!(
+        user_dir.join(qingjian_learning::USAGE_FILE).is_file(),
+        "上屏时就该追加进输入统计"
+    );
     let _ = std::fs::remove_dir_all(&user_dir);
 }
 
@@ -365,5 +558,42 @@ fn en_contains_common_interjection_with_packaged_reading_patch() {
         (outcome, committed.as_deref()),
         (KeyOutcome::Consumed, Some("嗯"))
     );
+    assert!(after.is_empty());
+}
+
+/// 自绘窗随帧收到输入状态（给主题显示中 / 英、简 / 繁、方案），与配置一致。
+#[test]
+fn self_drawn_window_gets_input_mode() {
+    let mut router = router_with(RouterConfig {
+        scheme: Scheme::Shuangpin(ShuangpinScheme::Xiaohe),
+        traditional: true,
+        full_width: true,
+        ..RouterConfig::default()
+    });
+    let sink = RecordingCandidates::default();
+    router.set_candidate_sink(Box::new(sink.clone()));
+    type_letters(&mut router, "ni");
+    let _ = router.handle(ClientMessage::PositionCandidates {
+        session: SESSION,
+        rect: rect(),
+    });
+    let modes = sink.1.lock().unwrap();
+    let mode = modes.last().expect("自绘窗收到过帧");
+    assert!(!mode.english && mode.traditional && mode.full_width);
+    assert_eq!(mode.scheme, "小鹤双拼");
+}
+
+#[test]
+fn space_on_an_email_address_commits_it_without_the_space() {
+    let mut router = router();
+    type_letters(&mut router, "qingjian");
+    let (_, _, frame) = press(&mut router, punct('@'));
+    assert_eq!(
+        candidate_texts(&frame)[..2],
+        ["qingjian@", "qingjian@qq.com"]
+    );
+    press(&mut router, function_key(0x28));
+    let (_, commit, after) = press(&mut router, letter(' '));
+    assert_eq!(commit.as_deref(), Some("qingjian@qq.com"));
     assert!(after.is_empty());
 }

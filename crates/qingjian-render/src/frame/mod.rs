@@ -1,9 +1,11 @@
-//! 一帧要画的全部内容：顶部拼音行、候选行、高亮、页脚、右侧整句补全。只是展示形态，不含排序或查词。
+//! 一帧要画的全部内容：顶部拼音行、候选行、高亮、页脚、右侧整句补全，以及给主题显示的输入状态。只是展示形态，不含排序或查词。
 
+mod mode;
 mod preedit;
 mod row;
 mod tone;
 
+pub use mode::Mode;
 pub use preedit::{Preedit, PreeditSegment, PreeditStyle};
 pub use row::Row;
 pub use tone::Tone;
@@ -28,11 +30,20 @@ pub struct Frame {
     /// 右下角页码。
     pub footer: Option<String>,
 
+    /// 往前还有页（矩阵展开时是往上还有屏）：主题拿来把翻不动的箭头画淡。
+    pub previous_page: bool,
+
+    /// 往后还有页。
+    pub next_page: bool,
+
     /// 拼音行右侧的整句补全（云联想），组句时才有。
     pub sentence: Option<String>,
 
     /// 拼音行右侧的一句临时状态（删了什么词），有它时不画整句补全。
     pub status: Option<String>,
+
+    /// 输入状态（中 / 英、简 / 繁、标点、方案）。
+    pub mode: Mode,
 }
 
 impl Frame {

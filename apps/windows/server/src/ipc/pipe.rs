@@ -23,10 +23,10 @@ use windows::Win32::System::Pipes::{
 };
 use windows::core::{HRESULT, HSTRING};
 
-use qingjian_platform::protocol::{ClientMessage, ServerMessage, read_message, write_message};
+use qingjian_platform::protocol::{ClientMessage, ServerMessage};
 
-use super::Work;
 use super::session_map::SessionMap;
+use super::{Handled, Work};
 use crate::dispatch::Router;
 
 pub use qingjian_platform::protocol::DEFAULT_PIPE_NAME;
@@ -57,6 +57,10 @@ pub fn serve_pipe(
         }
         Err(error) => return Err(error),
     };
+    let waker = sender.clone();
+    router.set_rescoring_wake(std::sync::Arc::new(move || {
+        let _ = waker.send(Work::Wake);
+    }));
     thread::spawn(move || accept_loop(&pipe, first, sender));
     tracing::info!(pipe = name, "命名管道监听中");
     // 按 Router 的节拍来 tick：在等本地整句模型就几十毫秒一次，否则一秒看一次配置文件。
@@ -80,8 +84,17 @@ pub fn serve_pipe(
                     router.handle(ClientMessage::CloseSession { session });
                 }
             }
+            Ok(Work::Click(mouse)) => router.handle_candidate_mouse(mouse),
+            Ok(Work::Panel(hit)) => router.handle_panel_mouse(hit),
+            Ok(Work::Wake) => router.tick(),
             Err(RecvTimeoutError::Timeout) => continue,
-            Err(RecvTimeoutError::Disconnected) => break,
+            Err(RecvTimeoutError::Disconnected) => {
+                tracing::warn!(
+                    reason = "all_work_senders_disconnected",
+                    "Pipe worker loop stopped"
+                );
+                break;
+            }
         }
         // 处理完消息节拍可能变短了（按键起了防抖）：到点时间只提前不推后
         due = due.min(Instant::now() + router.next_tick());
@@ -172,46 +185,30 @@ fn wait_client(stream: File) -> io::Result<File> {
 }
 
 /// 服务一条连接：读消息 → 转给工人线程 → 写回，直到对端在帧边界关闭或出错。
+///
+/// 断开后把本连接上开过的会话照单 `CloseSession`：DLL 来不及发（应用被关 / 崩了），
+/// 会话留在 Router 里会让聚焦会话的组句与候选窗口一直挂着，直到别的应用来一个键把它挤掉。
 fn serve_connection(mut stream: File, sender: Sender<Work>) {
     let (reply_sender, reply_receiver) = mpsc::channel::<Option<ServerMessage>>();
     let mut sessions = SessionMap::default();
-    loop {
-        let message = match read_message::<_, ClientMessage>(&mut stream) {
-            Ok(Some(message)) => message,
-            Ok(None) => break,
-            Err(error) => {
-                tracing::warn!(%error, "客户端会话读出错");
-                break;
+    let outcome = super::pump(
+        &mut stream,
+        |message| {
+            if sender
+                .send(Work::Client(message, reply_sender.clone()))
+                .is_err()
+            {
+                return Handled::Stop;
             }
-        };
-        let closing = matches!(message, ClientMessage::CloseSession { .. });
-        let (message, external) = match sessions.map(message) {
-            Ok(mapped) => mapped,
-            Err(_) => {
-                tracing::warn!("拒绝未登记或超额的连接会话");
-                break;
+            match reply_receiver.recv() {
+                Ok(reply) => Handled::Reply(reply.map(Box::new)),
+                Err(_) => Handled::Stop,
             }
-        };
-        if sender
-            .send(Work::Client(message, reply_sender.clone()))
-            .is_err()
-        {
-            break;
-        }
-        let response = reply_receiver.recv();
-        if closing && response.is_ok() {
-            sessions.closed(external);
-        }
-        match response {
-            Ok(Some(mut response)) => {
-                *response.session_mut() = external;
-                if write_message(&mut stream, &response).is_err() {
-                    break;
-                }
-            }
-            Ok(None) => {}
-            Err(_) => break,
-        }
+        },
+        &mut sessions,
+    );
+    if let Err(error) = outcome {
+        tracing::warn!(%error, "客户端会话读出错");
     }
     let _ = sender.send(Work::Disconnect(sessions.into_sessions()));
     let _ = unsafe { DisconnectNamedPipe(HANDLE(stream.as_raw_handle())) };

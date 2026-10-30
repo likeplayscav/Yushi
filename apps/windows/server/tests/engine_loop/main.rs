@@ -2,9 +2,16 @@
 
 mod aux_code;
 mod candidate_ui;
+mod click;
+mod cloud;
 mod composing;
 mod english;
+mod highlight;
+mod key_hint;
+mod menu;
 mod modes;
+mod numpad;
+mod prediction;
 mod rescoring;
 mod shortcuts;
 mod status;

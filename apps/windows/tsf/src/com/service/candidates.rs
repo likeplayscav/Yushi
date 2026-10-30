@@ -7,6 +7,10 @@ use crate::com::log::log;
 
 impl TextService_Impl {
     pub(super) fn apply_candidate_actions(&self) {
+        // 引擎被同步回调占用时暂留队列，下一次定时器再处理，不能先取走操作。
+        if self.engine.try_borrow_mut().is_err() {
+            return;
+        }
         let actions = self.shared.candidates.take_actions();
         if !self.shared.foreground() {
             return;

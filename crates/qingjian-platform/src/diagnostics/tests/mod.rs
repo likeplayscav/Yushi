@@ -48,6 +48,7 @@ fn inline_sections_unknown_scheme_and_empty_file_do_not_leak() {
         "",
         "predict = {api_key='secret-inline', enabled=true}\n",
         "[general]\nscheme='secret-scheme' # secret-comment\n",
+        "[general]\ntheme='secret-theme'\n",
     ] {
         let summary = config_summary(source).unwrap();
         assert!(!summary.contains("secret"));

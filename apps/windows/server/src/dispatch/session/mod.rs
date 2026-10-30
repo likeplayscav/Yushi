@@ -48,6 +48,17 @@ impl Router {
         }
         if self.focused == Some(session) {
             self.engine.set_private(private);
+            if private {
+                self.sentence_translation_cache = None;
+                self.engine.cancel_sentence_translation();
+                if let Some(super::Composed::Candidates {
+                    sentence_translation,
+                    ..
+                }) = &mut self.composed
+                {
+                    *sentence_translation = None;
+                }
+            }
         }
     }
 
@@ -68,12 +79,15 @@ impl Router {
         self.cancel_prediction();
         self.stop_rescoring();
         self.composed = None;
+        self.sentence_translation_cache = None;
+        self.grid = None;
         self.translation = None;
         self.pending_selection = None;
         self.sentence = None;
         self.notice = None;
         self.highlight = 0;
         self.navigated = false;
+        self.panel = None;
         self.hide_candidate_window();
     }
 }

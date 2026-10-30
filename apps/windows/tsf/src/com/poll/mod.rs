@@ -2,6 +2,7 @@
 //! 没在组句、本线程在前台时，隔几拍向 Server 取一次全局中英模式（别的应用、悬浮状态条可能切过）。
 //! 云端结果几百毫秒后才回，那时往往没有新按键来「顺手收一次」，所以在 TSF 线程上挂一个 `WM_TIMER`；
 //! 传输仍是一问一答。定时器挂在隐藏的消息窗口上，与按键同在 STA 消息泵上跑。回调上下文在 [`context`]。
+//! 鼠标点候选窗口上屏的文本也是这样拉回来的（Server 不能直接写文档），拉到就开编辑会话写进去。
 
 mod context;
 
@@ -19,8 +20,11 @@ use windows::Win32::UI::WindowsAndMessaging::{
 };
 use windows::core::{Error, PCWSTR, Result, w};
 
+use qingjian_platform::protocol::Frame;
+
 use self::context::PollContext;
-use super::composition::Shared;
+use super::composition::{Shared, preedit_string};
+use super::edit::request_update;
 use super::log::log;
 use super::service::SharedClient;
 use super::window_class::WindowClass;
@@ -47,7 +51,7 @@ pub(crate) struct PollTimer {
 
 impl PollTimer {
     /// 失败返回 `Err`，调用方降级为只在按键时收云结果。
-    pub(crate) fn new(engine: SharedClient, shared: Rc<Shared>) -> Result<Self> {
+    pub(crate) fn new(engine: SharedClient, shared: Rc<Shared>, client_id: u32) -> Result<Self> {
         CLASS.ensure(|| WNDCLASSEXW {
             lpfnWndProc: Some(wndproc),
             hInstance: super::dll_instance(),
@@ -81,6 +85,7 @@ impl PollTimer {
                     engine,
                     shared,
                     ticks: Cell::new(0),
+                    client_id,
                 }),
             )
         });
@@ -113,6 +118,7 @@ unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: 
 
 /// 组句中或翻译评审中拉云结果；否则前台时隔几拍问一次切模式（顺路取回按键行为设置）。引擎正被按键处理借用时跳过这一拍；连接坏了断开。
 fn poll_once(context: &PollContext) {
+    // COM 宿主和搜索子窗口只排队；在消息泵上发送操作，避免重入管道。
     super::service::on_candidate_actions();
     let tick = context.ticks.get().wrapping_add(1);
     context.ticks.set(tick);
@@ -130,16 +136,26 @@ fn poll_once(context: &PollContext) {
         return;
     };
     match client.poll() {
-        Ok(frame) => {
+        Ok((frame, Some(commit))) => {
             drop(guard);
-            let document = context.shared.last_context();
-            if let Err(error) = context.shared.candidates.update(&frame, document.as_ref()) {
+            commit_clicked(context, &frame, commit);
+        }
+        Ok((frame, None)) => {
+            drop(guard);
+            if let Err(error) = context
+                .shared
+                .candidates
+                .update(&frame, context.shared.last_context().as_ref())
+            {
                 log(&format!("更新宿主候选列表失败: {error}"));
             }
             // 翻译评审时回空帧 = 翻译已在 Server 侧结束（云端没给译文）。
             if translating && frame.is_empty() {
                 context.shared.set_translating(false);
                 context.shared.hide_candidates();
+            } else if frame.is_empty() && !context.shared.has_composition() {
+                // 没在组句时打开的符号面板被鼠标关掉了：文档里没有组句要收，回到没在组句
+                context.shared.set_composing(false);
             }
         }
         Err(error) => {
@@ -147,6 +163,38 @@ fn poll_once(context: &PollContext) {
             *guard = None;
             context.shared.end_composing();
         }
+    }
+}
+
+/// 鼠标点候选窗口上屏：与按键结果一样经异步编辑会话写进文档，剩下的拼音接着组句。
+fn commit_clicked(context: &PollContext, frame: &Frame, commit: String) {
+    let Some(document) = context.shared.last_context() else {
+        log("点击上屏没有上下文，丢弃");
+        return;
+    };
+    // 「只在候选窗口」模式应用里不放行内拼音，与按键路径一致
+    let preedit = if frame.preedit_mode.inline() {
+        preedit_string(frame)
+    } else {
+        String::new()
+    };
+    context.shared.set_composing(!frame.is_empty());
+    if let Err(error) = context
+        .shared
+        .candidates
+        .update(frame, context.shared.last_context().as_ref())
+    {
+        log(&format!("更新宿主候选列表失败: {error}"));
+    }
+    if let Err(error) = request_update(
+        &document,
+        context.client_id,
+        context.engine.clone(),
+        context.shared.clone(),
+        Some(commit),
+        preedit,
+    ) {
+        log(&format!("点击上屏的编辑会话没被受理: {error}"));
     }
 }
 

@@ -1,20 +1,21 @@
 //! 菜单栏里的「中 / 英」状态项。
 //!
 //! 输入源图标（Info.plist 的 tsInputMethodIconFileKey）没法动态换，所以自己放一个 NSStatusItem。
-//! Caps Lock 的变化不会作为按键送到输入法，用一个定时器轮询系统状态刷新。
+//! Caps Lock 的变化不会作为普通按键送到输入法，用一个定时器轮询系统状态刷新。
 //!
 //! 状态项一旦创建就**不再隐藏**：`setVisible(false)` 再 `setVisible(true)` 会把它重新排到菜单栏最左边，用户 ⌘ 拖到输入法图标旁的位置就丢了
 //! （固定 autosave 名也保不住），而焦点每进出一次输入框 IMK 就 deactivate / activate 一轮。
 //! 停用时改成收成零宽、清空标题，并且延迟 [`COLLAPSE_DELAY`] 再收：焦点只是在输入框之间挪的话，半秒内就会再次激活，根本收不下去；
 //! 真换到别的输入法才收起来，切回来再展开，位置一直在。
+//!
+//! 状态项等第一次激活才建：启动时 NSApplication 还没建、进程没连上 WindowServer，macOS 13 上这时建状态项直接 NSCGSPanic。
+//! 也不能为此把 NSApplication 提前到 IMKServer 之前建：那样装好后，系统弹窗抢走焦点再还回来时会把输入源切回 ABC。
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{MainThreadMarker, MainThreadOnly, define_class, msg_send, sel};
+use objc2::{MainThreadMarker, MainThreadOnly, Message, define_class, msg_send, sel};
 use objc2_app_kit::{NSMenu, NSStatusBar, NSStatusItem, NSVariableStatusItemLength};
 use objc2_foundation::{NSObject, NSObjectProtocol, NSString, NSTimer, ns_string};
-
-use crate::imk::modifiers;
 
 /// 轮询 Caps Lock 状态的间隔。
 const POLL_INTERVAL: f64 = 0.25;
@@ -23,8 +24,11 @@ const POLL_INTERVAL: f64 = 0.25;
 const COLLAPSE_DELAY: f64 = 0.5;
 
 pub struct ModeIndicator {
-    /// 菜单栏状态项。
-    item: Retained<NSStatusItem>,
+    /// 菜单栏状态项；第一次激活时才建。
+    item: Option<Retained<NSStatusItem>>,
+
+    /// 点状态项弹出的菜单，建状态项时挂上。
+    menu: Option<Retained<NSMenu>>,
 
     /// 轮询定时器；未激活时为 `None`。
     timer: Option<Retained<NSTimer>>,
@@ -46,11 +50,9 @@ pub struct ModeIndicator {
 
 impl ModeIndicator {
     pub fn new(mtm: MainThreadMarker) -> Self {
-        let item = NSStatusBar::systemStatusBar().statusItemWithLength(0.0);
-        item.setAutosaveName(Some(ns_string!("QingjianModeIndicator")));
-        item.setVisible(true);
         Self {
-            item,
+            item: None,
+            menu: None,
             timer: None,
             collapse_timer: None,
             shown: false,
@@ -60,17 +62,27 @@ impl ModeIndicator {
         }
     }
 
+    fn item(&mut self) -> &NSStatusItem {
+        self.item.get_or_insert_with(|| {
+            let item = NSStatusBar::systemStatusBar().statusItemWithLength(0.0);
+            item.setAutosaveName(Some(ns_string!("QingjianModeIndicator")));
+            item.setVisible(true);
+            item.setMenu(self.menu.as_deref());
+            item
+        })
+    }
+
     /// 输入法激活：展开状态项并开始轮询；停用时安排的收起取消。
-    pub fn activate(&mut self) {
+    pub fn activate(&mut self, english: bool) {
         if let Some(timer) = self.collapse_timer.take() {
             timer.invalidate();
         }
         if !self.shown {
             self.shown = true;
-            self.item.setLength(NSVariableStatusItemLength);
+            self.item().setLength(NSVariableStatusItemLength);
         }
         self.english = None;
-        self.update();
+        self.update(english);
         if self.timer.is_none() {
             let target = ModeMonitor::new(self.mtm);
             let timer = unsafe {
@@ -115,15 +127,21 @@ impl ModeIndicator {
         }
         self.shown = false;
         self.english = None;
-        if let Some(button) = self.item.button(self.mtm) {
+        let Some(item) = &self.item else {
+            return;
+        };
+        if let Some(button) = item.button(self.mtm) {
             button.setTitle(ns_string!(""));
         }
-        self.item.setLength(0.0);
+        item.setLength(0.0);
     }
 
     /// 点状态项弹出的菜单。
-    pub fn set_menu(&self, menu: &NSMenu) {
-        self.item.setMenu(Some(menu));
+    pub fn set_menu(&mut self, menu: &NSMenu) {
+        self.menu = Some(menu.retain());
+        if let Some(item) = &self.item {
+            item.setMenu(Some(menu));
+        }
     }
 
     pub fn set_cloud(&mut self, cloud: bool) {
@@ -131,17 +149,17 @@ impl ModeIndicator {
         self.english = None;
     }
 
-    /// 按当前 Caps Lock 状态刷新标题；收起时不动。
-    pub fn update(&mut self) {
+    /// 按当前中英模式刷新标题；收起时不动。
+    pub fn update(&mut self, english: bool) {
         if !self.shown {
             return;
         }
-        let english = modifiers::caps_lock_on();
         if self.english == Some(english) {
             return;
         }
         self.english = Some(english);
-        if let Some(button) = self.item.button(self.mtm) {
+        let mtm = self.mtm;
+        if let Some(button) = self.item().button(mtm) {
             let mode = if english { "英" } else { "中" };
             let title = if self.cloud {
                 format!("{mode} ☁︎")
@@ -163,7 +181,7 @@ define_class!(
     impl ModeMonitor {
         #[unsafe(method(tick:))]
         fn tick(&self, _timer: Option<&AnyObject>) {
-            crate::host::with(|h| h.indicator.update());
+            crate::host::with(|h| h.refresh_mode_ui());
         }
 
         #[unsafe(method(collapse:))]

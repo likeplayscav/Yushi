@@ -40,7 +40,13 @@ impl ITfTextInputProcessor_Impl for TextService_Impl {
             }
         }
         let combo = preserved::load_combo();
-        match preserved::register(&keystroke, tid, combo) {
+        match preserved::register(
+            &keystroke,
+            tid,
+            &preserved::GUID_TRANSLATE,
+            combo,
+            "翻译选中文字",
+        ) {
             Ok(()) => {
                 self.translate_combo.set(Some(combo));
                 log(&format!("翻译选中文字快捷键已登记为保留键: {combo}"));
@@ -50,7 +56,7 @@ impl ITfTextInputProcessor_Impl for TextService_Impl {
 
         self.client_id.set(tid);
         // 连不上 Server、没定时器都不致命。
-        match PollTimer::new(self.engine.clone(), self.shared.clone()) {
+        match PollTimer::new(self.engine.clone(), self.shared.clone(), tid) {
             Ok(timer) => *self.poll_timer.borrow_mut() = Some(timer),
             Err(error) => log(&format!("挂云联想轮询定时器失败: {error}")),
         }
@@ -121,12 +127,22 @@ impl ITfTextInputProcessor_Impl for TextService_Impl {
                 )
             };
         }
+        self.input_settings.set(None);
         if let Some(thread_mgr) = self.thread_mgr.borrow_mut().take()
             && let Ok(keystroke) = thread_mgr.cast::<ITfKeystrokeMgr>()
         {
             self.drop_switch_preserved_key(&keystroke);
+            if let Some(combo) = self.traditional_combo.take() {
+                preserved::unregister_traditional(&keystroke, combo);
+            }
+            if let Some(combo) = self.punctuation_combo.take() {
+                preserved::unregister_punctuation(&keystroke, combo);
+            }
+            if let Some(combo) = self.predict_combo.take() {
+                preserved::unregister(&keystroke, &preserved::GUID_PREDICT, combo);
+            }
             if let Some(combo) = self.translate_combo.take() {
-                preserved::unregister(&keystroke, combo);
+                preserved::unregister(&keystroke, &preserved::GUID_TRANSLATE, combo);
             }
             let _ = unsafe { keystroke.UnadviseKeyEventSink(self.client_id.get()) };
         }
@@ -134,6 +150,7 @@ impl ITfTextInputProcessor_Impl for TextService_Impl {
             let _ = client.close();
         }
         self.shared.candidates.deactivate();
+        self.pending_digit.borrow_mut().take();
         self.shared.reset();
         self.shared.take_server_stale();
         self.shared.set_foreground(false);

@@ -1,11 +1,13 @@
 ---
-title: 遇到问题
+title: 反馈问题
 order: 3
-description: 反馈问题时需提供的材料：当天的日志、「复制诊断信息」的内容，以及常见情况的自查。
+description: 到哪里反馈问题与建议，以及反馈时需要附上的日志与信息。
 ---
 
 问题与建议请提到 [GitHub Issues](https://github.com/qingjian-team/qingjian/issues/new/choose)，按表单填写即可；表单会要求下面这些材料。
 也可以加 QQ 群 [902314603](https://qm.qq.com/q/jBvn2gGTxm)（青简输入法用户内测体验交流群）直接交流。
+
+先查一下 [常见问题](faq.md)，很多情况在那里有处理方法。
 
 ## 反馈时请提供
 

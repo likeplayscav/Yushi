@@ -3,7 +3,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use qingjian_platform::ThemeMode;
+use qingjian_platform::Appearance;
 use qingjian_platform::protocol::{CandidateAction, Frame};
 use windows::Win32::Foundation::{COLORREF, RECT};
 use windows::Win32::Graphics::Gdi::{
@@ -61,10 +61,10 @@ impl View {
     pub fn paint(&self, dc: HDC) {
         let frame = self.frame.borrow();
         let layout = *self.layout.borrow();
-        let dark = match frame.theme {
-            ThemeMode::Dark => true,
-            ThemeMode::Light => false,
-            ThemeMode::System => windows_registry::CURRENT_USER
+        let dark = match frame.appearance {
+            Appearance::Dark => true,
+            Appearance::Light => false,
+            Appearance::System => windows_registry::CURRENT_USER
                 .open(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")
                 .and_then(|key| key.get_u32("AppsUseLightTheme"))
                 .is_ok_and(|value| value == 0),

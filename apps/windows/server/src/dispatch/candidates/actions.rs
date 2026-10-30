@@ -74,6 +74,7 @@ impl Router {
             outcome: KeyOutcome::Consumed,
             commit,
             frame,
+            english: None,
         }
     }
 }

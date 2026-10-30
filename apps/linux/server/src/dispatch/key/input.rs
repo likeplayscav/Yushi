@@ -1,6 +1,7 @@
 //! 按键怎么作用到 Engine / 高亮上。分流规则与 macOS 壳的 `handle_text` / `handle_command` 对齐。
 
-use qingjian_core::{QUESTION_PREFIX, shortcut};
+use qingjian_core::{CandidateKind, QUESTION_PREFIX, punctuation};
+use qingjian_platform::CommitRoute;
 use qingjian_platform::protocol::KeyEvent;
 
 use super::{Effect, codes, with_prefix};
@@ -10,6 +11,9 @@ impl Router {
     /// 功能键靠键码，其余靠字符。组句中修饰键 + 数字是快捷键；带 Ctrl / Alt / Win 而没配到快捷键的键归应用。
     /// 表达式模式里 Shift + 数字打的是 `^ * ( )`，不当快捷键。
     pub(crate) fn apply_key(&mut self, event: &KeyEvent) -> Effect {
+        if let Some(effect) = self.apply_commit_key(event) {
+            return effect;
+        }
         if self.composing()
             && !self.engine.expression_mode()
             && let Some(digit) = codes::digit_key(event.virtual_key)
@@ -68,6 +72,28 @@ impl Router {
             self.apply_chinese(c, event)
         };
         with_prefix(flushed, effect, c)
+    }
+
+    /// 组句中换过的上屏键（`[shortcut] commit_candidate` / `commit_raw`，怎么分见 `CommitKeys::route`）；
+    /// 注音的空格是一声、回车有自己的规则，不参与。返回 `None` 照原来的分派走。
+    fn apply_commit_key(&mut self, event: &KeyEvent) -> Option<Effect> {
+        if !self.composing() || self.engine.is_zhuyin_mode() {
+            return None;
+        }
+        let route = self.config.commit_keys.route(event);
+        if route == CommitRoute::Keep {
+            return None;
+        }
+        // 只有一个 `?`：上屏键就是「把这个 ? 上屏」，与空格、回车一样
+        if route != CommitRoute::Unbound && self.engine.bare_question() {
+            let english = event.modifiers.caps || event.modifiers.english_mode;
+            return Some(Effect::Changed(Some(self.restore_bare_question(english))));
+        }
+        Some(match route {
+            CommitRoute::Candidate => Effect::Changed(Some(self.commit_highlighted())),
+            CommitRoute::Raw => Effect::Changed(Some(self.engine.take_raw())),
+            CommitRoute::Unbound | CommitRoute::Keep => Effect::Navigated,
+        })
     }
 
     /// 缓冲区里只有一个 `?`：清掉，还原成问号（按当前模式的全角设置转）。
@@ -176,7 +202,7 @@ impl Router {
 
     /// 中文模式：字母进拼音。缺省 Shift 大写是临时打英文——组句中先把拼音原样上屏、字母交给应用；
     /// 配 `[general] shift_letter = "compose"` 时大写也收进缓冲区（Core 按小写匹配、原样上屏时还原大小写）。
-    /// 没在组句时的其他字符走全角标点（与 macOS 壳一致，组句中的标点仍进英文直输段）。
+    /// 没在组句时的其他字符走全角标点；组句中会转全角的标点先上屏高亮候选再补标点，其余符号仍进英文直输段（见 apply_printable）。
     fn apply_chinese(&mut self, c: char, event: &KeyEvent) -> Effect {
         // 注音模式下数字与 `- ; , . /` 就是键盘上的音节键，跟着进缓冲区。
         let is_zhuyin_key = self.engine.is_zhuyin_mode()
@@ -255,12 +281,13 @@ impl Router {
         with_prefix(committed, effect, c)
     }
 
-    /// 组句中的可打印键：数字选当前页第 N 个（没有这一格就进直输段），翻页键翻页，空格上屏高亮，其余进英文直输段；已在直输段里就一律追加。
+    /// 组句中的可打印键：数字选当前页第 N 个（没有这一格就进直输段），翻页键翻页，空格上屏高亮，
+    /// 会转全角的标点上屏高亮候选再补标点，其余符号进英文直输段；已在直输段里就一律追加。
     /// 表达式模式（`v1+2`）里数字和运算符进算式；问字模式敲的还可能是码点（`u4e00`、`u+1f600`），数字与 `+` 进缓冲区；
     /// 微软 / 搜狗双拼的 `;` 是 ing 键，末尾有落单声母时进缓冲区。
     fn apply_printable(&mut self, c: char, event: &KeyEvent) -> Effect {
         let expression = self.engine.expression_mode();
-        if (expression && shortcut::is_expression_char(c))
+        if self.engine.expression_input(c)
             || (self.engine.unicode_entry() && (c.is_ascii_digit() || c == '+'))
             || (c == ';' && self.engine.takes_semicolon())
         {
@@ -268,10 +295,16 @@ impl Router {
             return Effect::Changed(None);
         }
         // 英文直输段（缓冲区里已有 `-` 这类字符）：可见字符一律追加，数字与翻页键也不再选词 / 翻页；
-        // 空格整段原样上屏，空格本身也要在（`hello, world`）。
+        // 空格整段原样上屏，空格本身也要在（`hello, world`）；高亮挪到邮箱地址上时只上屏地址。
         if self.engine.raw_mode() {
             if c == ' ' {
+                let address = self
+                    .layout_candidate(self.highlight)
+                    .is_some_and(|candidate| candidate.kind == CandidateKind::Shortcut);
                 let committed = self.commit_highlighted();
+                if address {
+                    return Effect::Changed(Some(committed));
+                }
                 self.engine.note_passthrough(c);
                 return with_prefix(Some(committed), Effect::Passthrough, c);
             }
@@ -302,9 +335,18 @@ impl Router {
             }
             return Effect::Changed(Some(self.commit_highlighted()));
         }
-        // 表达式 / 问字模式下的其他字符不进缓冲区（与 macOS 壳一致）：先把高亮候选上屏，再按没在组句处理这个键。
-        if c != '\'' && (expression || self.engine.question_mode()) {
-            let committed = self.commit_highlighted();
+        // 表达式 / 问字模式下的其他字符不进缓冲区（与 macOS 壳一致）；
+        // 普通拼音组句里的标点也一样——会转全角的（`,` `.` `?` `!` 引号、括号这些）先把高亮候选上屏再补标点
+        //（`nihao,` 一气打完「你好，」），翻页键已在前面上方拦走，数字后的 `.` 是否保持半角由 Core 判断；
+        // 这条上屏行为由 `[general] punct_commits` 控制（缺省关：标点进英文直输段）。
+        // 不会转的符号（`-` `/` `@`）仍进英文直输段；`'` 是隔音符，任何模式都进缓冲区。
+        if c != '\''
+            && (expression
+                || self.engine.question_mode()
+                || (self.config.punct_commits && punctuation::converts(c)))
+        {
+            // 高亮候选没吃完拼音时它留在组句里：连同前面留着的先交给应用，标点才接得在后面
+            let committed = self.commit_highlighted() + &self.engine.take_held();
             let effect = self.apply_punctuation(c, event);
             return with_prefix(Some(committed), effect, c);
         }
