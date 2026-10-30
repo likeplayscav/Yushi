@@ -4004,7 +4004,7 @@ dependencies = [
 
 [[package]]
 name = "qingjian-settings"
-version = "0.3.2-beta.1"
+version = "0.3.2-beta.2"
 dependencies = [
  "bamboo-slip",
  "bamboo-slip-i18n",
@@ -4080,7 +4080,7 @@ dependencies = [
 
 [[package]]
 name = "qingjian-windows-server"
-version = "0.3.2-beta.1"
+version = "0.3.2-beta.2"
 dependencies = [
  "bamboo-slip-i18n",
  "dotenvy",
@@ -4109,7 +4109,7 @@ dependencies = [
 
 [[package]]
 name = "qingjian-windows-settings"
-version = "0.3.2-beta.1"
+version = "0.3.2-beta.2"
 dependencies = [
  "jiff",
  "qingjian-core",
@@ -4130,7 +4130,7 @@ dependencies = [
 
 [[package]]
 name = "qingjian-windows-tsf"
-version = "0.3.2-beta.1"
+version = "0.3.2-beta.2"
 dependencies = [
  "qingjian-core",
  "qingjian-platform",
