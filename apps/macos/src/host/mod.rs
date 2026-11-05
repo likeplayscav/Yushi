@@ -6,6 +6,7 @@
 //! 设置窗口、手改文件被监视到，全都走它；三个入口都只写 `config.toml`，不各存一套状态。
 
 mod aux_code;
+mod clipboard_process;
 mod cloud;
 mod config;
 mod diagnostics;
@@ -25,7 +26,8 @@ use objc2_app_kit::{NSPasteboard, NSPasteboardTypeString};
 use objc2_foundation::{NSProcessInfo, NSRect, NSString};
 use qingjian_core::{
     Candidate, CandidateKind, Cell, CloudWord, EmojiTable, Engine, FuzzyRules, Language, ModeKeys,
-    NoGlossFiller, NoInputLogger, NoPredictor, NoTranslator, Prediction,
+    NoGlossFiller, NoInputLogger, NoPredictor, NoTranslator, Prediction, Sense, TelexComposer,
+    Translation, Translator,
 };
 use qingjian_dictionary::{Dictionary, WordList};
 use qingjian_learning::{FrequencyLearner, InputLog, PanelUsage, UsageStats, VocabularyBook};
@@ -85,11 +87,23 @@ pub struct Host {
     /// 单击 Shift 切中英（勾了 `[shortcut] switch_mode` 的 shift 时）；定时器只在激活期间跑。
     pub mode_switch: ModeSwitch,
 
+    /// 越南语 Simple Telex 的当前词；只在双击 Shift 切出的第三输入法中使用。
+    pub vietnamese: TelexComposer,
+
+    /// 由随包越南语释义表派生的输入候选词表。
+    pub vietnamese_words: Option<WordList>,
+
+    /// 越南语候选的中文释义：个人模型译词优先，随包反向词库兜底。
+    pub vietnamese_glossary: Option<LayeredTranslator>,
+
     /// 中 / 英与大小写切换时右上角一闪而过的提示。
     pub osd: ModeOsd,
 
     /// 上一次已经提示过的中英模式；`None` 表示还没提示过（启动后第一次只记不弹）。
     last_osd_english: Option<bool>,
+
+    /// 上一次已经提示过的越南语模式；用于只在进入 / 退出时提示一次。
+    last_osd_vietnamese: Option<bool>,
 
     /// 上一次已经提示过的 Caps Lock 状态，同上。
     last_osd_caps: Option<bool>,
@@ -172,6 +186,9 @@ pub struct Host {
     /// 组句中按需联想的组合键（配置 `[shortcut] predict`）。
     pub predict_keys: KeyCombo,
 
+    /// 打开符号面板翻译组的组合键（`[shortcut] translate_panel`），缺省 ⌃⌥Y。
+    pub translate_panel_keys: KeyCombo,
+
     /// 在飞的按需联想请求序号：结果到了排在第一页最前面，自动联想的照旧补在末尾。
     manual_prediction: Option<u64>,
 
@@ -210,6 +227,9 @@ pub struct Host {
 
     /// 候选高亮由哪对方向键移动（配置 `[shortcut] highlight_keys`）。
     pub highlight_keys: HighlightKeys,
+
+    /// 组句中额外使用 Ctrl + F / B / N / P / A / E 导航候选。
+    pub extra_candidate_navigation: bool,
 
     /// 英文模式是否给英文候选（配置 `[general] english_candidates`）。
     pub english_candidates: bool,

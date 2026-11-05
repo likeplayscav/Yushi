@@ -11,6 +11,7 @@ mod key_hint;
 mod menu;
 mod modes;
 mod numpad;
+mod panel_translate;
 mod prediction;
 mod rescoring;
 mod shortcuts;

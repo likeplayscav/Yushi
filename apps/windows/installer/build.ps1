@@ -36,10 +36,17 @@ if ($Sign) {
 
 # 0) 产品数据缺一样就停：与 .iss 的 [Files] 和 data-bundle.sh 的数据包一致，免得编译几分钟后才在 iscc 那步报错，
 #    更免得少了码表的包照样能装（以前它标了 skipifsourcedoesntexist，缺了也悄悄打包）。本地整句模型不随包。
+python (Join-Path $Repo 'tools\corpus\vietnamese_words.py') `
+    (Join-Path $Repo 'assets\glossary\glossary-vi.tsv') `
+    (Join-Path $Repo 'data\generated\vietnamese.tsv') `
+    (Join-Path $Repo 'data\generated\vietnamese-zh.tsv')
+if ($LASTEXITCODE -ne 0) { throw "生成越南语候选词表失败（退出码 $LASTEXITCODE）" }
 $data = @(
     'data\generated\dict.qj',
     'data\generated\lm.qj',
     'data\generated\english.tsv',
+    'data\generated\vietnamese.tsv',
+    'data\generated\vietnamese-zh.tsv',
     'data\generated\dicts\*.qj',
     'data\generated\codes\*.qj'
 ) + ('en', 'ja', 'zh', 'es', 'vi', 'de' | ForEach-Object { "data\generated\glossary-$_.qj" })
@@ -53,7 +60,7 @@ if (-not $SkipBuild) {
     Write-Host '构建 release 产物…' -ForegroundColor Cyan
     Push-Location $Repo
     try {
-        cargo build --release --locked -p qingjian-windows-server -p qingjian-windows-tsf -p qingjian-settings -p qingjian-windows-settings
+        cargo build --release --locked -p qingjian-windows-server -p qingjian-windows-tsf -p qingjian-settings -p qingjian-clipboard-app -p qingjian-windows-settings
         if ($LASTEXITCODE -ne 0) { throw "cargo build 失败（退出码 $LASTEXITCODE）" }
         cargo build --release --locked -p qingjian-windows-tsf --target i686-pc-windows-msvc
         if ($LASTEXITCODE -ne 0) { throw "32 位 DLL cargo build 失败（退出码 $LASTEXITCODE）" }
@@ -66,6 +73,7 @@ $targets = @(
     'i686-pc-windows-msvc\release\qingjian_tsf.dll',
     'release\qingjian-server.exe',
     'release\qingjian-settings.exe',
+    'release\qingjian-clipboard.exe',
     'release\qingjian-settings-legacy.exe'
 )
 foreach ($t in $targets) {

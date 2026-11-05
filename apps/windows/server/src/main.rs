@@ -245,13 +245,48 @@ fn main() -> ExitCode {
     engine.set_auto_space(config.general.auto_space);
     engine.set_shuangpin_raw_preedit(config.general.shuangpin_raw_preedit);
     engine.set_shuangpin_raw_window(config.general.shuangpin_raw_window);
+    engine.set_shuangpin_full_pinyin(config.general.shuangpin_full_pinyin);
     engine.set_hold_selections(config.general.hold_selections);
     engine.set_context_memory(config.model.context_memory_seconds);
     engine.log_session(env!("CARGO_PKG_VERSION"), "windows");
     let usage_path = user_dir().map(|dir| dir.join(qingjian_predict::API_USAGE_FILE));
+    qingjian_windows_server::clipboard_process::sync(config.clipboard.enabled);
     dispatch::attach_cloud(&mut engine, &config.predict, usage_path);
     let router_config = RouterConfig::from(&config);
     let mut router = Router::new(engine, router_config.clone());
+    let vietnamese_words = generated(&root, "vietnamese.tsv").and_then(|path| {
+        match qingjian_dictionary::WordList::from_path(&path) {
+            Ok(words) => Some(words),
+            Err(error) => {
+                tracing::warn!(%error, path = %path.display(), "越南语候选词表读不了");
+                None
+            }
+        }
+    });
+    router.set_vietnamese_words(vietnamese_words);
+    let vietnamese_glossary = generated(&root, "vietnamese-zh.tsv").and_then(|path| {
+        match qingjian_translate::Glossary::from_path(Language::Chinese, &path) {
+            Ok(bundled) => {
+                let personal = user_dir().map_or_else(
+                    || qingjian_translate::PersonalGlossary::in_memory(Language::Chinese),
+                    |dir| {
+                        qingjian_translate::PersonalGlossary::open(
+                            Language::Chinese,
+                            dir.join("user-glossary-input-vi-zh.tsv"),
+                        )
+                    },
+                );
+                Some(qingjian_translate::LayeredTranslator::new(
+                    bundled, personal,
+                ))
+            }
+            Err(error) => {
+                tracing::warn!(%error, path = %path.display(), "越南语中文释义表读不了");
+                None
+            }
+        }
+    });
+    router.set_vietnamese_glossary(vietnamese_glossary);
     router.configure_local_model(
         dispatch::ModelDirs {
             user: user_dir(),

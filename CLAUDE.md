@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 本仓库与上游
+
+- 本仓库的 `origin` 是 `https://github.com/likeplayscav/Yushi.git`。
+- 固定上游 `upstream` 为 `https://github.com/qingjian-team/qingjian.git`，以后同步上游都使用这个地址的 `main` 分支。
+- 同步时先检查工作区并获取双方最新提交，再合并 `upstream/main`，保留本仓库的独有改动；解决冲突后按下文要求验证。
+
 ## 仓库现状
 
 跨平台输入法，Core 平台无关，各平台只做壳。已发版 0.1.3（macOS 与 Windows 共用版本号，2026-09-17）；Linux 提供 Rust Server + Fcitx5 默认候选面板（源码安装，0.1.4 起另有 Ubuntu 26.04 预编译包），另有 Ubuntu 22.04 的 Fcitx4 源码适配。
@@ -25,7 +31,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `crates/bamboo-slip`：自绘 UI 引擎（场景树、布局、文字、动画 → 位图，另有控件库与窗口宿主），候选窗与设置程序共用；不放任何青简的概念，约定见该目录的 `CLAUDE.md`。双许可，见该目录的 `LICENSE.md`。
 - `crates/bamboo-slip-i18n`：界面文案多语言：各 crate 的 `locales/*.toml` 编译时嵌入，`tr` 按进程级的界面语言查，回退英文再回退中文。双许可，见该目录的 `LICENSE.md`。
 - `crates/qingjian-update`：检查更新：读官网的 `releases.json`、验 ed25519 签名、按平台与渠道挑新版本，只提示不安装；发版侧的签名工具是 `tools/release-sign`。见 `docs/design/update.md`。
+- `crates/qingjian-code`：认出一段文字像不像代码并切高亮片段，输入法与剪贴板共用；core 里转出为 `qingjian_core::code`。
+- `crates/qingjian-clipboard`：剪贴板历史存储（SQLite，留好同步要用的字段）与面板位置，平台无关，不放窗口与界面。
+- `crates/qingjian-clipboard-sync`：剪贴板的设备间同步：配对、加密通道、合并、发现与扫描，不依赖具体存储；Windows 与 Android 共用。
 - `apps/settings`：设置程序（三平台共用，画在 bamboo-slip 上，读写同一份配置文件），页面与设置项按 `docs/design/settings.md`；macOS 装在 `Qingjian.app/Contents/Applications/`，Windows、Linux 与 Server 同目录。`--png <目录>` 拷一份配置按脚本截图。
+- `apps/clipboard`：青简剪贴板（独立进程，Windows 与 macOS）：监听复制、全局快捷键呼出卡片面板、粘贴回原窗口，画在 bamboo-slip 上；系统相关的在 `src/system/{windows,macos}/`，霓虹灯的节奏与像素在共用的 `src/system/neon/`。macOS 版是输入法包里的 `QingjianClipboard.app`，由输入法按配置拉起。
 - `apps/cli`：Core 的验证工具：查询、逐键计时、输入日志回放、整句评测、常数扫描。排序 / 整句 / 纠错的改动先跑它再合。
 - `apps/macos`：IMK 壳，按 `app / host / imk / candidates / menubar / preferences` 分目录（`preferences` 是旧版设置，新版 `apps/settings` 为主、旧版只作兜底）；`scripts/bundle.sh --install` 装到本机，`--pkg` 出分发包。
 - `apps/windows`：`server`（Server 进程：Engine + IPC + 自绘候选窗与状态条）+ `tsf`（TSF DLL）+ `settings`（旧版设置，WinUI 3，只作兜底，新版 `apps/settings` 为主）+ `installer`（Inno）。DLL 不能带 Engine 的依赖树，所以是两个 package。

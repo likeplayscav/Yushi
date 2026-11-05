@@ -24,20 +24,24 @@
 3. 提交，打注释标签并推：`git tag -a v0.1.4 -m "青简 0.1.4" && git push origin main v0.1.4`。
 4. 标签推出去之后，给历代配置回归测试补一份这一版的模板：`python3 crates/qingjian-platform/tests/config_history/extract.py v<版本> v<版本>`，
    新文件随下一个提交进库（`tests/config_history.rs` 要求以后的版本都读得进它）。
-5. 紧接一个普通提交把版本号改成下一个开发版（`0.1.5-dev`），CHANGELOG 顶上加 `## 0.1.5 · 未发布 · stable`；-dev 版本永远没有标签与 Release。
+5. CI 跑完、GitHub Release 转正后，`tools/release/gitee-release.sh v<版本>` 在 Gitee 镜像上建同名发行版（官网下载页有它的链接）：
+   标题、说明、预发布照搬 GitHub Release，不传安装包。要对 Gitee 仓库有推送权限的 `GITEE_TOKEN`；标签由镜像同步过去，还没到就先在 Gitee 仓库页点同步。
+6. 紧接一个普通提交把版本号改成下一个开发版（`0.1.5-dev`），CHANGELOG 顶上加 `## 0.1.5 · 未发布 · stable`；-dev 版本永远没有标签与 Release。
 
 `release.yml` 的流程：
 
 - `prepare`（`ubuntu-26.04`）：门禁（要打的平台版本号都与标签一致、不带 `-dev`、标签在 main 上、配了索引签名密钥）→ 用 CHANGELOG 那一节加各平台未签名提示建**草稿** Release。
 - `macos`（`macos-26`）、`windows`（`windows-latest`）、`linux`（`ubuntu-26.04`）、`android`（`ubuntu-26.04`）并行：下载产品数据 → 打包 → `tools/release/upload-build.sh` 把安装包和
   这个平台的 `SHA256SUMS-<平台>`、`build-info-<平台>.json` 片段传到草稿上。
+- `linux-packages`（`ubuntu-26.04`）与它们并行：在容器里打 deb / rpm（`apps/linux/packaging/build.sh`，见 [linux-packaging.md](linux-packaging.md)），在 Debian 13、Ubuntu 26.04、Fedora 42 的干净容器里装一遍自检，
+  再同样传到草稿上（片段名 `linux-packages`）。它们不进 `releases.json`：每种格式两个包，检查更新与官网下载页仍按 tar.gz 认 Linux。
 - `publish`：要打的平台都成功才跑，`tools/release/finish-release.sh` 把片段合成一份 `SHA256SUMS` 与 `build-info.json`（各平台构建机记在 `platforms` 里）、删掉片段、草稿转正
   → `publish-releases-json.sh` 生成并签名 `releases.json` → `bump-website.sh` 触发官网构建。
   任何平台失败，Release 就停在草稿、用户看不到；修好后删掉草稿与标签重推，或在 Actions 页重跑失败的 job。
 
 **单平台补丁**（只修一个平台的急事）：只改那个平台的版本号，打 `macos-v<版本>` / `windows-v<版本>` / `linux-v<版本>` / `android-v<版本>`，同一套流程只打那一个平台，Release 标题带平台名。
 
-发版后 GitHub Release 上有：`qingjian-<版本>-macos-arm64.pkg`、`-macos-x86_64.pkg`、`-windows-x86_64-setup.exe`、`-linux-x86_64.tar.gz`、`-android-arm64.apk`、`SHA256SUMS`、`build-info.json`、`releases.json` 与 `.sig`。
+发版后 GitHub Release 上有：`qingjian-<版本>-macos-arm64.pkg`、`-macos-x86_64.pkg`、`-windows-x86_64-setup.exe`、`-linux-x86_64.tar.gz`、`-android-arm64.apk`，deb / rpm 各两个（`qingjian`、`qingjian-fcitx5`），`SHA256SUMS`、`build-info.json`、`releases.json` 与 `.sig`。
 
 官网由 Cloudflare Workers Builds 按官网仓库的提交自动构建，没有可调用的构建钩子，所以主仓库靠**往官网仓库推一个小提交**来触发：
 `tools/release/bump-website.sh` 把版本标签与文档提交号写进官网的 `src/content/upstream.json` 并提交推送（提交者 qingjian-ci）。
@@ -45,7 +49,7 @@
 官网文档只随发版更新（`docs/user/` 平时改动不推官网，免得文档领先于用户装到的版本）。没配就在官网仓库随便提交一次（或本地跑这个脚本）。
 官网构建时才拉最新 Release 的 `releases.json` 与主仓库 `docs/user`，所以提交内容本身不重要，`upstream.json` 只是留个记录、顺便让文档按记下的提交号拉（版本对得上）。
 
-Rust 工具链由 `rust-toolchain.toml` 钉版本（现在 1.96.0），两个 workflow 里 `dtolnay/rust-toolchain` 的 `toolchain:` 输入写同一个号；升级 Rust 时三处一起改。
+Rust 工具链由 `rust-toolchain.toml` 钉版本（现在 1.96.0），各 workflow 里 `dtolnay/rust-toolchain` 的 `toolchain:` 输入写同一个号；升级 Rust 时一起改。
 
 ## 各平台的特别之处
 
@@ -72,11 +76,12 @@ cargo 命令全 `--locked`（含 `bundle.sh` 与 `build.ps1`）。普通 CI 只�
 发版门禁（`release.yml` 第一步）：版本号与标签一致且不带 `-dev`；标签指向的提交必须在 `main` 上（`git merge-base --is-ancestor`）；产品数据下载后按 `data` Release 的 `SHA256SUMS` 校验，摘要写进 `build-info.json` 的 `data_sha256`。
 **正式版前还欠**：产品数据改成不可变 tag 并在仓库里锁定版本（现在滚动覆盖，同一源码 tag 重跑可能拿到不同数据）、安装包内容验证（词库 / 模型 / 许可齐不齐、签名校验）。
 
-## 两个 workflow
+## 几个 workflow
 
 | 文件 | 触发 | 做什么 |
 |---|---|---|
 | `.github/workflows/ci.yml` | push main、PR | Linux 上 `cargo fmt --check` / clippy / test，排除 `qingjian-macos`（IMK 外壳只能在 macOS 编译，macOS runner 计费是 Linux 的 10 倍） |
+| `.github/workflows/clipboard-release.yml` | 推 `clipboard-v*` 标签 | 打青简剪贴板的独立安装包，发到 qingjian-clipboard 的 Release（见下文「青简剪贴板」） |
 | `.github/workflows/release.yml` | 推 `v*`（全部平台）或 `macos-v*` / `windows-v*` / `linux-v*` / `android-v*`（单平台）标签 | `prepare` 门禁并建草稿 Release → `macos` / `windows` / `linux` / `android` 并行打包上传 → `publish` 合并摘要、转正、生成 `releases.json`、触发官网构建（见上文） |
 
 ## 产品数据从哪来
@@ -172,6 +177,25 @@ gh secret set QINGJIAN_ANDROID_KEY_PASSWORD
 - `SHA256SUMS` 与 `releases.json` 自己不列进 `assets`。
 - 官网侧要做的：构建时下载这个文件替代手写的 `releases` 数组（与拉 `docs/user` 的 `sync-docs.mjs` 同一处、同一个令牌），
   `downloadsOpen` 开关仍由官网自己控制。
+
+## 青简剪贴板
+
+剪贴板单独发版，版本号与输入法无关（`apps/clipboard/Cargo.toml`，从 0.1.0 起），源码留在这个仓库，安装包与 issue 在 [qingjian-team/qingjian-clipboard](https://github.com/qingjian-team/qingjian-clipboard)。
+输入法的安装包照常内置一份（缺省关闭），独立安装包给只要剪贴板的人：
+- Windows：按用户装、不要管理员，见 `apps/clipboard/installer/clipboard.iss`。
+- macOS：`QingjianClipboard.app` 压成 zip，Apple Silicon 与 Intel 各一个，用户解压后拖进「应用程序」。和输入法包里那份是同一个 bundle id、同一套 `assemble.sh` 装出来的；两份不会同时跑（单实例锁），单独装的那份在菜单栏菜单里多一个「开机启动」（系统登录项）。
+
+1. `apps/clipboard/Cargo.toml` 去掉 `-dev`，`cargo update --workspace --offline`；`apps/clipboard/CHANGELOG.md` 顶上那节的「未发布」换成日期。
+2. 提交、合进 main 后打注释标签并推：`git tag -a clipboard-v0.1.0 -m "青简剪贴板 0.1.0" && git push origin main clipboard-v0.1.0`。
+3. `clipboard-release.yml`：`gate` 过门禁（版本号 = 标签、不带 `-dev`、标签在 main 上）后在 qingjian-clipboard 建 `v<版本>` 的**草稿** Release，说明取自 CHANGELOG 那节，附两个平台的未签名提示与源码提交；
+   `windows`、`macos` 并行打包传到草稿上；两边都成功 `publish` 才补上 `SHA256SUMS`、转正。任何一边失败就停在草稿，修好后删掉草稿与标签重推，或重跑失败的 job。
+   跨仓库发布要 Secret `QINGJIAN_CLIPBOARD_TOKEN`（fine-grained PAT，对 qingjian-clipboard 有 Contents: read and write），没配门禁直接失败。
+4. 紧接一个提交把版本号改成下一个 `-dev`，CHANGELOG 顶上加新的「未发布」节。
+
+本机打包：
+- Windows：`powershell -ExecutionPolicy Bypass -File apps\clipboard\installer\build.ps1`，成品在 `target\installer\qingjian-clipboard-<版本>-windows-x86_64-setup.exe`。
+- macOS：`apps/clipboard/macos/build.sh`（`QINGJIAN_TARGET=x86_64-apple-darwin` 打 Intel），成品在 `target/installer/qingjian-clipboard-<版本>-macos-<arm64|x86_64>.zip`。
+剪贴板的标签不进 `release.yml`（它只认 `v*` 与各平台前缀），也不进 `releases.json`：输入法的检查更新与官网下载页不认它。
 
 ## 本机打包
 

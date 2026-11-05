@@ -252,6 +252,7 @@ impl Router {
                 sentence: None,
                 notice: self.notice.clone(),
                 symbol_panel: false,
+                panel_text_box: false,
             },
             Some(Composed::Candidates {
                 preedit,
@@ -308,6 +309,7 @@ impl Router {
                     sentence: self.sentence.clone(),
                     notice: self.notice.clone(),
                     symbol_panel: false,
+                    panel_text_box: false,
                 }
             }
         }

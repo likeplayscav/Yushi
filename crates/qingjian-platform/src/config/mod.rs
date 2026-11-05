@@ -2,6 +2,7 @@ mod appearance;
 mod apps;
 mod aux_code;
 mod candidate_renderer;
+mod clipboard;
 mod code_rules;
 mod commit_key;
 mod dictionaries;
@@ -27,6 +28,7 @@ mod shift_letter;
 mod shortcut;
 mod status_bar;
 mod switch_key;
+mod third_input_method;
 mod transfer;
 mod update;
 
@@ -47,6 +49,9 @@ pub use apps::{
 };
 pub use aux_code::AuxCodeConfig;
 pub use candidate_renderer::CandidateRenderer;
+pub use clipboard::{
+    CLIPBOARD_HISTORY_LIMITS, ClipboardConfig, ClipboardEdge, DEFAULT_CLIPBOARD_EXCLUDED_APPS,
+};
 pub use code_rules::CodeRules;
 pub use commit_key::{CommitKey, CommitKeys, CommitRoute};
 pub use dictionaries::{DEFAULT_DOMAINS, DictionariesConfig};
@@ -74,6 +79,7 @@ pub use shift_letter::ShiftLetter;
 pub use shortcut::ShortcutConfig;
 pub use status_bar::StatusBarConfig;
 pub use switch_key::{SwitchKey, SwitchKeys};
+pub use third_input_method::ThirdInputMethod;
 pub use transfer::{export_settings, import_settings};
 pub use update::{UpdateChannel, UpdateConfig};
 
@@ -113,6 +119,9 @@ pub struct Config {
 
     /// 本地整句模型。
     pub model: LocalModelConfig,
+
+    /// 青简剪贴板（实验功能）。
+    pub clipboard: ClipboardConfig,
 
     /// 检查更新。
     pub update: UpdateConfig,
@@ -154,7 +163,7 @@ english_candidates_on = [
   "com.apple.TextEdit", "com.apple.Notes", "com.apple.mail", "com.apple.MobileSMS", "com.apple.iWork.Pages", "com.apple.iWork.Keynote",
   "com.microsoft.Word", "com.microsoft.Powerpoint", "com.microsoft.Outlook", "com.microsoft.onenote.mac", "com.microsoft.teams2", "com.kingsoft.wpsoffice.mac",
   "com.tencent.xinWeChat", "com.tencent.qq", "com.tencent.WeWorkMac", "com.alibaba.DingTalkMac", "com.electron.lark",
-  "ru.keepcoder.Telegram", "com.tdesktop.Telegram", "com.hnc.Discord", "com.tinyspeck.slackmacgap", "md.obsidian", "notion.id", "abnerworks.Typora",
+  "ru.keepcoder.Telegram", "com.tdesktop.Telegram", "com.hnc.Discord", "com.tinyspeck.slackmacgap", "com.vng.zalo", "com.anthropic.claudefordesktop", "md.obsidian", "notion.id", "abnerworks.Typora",
 ]
 "#
     };
@@ -193,6 +202,8 @@ translation_second = "shift+option"
 # 把应用里选中的文字译成学习语言（要开着云服务）：译文先出现在候选窗口，回车替换选中的文字，Esc 保留原文
 # 修饰键 + 一个字母或数字，任意组合；避开 ⌘T 这类应用常用键
 translate_selection = "control+option+t"
+# 没在打字时打开符号面板的「翻译」组（要开着云服务）：框里打一句，译文停顿后出现在光标处，回车上屏
+translate_panel = "control+option+y"
 "#
     };
 }
@@ -227,6 +238,8 @@ translation_second = "shift+ctrl"
 translate_selection = "ctrl+alt+t"
 # Windows 组句中按需调用 AI
 predict = "ctrl+alt+j"
+# 没在打字时打开符号面板的「翻译」组（要开着云服务）：框里打一句，译文停顿后出现在光标处，回车上屏
+translate_panel = "ctrl+alt+y"
 "#
     };
 }
@@ -246,7 +259,7 @@ page_size = 9
 page_keys = "[]"
 # 候选窗口外观：system 跟随系统 / light 浅色 / dark 深色
 appearance = "system"
-# 候选窗口主题（主题 id）：qingjian 青简绿 / system-blue 系统蓝 / wechat 微信绿 / sakura 樱花 / dafeiyu 大肥鱼 / miku 初音未来 / bocchi 波奇酱。只对青简渲染器生效
+# 候选窗口主题（主题 id）：qingjian 青简绿 / system-blue 系统蓝 / wechat 微信绿 / sujian 素笺 / sakura 樱花 / dafeiyu 大肥鱼 / miku 初音未来 / bocchi 波奇酱。只对青简渲染器生效
 theme = "qingjian"
 # 候选窗口排布：vertical 竖排 / horizontal 横排（横排只给高亮候选显示译文）
 layout = "vertical"
@@ -299,6 +312,8 @@ numpad_digit = "select"
 # 内置英文模式：开着时单击切换键（[shortcut] switch_mode）或 Caps Lock 亮着进英文模式
 # 关掉后青简保持中文模式，切换键与语言栏按钮都不再切过去；要打英文请用系统快捷键（Win+Space）切到别的输入法。Windows 与 Linux 用，macOS 的中英切换是 Caps Lock
 english_mode = true
+# 连按两次 Shift 切换到的第三输入法：off 不启用 / vietnamese 越南语。当前版本先保存设置，输入法实现完成后生效
+double_shift_input = "off"
 # 初始英文：Windows 是青简启动时，按应用记忆时也用于没有记录的应用；Linux 是新打开的应用和窗口
 default_english = false
 # Windows：按应用 exe 名记住中英状态，重启青简后重新使用初始模式
@@ -327,6 +342,8 @@ scheme = ""
 shuangpin_raw_preedit = false
 # 双拼方案下候选窗口的拼音行显示原始按键还是全拼，与上一项各管各的；缺省 false（全拼）；macOS、Windows 用
 shuangpin_raw_window = false
+# 双拼方案下同时接受全拼：开着时打拼音也用全拼，同一段输入里两种打法可以混用（一边双拼一边全拼的人共用一份配置）
+shuangpin_full_pinyin = false
 # 一段拼音分几次选完时，先选的词留在输入框里、整段选完才一起上屏，退格先撤回最后一次选择；false 为选了就上屏
 hold_selections = true
 # 形码方案：留空或 off 为关，wubi86 为五笔（86 版），也可以写用户数据目录 schemes/ 下自己放的方案目录名。
@@ -351,6 +368,9 @@ system_text_replacements = true
 # enabled = true    # 是否启用
 
 [shortcut]
+# 呼出剪贴板面板（实验功能，要开着 [clipboard] enabled）；至少两个修饰键加字母、数字或句号。
+# 缺省 Windows 是 "ctrl+alt+v"，macOS 是 "cmd+shift+v"
+# clipboard = "ctrl+alt+v"
 # Windows：切换当前模式的全 / 半角标点；空串禁用，可设为 "ctrl+." 或其他修饰键加字母、数字、句号
 toggle_punctuation = ""
 # Windows：在简体与上次用的繁体字形之间切换；空串禁用，可设为 "ctrl+shift+f" 或其他修饰键加字母、数字
@@ -367,6 +387,8 @@ question_mark = false
 # 候选高亮由哪对方向键移动：updown 用 ↑ / ↓ 移高亮、← / → 移拼音光标（缺省）；leftright 改用 ← / → 移高亮
 # leftright 时两键把「拼音行 + 候选栏」当成一条从左到右的序列走：→ 到拼音光标末位溢出成选词，← 到候选首位回拼音光标；↑ / ↓ 不做事。只有 Windows 用
 highlight_keys = "updown"
+# 额外用 Ctrl + F/B/N/P/A/E 导航候选（macOS）：竖排 P/N 移候选、B/F 翻页，横排相反；A/E 跳到当前页首个/最后一个真实候选，跳过空位；默认关
+extra_candidate_navigation = false
 # 组句时上屏高亮候选的键与原样上屏敲的字母的键：space / enter，都可写成 shift+space、shift+enter，或一个符号键如 ";"
 # 不能用 Ctrl / Alt / Win 组合、字母数字、翻页键；两项不能相同。空格或回车让出去后又没配给另一项，组句时按它不做事。Windows、Linux 用
 commit_candidate = "space"
@@ -441,8 +463,6 @@ lookahead = 32
 slots = 2
 # 组句中除了词候选还要不要整句补全（preedit 右侧，Tab 接受）
 sentence = true
-# 本地整句候选右侧是否显示服务返回的译文；仅发送该候选文本，不发送光标前后上下文
-sentence_translation = false
 # 上屏的整句（含分几次打完的一句）翻成学习语言，记进生词本的时间线；只发那一句，不发光标前后的文字
 vocabulary_translation = true
 
@@ -456,6 +476,18 @@ enabled = false
 # y = 0
 # 大小（百分比，60–150）；不跟候选字号走
 size = 100
+
+[clipboard]
+# 青简剪贴板（实验功能，Windows）：记录复制过的内容，按快捷键从屏幕一边弹出面板。默认关
+enabled = false
+# 面板从哪条边弹出：top、bottom、left、right
+edge = "bottom"
+# 最多留多少条，超了删最旧的
+history_limit = 1000
+# 暂时不记录新复制的内容
+paused = false
+# 从这些程序复制的内容不记录：程序名，不分大小写
+excluded_apps = ["KeePass", "KeePassXC", "1Password", "Bitwarden"]
 
 [update]
 # 检查更新：每天向官网（qingjian.app）读一次版本索引，有新版在菜单与设置的「关于」页提示；请求不带任何标识，不自动下载安装
@@ -694,7 +726,7 @@ impl Config {
 const APPEARANCE_COMMENT: &str = "# 候选窗口外观：system 跟随系统 / light 浅色 / dark 深色\n";
 
 /// 模板里 `theme` 那一行上方的注释，同上。
-const THEME_COMMENT: &str = "# 候选窗口主题（主题 id）：qingjian 青简绿 / system-blue 系统蓝 / wechat 微信绿 / sakura 樱花 / dafeiyu 大肥鱼 / miku 初音未来 / bocchi 波奇酱。只对青简渲染器生效\n";
+const THEME_COMMENT: &str = "# 候选窗口主题（主题 id）：qingjian 青简绿 / system-blue 系统蓝 / wechat 微信绿 / sujian 素笺 / sakura 樱花 / dafeiyu 大肥鱼 / miku 初音未来 / bocchi 波奇酱。只对青简渲染器生效\n";
 
 /// 旧写法里 `theme` 写的外观；新写法（或没写）为 `None`。
 fn legacy_appearance(document: &DocumentMut) -> Option<Appearance> {

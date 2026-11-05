@@ -36,6 +36,8 @@ data class Settings(
     val swipeInput: Boolean,
     /** 在键上往上一划上屏键上角标的数字或符号（缺省开），不用长按出气泡。 */
     val flickSymbols: Boolean,
+    /** 长按字母键不滑直接抬手出大写（缺省关，出角标符号）；气泡照样弹，滑着选不受影响。 */
+    val longPressUpper: Boolean,
     /** 按住空格左右滑逐字挪光标（缺省开）；关了空格上横滑不响应。 */
     val spaceCursor: Boolean,
     /** 键位排法：缺省是 [Arrangement.STANDARD]，另一套挪动了几个键的位置，见 [Arrangement]。 */
@@ -97,6 +99,7 @@ data class Settings(
         const val KEY_VOICE_HOLD_SPACE = "voice_hold_space"
         const val KEY_SWIPE_INPUT = "swipe_input"
         const val KEY_FLICK_SYMBOLS = "flick_symbols"
+        const val KEY_LONG_PRESS_UPPER = "long_press_upper"
         const val KEY_SPACE_CURSOR = "space_cursor"
         const val KEY_ARRANGEMENT = "arrangement"
         const val KEY_SHUANGPIN = "shuangpin_scheme"
@@ -116,6 +119,9 @@ data class Settings(
         const val KEY_LEARNING = "learning"
         const val KEY_HOLD_SELECTIONS = "hold_selections"
         const val KEY_SPELLING_CORRECTION = "spelling_correction"
+        const val KEY_EMOJI = "emoji"
+        const val KEY_KAOMOJI = "kaomoji"
+        const val KEY_SYMBOLS = "symbols"
         const val KEY_DOMAINS = "domains"
         const val KEY_DISABLED_DICTIONARIES = "disabled_dictionaries"
         const val KEY_GLOSS_FILL = "gloss_fill"
@@ -165,6 +171,7 @@ data class Settings(
                 voiceHoldSpace = prefs.getBoolean(KEY_VOICE_HOLD_SPACE, true),
                 swipeInput = prefs.getBoolean(KEY_SWIPE_INPUT, false),
                 flickSymbols = prefs.getBoolean(KEY_FLICK_SYMBOLS, true),
+                longPressUpper = prefs.getBoolean(KEY_LONG_PRESS_UPPER, false),
                 spaceCursor = prefs.getBoolean(KEY_SPACE_CURSOR, true),
                 arrangement = Arrangement.entries.firstOrNull { it.name == prefs.getString(KEY_ARRANGEMENT, null) }
                     ?: Arrangement.STANDARD,
@@ -185,6 +192,9 @@ data class Settings(
                     learning = prefs.getBoolean(KEY_LEARNING, true),
                     holdSelections = prefs.getBoolean(KEY_HOLD_SELECTIONS, true),
                     spellingCorrection = prefs.getBoolean(KEY_SPELLING_CORRECTION, true),
+                    emoji = prefs.getInt(KEY_EMOJI, SettingChoices.defaultEmoji),
+                    kaomoji = prefs.getInt(KEY_KAOMOJI, SettingChoices.defaultKaomoji),
+                    symbols = prefs.getInt(KEY_SYMBOLS, SettingChoices.defaultSymbols),
                     domains = prefs.getStringSet(KEY_DOMAINS, null)?.toSet() ?: SettingChoices.defaultDomains,
                     disabledDictionaries = prefs.getStringSet(KEY_DISABLED_DICTIONARIES, null).orEmpty().toSet(),
                     dictionariesStamp = prefs.getLong(KEY_DICTIONARIES_STAMP, 0),

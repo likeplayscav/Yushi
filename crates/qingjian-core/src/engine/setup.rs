@@ -67,6 +67,17 @@ impl Engine {
         self.shuangpin_raw_window
     }
 
+    /// 双拼方案下是否同时接受全拼。开着时同一段输入里的音节可以两种打法混用（`wodemingzi`），
+    /// 一边双拼一边全拼的两个人共用一份设置；关着（缺省）只有双拼一种读法。
+    pub fn set_shuangpin_full_pinyin(&mut self, enabled: bool) {
+        self.shuangpin_full_pinyin = enabled;
+        *self.correction_cache.borrow_mut() = None;
+    }
+
+    pub fn shuangpin_full_pinyin(&self) -> bool {
+        self.shuangpin_full_pinyin
+    }
+
     /// 挂上辅码码表（用户导入的与随包的笔画表）。照 [`Self::set_extra_dictionaries`] 的模式：壳按目录与配置装配。
     pub fn with_aux_codes(mut self, tables: Vec<Arc<dyn AuxCodeLookup>>) -> Self {
         self.aux_codes = tables;
@@ -278,6 +289,23 @@ impl Engine {
         }
     }
 
+    /// 一段键的全部读法：纯双拼（或注音）一条，开了混输时还有全拼与两种打法交替的读法。
+    /// 第一条是主读法，拼音行、尾巴与上屏消耗都按它算；其余读法只参与候选与整句比分数。
+    pub(super) fn decode_readings(&self, keys: &str) -> Vec<EngineDecoded> {
+        match (
+            self.zhuyin,
+            self.shuangpin.as_deref(),
+            self.shuangpin_full_pinyin,
+        ) {
+            (false, Some(layout), true) => layout
+                .decode_mixed(keys, self.fuzzy)
+                .into_iter()
+                .map(EngineDecoded::Shuangpin)
+                .collect(),
+            _ => self.decode(keys).into_iter().collect(),
+        }
+    }
+
     /// 光标后剩余拼音的显示形式：双拼先解码；能切就按音节用 `'` 连上，切不动就原样。
     /// 只用形码时剩余段是编码，原样显示。
     pub(super) fn marked_rest(&self, rest: &str) -> String {
@@ -338,6 +366,7 @@ impl Engine {
     /// 设置显式选区翻译的提供方，独立于自动联想；取消后旧结果不会上屏。
     pub fn set_translation_predictor(&mut self, predictor: Option<Box<dyn Predictor>>) {
         self.cancel_prediction();
+        self.panel_translations.clear();
         self.translation_predictor = predictor;
     }
 
@@ -349,6 +378,7 @@ impl Engine {
     /// 运行时换掉 Predictor（菜单开关云联想 / 配置热加载）；正在等的联想一并作废。
     pub fn set_predictor(&mut self, predictor: Box<dyn Predictor>) {
         self.cancel_prediction();
+        self.panel_translations.clear();
         self.predictor = predictor;
     }
 

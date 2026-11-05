@@ -28,6 +28,7 @@ description: 青简的全部设置保存在一个文本配置文件里：位置�
 | 配置项 | 设置界面 | 说明 |
 |---|---|---|
 | `[general] scheme` | 输入 → 拼音 | `pinyin`（全拼）、`xiaohe`、`ziranma`、`microsoft`、`sogou`、`abc`、`xiaolang`、`shoudao`、`jiajia`、`ziguang`、`zhuyin`，或自制方案的文件夹名 |
+| `[general] double_shift_input` | 输入法切换 → 连按两次 Shift 切换第三输入法 | `off`（缺省，不启用）或 `vietnamese`（越南语；输入法实现完成后生效） |
 | `[general] hold_selections` | 输入 → 分次选词先不上屏 | `true` / `false` |
 | `[aux_code] enabled`、`scheme` | 输入 → 辅码 | `scheme` 写码表的文件名或方案的文件夹名，随包笔画码是 `stroke` |
 | `[general] aux_code_keep_empty` | 输入 → 码删空后留在辅码 | `false` 为删空即退出 |
@@ -49,9 +50,16 @@ description: 青简的全部设置保存在一个文本配置文件里：位置�
 | `[general] preedit` | 外观 → 拼音显示位置 | `both`、`inline`、`window` |
 | `[general] page_keys` | 快捷键 → 翻页键 | `"[]"`、`",."`、`"-="` |
 | `[shortcut] extra_page_keys` | 快捷键 → 额外翻页键 | 列表，如 `["[]", ",.", "-="]`，缺省为空 |
+| `[shortcut] extra_candidate_navigation` | 快捷键 → Emacs 风格候选键（macOS） | `false`（默认）或 `true` |
 | `[shortcut] highlight_keys` | 快捷键 → 高亮移动键 | 上下或左右 |
 | `[shortcut] toggle_punctuation` | 快捷键 → Ctrl + . 切换全半角标点 | 空串为关闭，`"ctrl+."` 为 Ctrl + 句号；也可写成修饰键加字母、数字或句号，如 `"ctrl+shift+."` |
 | `[shortcut] toggle_traditional` | 快捷键 → Ctrl + Shift + F 切换简繁输出 | 空串为关闭（缺省），`"ctrl+shift+f"` 为 Ctrl + Shift + F；也可写成修饰键加字母或数字。只有 Windows 用 |
+| `[clipboard] enabled`、`edge` | 实验功能 → 青简剪贴板 | `enabled` 缺省 `false`；`edge`：`top`、`bottom`（缺省）、`left`、`right` |
+| `[clipboard] history_limit` | 实验功能 → 最多保留 | 缺省 `1000`，超了删最旧的；改小会立刻删 |
+| `[clipboard] paused`、`excluded_apps` | 实验功能 → 暂停记录、不记录这些程序 | `paused` 缺省 `false`；`excluded_apps` 写程序名，不分大小写，缺省是常见的密码管理器 |
+| `[clipboard] sync_enabled`、`sync_neon` | 实验功能 → 局域网同步、同步时显示霓虹灯 | `sync_enabled` 缺省 `false`，`sync_neon` 缺省 `true` |
+| `[clipboard] device_name` | 剪贴板面板 → 设备 → 这台设备的名字 | 空串用随机的默认名 |
+| `[shortcut] clipboard` | 实验功能 → 呼出剪贴板 | 缺省 Windows 是 `"ctrl+alt+v"`，macOS 是 `"cmd+shift+v"`；至少两个修饰键（macOS、Windows） |
 | `[shortcut] translate_selection` | 快捷键 → 翻译选中文字 | 如 `"alt+shift+t"` |
 | `[shortcut] predict` | 快捷键 → 按需 AI 联想 | 完整的组合键，设置界面只改修饰键 |
 | `[predict]` 一节 | 云服务 | 见下文 |

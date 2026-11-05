@@ -115,6 +115,15 @@ pub fn shortcuts(ui: &mut Ui<Message>, page: &Page) -> Result<Vec<NodeId>, Rende
             false,
         )?);
     }
+    if Feature::TranslatePanel.here() {
+        rows.push(recorder(
+            ui,
+            page,
+            Shortcut::TranslatePanel,
+            tr("shortcuts.translate_panel_info"),
+            false,
+        )?);
+    }
     out.push(section_title(
         ui,
         theme,
@@ -188,6 +197,21 @@ fn extra_keys(
             SettingRow::new(tr("shortcuts.highlight_keys"))
                 .info(tr("shortcuts.highlight_keys_info"))
                 .control(highlight)
+                .build(ui, theme)?,
+        );
+    }
+    if Feature::ExtraCandidateNavigation.here() {
+        let enabled = shortcut.extra_candidate_navigation;
+        let checkbox = Checkbox::new(enabled, "Ctrl + F/B/N/P/A/E").build(
+            ui,
+            theme,
+            "extra-candidate-navigation",
+            Message::set("shortcut", "extra_candidate_navigation", !enabled),
+        )?;
+        rows.push(
+            SettingRow::new(tr("shortcuts.extra_candidate_navigation"))
+                .info(tr("shortcuts.extra_candidate_navigation_info"))
+                .control(checkbox)
                 .build(ui, theme)?,
         );
     }

@@ -58,6 +58,8 @@ impl Host {
         self.engine
             .set_shuangpin_raw_window(config.general.shuangpin_raw_window);
         self.engine
+            .set_shuangpin_full_pinyin(config.general.shuangpin_full_pinyin);
+        self.engine
             .set_hold_selections(config.general.hold_selections);
         self.engine
             .set_context_memory(config.model.context_memory_seconds);
@@ -68,6 +70,9 @@ impl Host {
         // 中英切换键：macOS 只认单击 Shift（勾上后 Caps Lock 退化成只管大小写），其余勾选项不用但要说一声
         self.mode_switch
             .set_enabled(config.shortcut.switch_mode.shift);
+        self.mode_switch.set_third_enabled(
+            config.general.double_shift_input == qingjian_platform::ThirdInputMethod::Vietnamese,
+        );
         if config.shortcut.switch_mode.control || config.shortcut.switch_mode.ctrl_alt_space {
             tracing::warn!(
                 "macOS 只支持单击 Shift 作为中英切换键，配置文件里写的 control / ctrl+alt+space 已忽略"
@@ -75,11 +80,13 @@ impl Host {
         }
         self.punctuation_keys = config.shortcut.toggle_punctuation;
         self.predict_keys = config.shortcut.predict;
+        self.translate_panel_keys = config.shortcut.translate_panel;
         self.page_size = config.general.page_size();
         self.cloud_slots = config.predict.slots;
         self.page_keys = config.general.page_keys();
         self.extra_page_keys = config.shortcut.extra_page_keys;
         self.highlight_keys = config.shortcut.highlight_keys;
+        self.extra_candidate_navigation = config.shortcut.extra_candidate_navigation;
         self.punct_commits = config.general.punct_commits;
         self.preedit_mode = config.general.preedit;
         self.translation_pos = config.general.translation_pos;
@@ -176,6 +183,7 @@ impl Host {
             &self.update_status,
         );
         self.sync_update();
+        super::clipboard_process::sync(config.clipboard.enabled);
     }
 
     /// 配置里的自定义短语，`[general] system_text_replacements` 开着时再并上系统的文本替换，一起推给 Engine。

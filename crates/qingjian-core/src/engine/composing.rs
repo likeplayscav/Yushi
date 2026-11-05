@@ -183,6 +183,8 @@ impl Engine {
             self.page_turns = 0;
             self.retype_snapshot = None;
             self.typing.restart();
+            // 翻译框里选着字时开始打拼音：同记事本一样先删掉选中的字，拼音画在原处
+            self.remove_panel_selection();
         }
         self.typing.key(Instant::now());
         // 进缓冲区的字符也更新「上一个字符是不是数字」：直通了 `3` 再接着打拼音，
@@ -225,7 +227,7 @@ impl Engine {
     pub fn clear(&mut self) {
         self.composition.clear();
         self.held.clear();
-        self.panel = None;
+        self.take_panel();
         self.aux_code = None;
         self.chain.leave_buffer();
         // 壳给的光标前文只对这段组句有效，下一段第一键再读
@@ -423,7 +425,7 @@ impl Engine {
 }
 
 /// 光标后的第一个「单位」占几个字节：先跳过紧跟的 `'`，再算一个音节；规则同 [`unit_len_before`]。
-fn unit_len_after(after: &str, shuangpin: bool, plain: bool) -> usize {
+pub(super) fn unit_len_after(after: &str, shuangpin: bool, plain: bool) -> usize {
     let trimmed = after.trim_start_matches('\'');
     let separators = after.len() - trimmed.len();
     let Some(first) = trimmed.chars().next() else {

@@ -6,6 +6,14 @@ internal object Native {
         System.loadLibrary("qingjian_android")
     }
 
+    /** 日志接到 logcat 并写进 [logDir]，见 [AppLog]。 */
+    external fun initLogging(logDir: String)
+
+    external fun setVerboseLog(on: Boolean)
+
+    /** [level]：0 错误、1 警告、2 信息、其余调试。 */
+    external fun log(level: Int, message: String)
+
     /** 失败返回 0，原因在 logcat（标签 qingjian）。 */
     external fun create(dataDir: String, userDir: String): Long
 
@@ -25,6 +33,9 @@ internal object Native {
     external fun decodeSwipe(handle: Long, input: String): String?
 
     external fun select(handle: Long, index: Int): String?
+
+    /** 点了拼音行第 [index] 个字之后：拼音里的光标挪过去。 */
+    external fun moveCaret(handle: Long, index: Int): String?
 
     external fun selectTranslation(handle: Long, index: Int, sense: Int): String?
 
@@ -89,6 +100,43 @@ internal object Native {
 
     /** 剪贴板操作（[request] 是 `{"op":…}` 的 JSON），回操作之后的列表 JSON（[{text, image}]）；[limit] 是最大条数。 */
     external fun clipboard(userDir: String, request: String, limit: Int): String?
+
+    /** 没起名时的默认设备名。 */
+    external fun clipboardSyncDefaultName(userDir: String, chinese: Boolean): String?
+
+    /** 开始局域网同步（已开着就重开），成功回真。 */
+    external fun clipboardSyncStart(userDir: String, name: String, model: String, limit: Int): Boolean
+
+    external fun clipboardSyncStop()
+
+    /** 设备 id 和监听端口（JSON），注册 NSD 用。 */
+    external fun clipboardSyncInfo(): String?
+
+    external fun clipboardSyncFound(deviceId: String, name: String, model: String, address: String)
+
+    external fun clipboardSyncGone(deviceId: String)
+
+    /** 本机剪贴板内容变了，推给在线的设备。 */
+    external fun clipboardSyncChanged()
+
+    /** 等下一个同步事件（JSON），超时回 null。 */
+    external fun clipboardSyncPoll(timeoutMillis: Int): String?
+
+    /** 已配对和附近的设备（JSON）。 */
+    external fun clipboardSyncDevices(): String?
+
+    /** 设备页开了或关了。 */
+    external fun clipboardSyncWatch(watching: Boolean)
+
+    /** 显示配对码：生成一个新码。 */
+    external fun clipboardSyncBeginPairing(): String?
+
+    external fun clipboardSyncCancelPairing()
+
+    /** 输入配对码去连对方，结果走事件；地址写错回假。 */
+    external fun clipboardSyncJoin(address: String, code: String): Boolean
+
+    external fun clipboardSyncUnpair(deviceId: String)
 
     /** 记一张复制的图片，回操作之后的列表 JSON。 */
     external fun clipboardAddImage(userDir: String, bytes: ByteArray, extension: String, limit: Int): String?

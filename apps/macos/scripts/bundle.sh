@@ -76,7 +76,7 @@ GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then GIT_REV="${GIT_REV}+"; fi
 QINGJIAN_BUILD="${GIT_REV} · $(date +%Y-%m-%d)"
 export QINGJIAN_BUILD
-BUILD_ARGS=(-p "$BIN_NAME" -p qingjian-settings --locked)
+BUILD_ARGS=(-p "$BIN_NAME" -p qingjian-settings -p qingjian-clipboard-app --locked)
 [[ "$PROFILE" == "release" ]] && BUILD_ARGS+=(--release)
 BIN_DIR="target/$PROFILE"
 if [[ -n "$TARGET" ]]; then
@@ -181,6 +181,9 @@ if [[ "$SAMPLE_DATA" == 0 ]]; then
   for f in assets/lexicon/english.tsv data/generated/english.tsv; do
     [[ -f "$f" ]] && cp "$f" "$APP/Contents/Resources/"
   done
+  python3 tools/corpus/vietnamese_words.py assets/glossary/glossary-vi.tsv \
+    data/generated/vietnamese.tsv data/generated/vietnamese-zh.tsv
+  cp data/generated/vietnamese.tsv data/generated/vietnamese-zh.tsv "$APP/Contents/Resources/"
   echo "使用 data/generated/ 的产品数据（自建词库）"
 else
   echo "只带样例词库（--sample-data），不是可分发的包"
@@ -188,15 +191,12 @@ fi
 printf 'APPL????' > "$APP/Contents/PkgInfo"
 
 # 图标：应用图标从 assets/icon/macos/app.png 生成 .icns；输入法菜单图标直接用 assets/icon/menu.pdf（矢量，随 Info.plist 的 TISIconIsTemplate 按深浅色反色）
-ICONSET="$ROOT/target/Qingjian.iconset"
-rm -rf "$ICONSET" && mkdir -p "$ICONSET"
-for size in 16 32 128 256 512; do
-  sips -z $size $size assets/icon/macos/app.png --out "$ICONSET/icon_${size}x${size}.png" >/dev/null
-  double=$((size * 2))
-  sips -z $double $double assets/icon/macos/app.png --out "$ICONSET/icon_${size}x${size}@2x.png" >/dev/null
-done
-iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/Qingjian.icns"
+apps/macos/scripts/make-icns.sh "$APP/Contents/Resources/Qingjian.icns"
 cp "$APP/Contents/Resources/Qingjian.icns" "$SETTINGS_APP/Contents/Resources/Qingjian.icns"
+# 青简剪贴板（实验功能）也是独立的 .app：常驻菜单栏，输入法按配置用 open 拉起它（apps/macos/src/host/clipboard_process.rs）。
+# 与剪贴板单独打包共用 assemble.sh
+apps/clipboard/macos/assemble.sh "$BIN_DIR/qingjian-clipboard" "$APP/Contents/Applications/QingjianClipboard.app" \
+  "$BUILD_NUMBER" "$APP/Contents/Resources/Qingjian.icns" >/dev/null
 cp assets/icon/menu.pdf "$APP/Contents/Resources/qingjian-menu.pdf"
 # 仓库放在 iCloud 同步的目录（Documents）时新建的 .app 会带上 Finder 扩展属性，codesign 会拒（detritus not allowed）：签名前清掉
 xattr -cr "$APP"
@@ -273,6 +273,8 @@ if [[ "$MODE" == "--install" ]]; then
   # 系统会在下次切换到该输入法时重新拉起进程
   pkill -x "$BIN_NAME" 2>/dev/null || true
   pkill -x qingjian-settings 2>/dev/null || true
+  # 剪贴板开着的话，输入法下次套用配置时用新版拉起来
+  pkill -x qingjian-clipboard 2>/dev/null || true
   rm -rf "$INSTALL_DIR/$APP_NAME.app"
   mv "$STAGING" "$INSTALL_DIR/$APP_NAME.app"
   forget_bundle "$APP"

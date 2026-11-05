@@ -205,6 +205,12 @@ const LINKS: &[(PageId, &str, &str, &str)] = &[
     ),
     (
         PageId::Shortcuts,
+        "shortcuts.extra_candidate_navigation",
+        "personalize/keys-settings",
+        "Emacs 风格候选键（macOS）",
+    ),
+    (
+        PageId::Shortcuts,
         "shortcuts.punctuation_width",
         "personalize/keys-settings",
         "全半角标点快捷键（macOS、Windows）",
@@ -283,12 +289,6 @@ const LINKS: &[(PageId, &str, &str, &str)] = &[
         "AI 候选词",
     ),
     (PageId::Cloud, "cloud.sentence", "cloud/predict", "整句补全"),
-    (
-        PageId::Cloud,
-        "cloud.sentence_translation",
-        "cloud/sentence-translation",
-        "整句候选翻译",
-    ),
     (PageId::Cloud, "cloud.api_key", "cloud/index", "会发送什么"),
     (PageId::Cloud, "cloud.connection", "cloud/index", "开启"),
     (

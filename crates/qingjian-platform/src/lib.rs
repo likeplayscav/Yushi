@@ -21,16 +21,17 @@ mod scheme;
 pub mod shuangpin_schemes;
 
 pub use config::{
-    Appearance, AppsConfig, AuxCodeConfig, CandidateRenderer, CodeRules, CommitKey, CommitKeys,
-    CommitRoute, Config, DEFAULT_DOMAINS, DEFAULT_ENGLISH_CANDIDATES_ON,
+    Appearance, AppsConfig, AuxCodeConfig, CLIPBOARD_HISTORY_LIMITS, CandidateRenderer,
+    ClipboardConfig, ClipboardEdge, CodeRules, CommitKey, CommitKeys, CommitRoute, Config,
+    DEFAULT_CLIPBOARD_EXCLUDED_APPS, DEFAULT_DOMAINS, DEFAULT_ENGLISH_CANDIDATES_ON,
     DEFAULT_ENGLISH_CANDIDATES_ON_LINUX, DEFAULT_ENGLISH_CANDIDATES_ON_MACOS,
     DEFAULT_ENGLISH_CANDIDATES_ON_WINDOWS, DEFAULT_KEY_HINT_OPACITY, DEFAULT_PAGE_KEYS,
     DEFAULT_THEME, DictionariesConfig, EmojiCount, FontSize, GeneralConfig, HighlightKeys,
     KeyCombo, KeyHintMode, LEARNING_LANGUAGE_OFF, LayoutMode, LocalModel, LocalModelConfig,
     LogLevel, MAX_PAGE_SIZE, Modifiers, NumpadDigit, PAGE_KEY_OPTIONS, PageKeys, PreeditMode,
-    Scheme, ShiftLetter, ShortcutConfig, SwitchKey, SwitchKeys, UI_LANGUAGE_DEFAULT,
-    UI_LANGUAGE_SYSTEM, UpdateChannel, UpdateConfig, ZhiyiTier, export_phrases, export_settings,
-    import_phrases, import_settings, scheme_label, scheme_name,
+    Scheme, ShiftLetter, ShortcutConfig, SwitchKey, SwitchKeys, ThirdInputMethod,
+    UI_LANGUAGE_DEFAULT, UI_LANGUAGE_SYSTEM, UpdateChannel, UpdateConfig, ZhiyiTier,
+    export_phrases, export_settings, import_phrases, import_settings, scheme_label, scheme_name,
 };
 pub use error::ConfigError;
 pub use scheme::{SchemeMeta, SchemeSlot};

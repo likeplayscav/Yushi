@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use super::scheme::Scheme;
 use super::{
     Appearance, CandidateRenderer, EmojiCount, FontSize, KeyHintMode, LayoutMode,
-    LegacyTraditional, LogLevel, NumpadDigit, PreeditMode, ShiftLetter,
+    LegacyTraditional, LogLevel, NumpadDigit, PreeditMode, ShiftLetter, ThirdInputMethod,
 };
 use crate::code_schemes::{self, WUBI86};
 
@@ -132,6 +132,9 @@ pub struct GeneralConfig {
     /// Windows：按应用 exe 名记住中英状态，仅保存在本次 Server 运行期间。
     pub remember_mode_per_app: bool,
 
+    /// 连按两次 Shift 时切换到的第三输入法；缺省关。当前先保存用户选择，运行时接入随第三输入法实现补上。
+    pub double_shift_input: ThirdInputMethod,
+
     /// 中文模式下不在组句时敲的标点转成全角（`，。？！` 等，数字后的 `.` 保持半角）。
     /// Windows 悬浮状态条上可点切换；macOS 在偏好设置中选择默认模式。
     pub full_width_punctuation: bool,
@@ -166,6 +169,10 @@ pub struct GeneralConfig {
 
     /// 双拼方案下候选窗口的拼音行显示原始按键还是全拼，与 `shuangpin_raw_preedit` 各管各的，两项组合出四种显示。缺省关（全拼）。
     pub shuangpin_raw_window: bool,
+
+    /// 双拼方案下同时接受全拼（同一段输入里两种打法也能混用）。缺省关：只用选定的双拼方案。
+    /// 开着时家里有人打双拼、有人打全拼可以共用一份设置。
+    pub shuangpin_full_pinyin: bool,
 
     /// 一段拼音分几次选完时，先选的词留在输入框里、整段选完才一起上屏，退格先撤回选择。缺省开；关掉是选了就上屏。
     pub hold_selections: bool,
@@ -265,6 +272,7 @@ impl Default for GeneralConfig {
             english_mode: true,
             default_english: false,
             remember_mode_per_app: false,
+            double_shift_input: ThirdInputMethod::default(),
             full_width_punctuation: true,
             english_full_width_punctuation: false,
             punct_commits: false,
@@ -274,6 +282,7 @@ impl Default for GeneralConfig {
             scheme: String::new(),
             shuangpin_raw_preedit: false,
             shuangpin_raw_window: false,
+            shuangpin_full_pinyin: false,
             hold_selections: true,
             key_hint: KeyHintMode::default(),
             key_hint_opacity: DEFAULT_KEY_HINT_OPACITY,

@@ -66,12 +66,17 @@ Name: "chs"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 ; 这是最容易被误解成「设置/新版没生效」的一点，所以放在完成页明说。
 FinishedLabel=安装完成。请注销后重新登录（或重启电脑），青简才会在所有应用里生效。%n%n不方便注销的话，先关掉再重新打开要打字的应用也可以。
 
+[Dirs]
+; 输入法图标所在目录：regsvr32 在这里写单色图标，之后各用户的 Server 跟着任务栏深浅改写，所以放开给普通用户写
+Name: "{commonappdata}\Qingjian"; Permissions: users-modify
+
 [Files]
 ; —— 二进制 ——
 ; DLL 按版本起名并排装；卸载时若仍被占用，登记成重启后删。
 Source: "{#Repo}\target\release\qingjian_tsf.dll";      DestDir: "{app}"; DestName: "{#TsfDll}"; Flags: ignoreversion uninsrestartdelete
 Source: "{#Repo}\target\i686-pc-windows-msvc\release\qingjian_tsf.dll"; DestDir: "{app}"; DestName: "{#TsfDll32}"; Flags: ignoreversion uninsrestartdelete
 Source: "{#Repo}\target\release\qingjian-settings.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#Repo}\target\release\qingjian-clipboard.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; 旧版设置程序（WinUI）留一个版本作回退，下个版本删掉它与下面的运行时
 Source: "{#Repo}\target\release\qingjian-settings-legacy.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; 旧版设置程序自带一份 Windows App Runtime（自包含部署：Windows 10 上机器装的框架包用不了，见 docs\notes\windows-win10.md）；
@@ -88,6 +93,8 @@ Source: "{#Repo}\data\generated\glossary-es.qj"; DestDir: "{app}\data\generated"
 Source: "{#Repo}\data\generated\glossary-vi.qj"; DestDir: "{app}\data\generated";       Flags: ignoreversion
 Source: "{#Repo}\data\generated\glossary-de.qj"; DestDir: "{app}\data\generated";       Flags: ignoreversion
 Source: "{#Repo}\data\generated\english.tsv";    DestDir: "{app}\data\generated";       Flags: ignoreversion
+Source: "{#Repo}\data\generated\vietnamese.tsv"; DestDir: "{app}\data\generated";       Flags: ignoreversion
+Source: "{#Repo}\data\generated\vietnamese-zh.tsv"; DestDir: "{app}\data\generated";    Flags: ignoreversion
 Source: "{#Repo}\data\generated\dicts\*.qj";     DestDir: "{app}\data\generated\dicts";  Flags: ignoreversion
 ; —— 随包辅码码表（笔画，开箱可用）：Server 扫 data\generated\codes\；CNS11643 筆順資料派生，署名见「关于」页 ——
 ;    产品数据一律不加 skipifsourcedoesntexist：缺了就编不过，不悄悄打出少数据的包（build.ps1 编译前先查一遍）
@@ -151,6 +158,8 @@ Filename: "{sys}\taskkill.exe"; Parameters: "/im qingjian-server.exe /f"; \
   Flags: runhidden; RunOnceId: "KillServer"
 Filename: "{sys}\taskkill.exe"; Parameters: "/im qingjian-settings.exe /f"; \
   Flags: runhidden; RunOnceId: "KillSettings"
+Filename: "{sys}\taskkill.exe"; Parameters: "/im qingjian-clipboard.exe /f"; \
+  Flags: runhidden; RunOnceId: "KillClipboard"
 Filename: "{sys}\taskkill.exe"; Parameters: "/im qingjian-settings-legacy.exe /f"; \
   Flags: runhidden; RunOnceId: "KillLegacySettings"
 Filename: "{sys}\regsvr32.exe"; Parameters: "/u /s ""{app}\{#TsfDll}"""; \
@@ -238,6 +247,7 @@ begin
   RetireServerExe;
   KillProcess('qingjian-server.exe');
   KillProcess('qingjian-settings.exe');
+  KillProcess('qingjian-clipboard.exe');
   KillProcess('qingjian-settings-legacy.exe');
   RetireLoadedDll('{#TsfDll}');
   RetireLoadedDll('{#TsfDll32}');

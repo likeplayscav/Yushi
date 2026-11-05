@@ -2,6 +2,7 @@
 
 mod aux_code;
 mod candidate_menu;
+mod caret;
 mod chaizi;
 mod cloud;
 mod code;
@@ -21,6 +22,7 @@ mod lookup;
 mod nine_key;
 mod p2c_placement;
 mod panel;
+mod panel_translate;
 mod polyphone;
 mod privacy;
 mod raw;

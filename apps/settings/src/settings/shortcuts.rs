@@ -31,8 +31,22 @@ impl Settings {
         if Feature::CloudRequestControls.here() {
             self.write("shortcut", "predict", defaults.predict.key_string());
         }
+        if Feature::TranslatePanel.here() {
+            self.write(
+                "shortcut",
+                "translate_panel",
+                defaults.translate_panel.key_string(),
+            );
+        }
         if Feature::HighlightKeys.here() {
             self.write("shortcut", "highlight_keys", defaults.highlight_keys.key());
+        }
+        if Feature::ExtraCandidateNavigation.here() {
+            self.write(
+                "shortcut",
+                "extra_candidate_navigation",
+                defaults.extra_candidate_navigation,
+            );
         }
         if Feature::ExtraPageKeys.here() {
             self.write_list("shortcut", "extra_page_keys", &[]);

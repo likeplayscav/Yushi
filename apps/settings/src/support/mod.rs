@@ -36,6 +36,7 @@ pub enum Feature {
     CommitKeys,
     ExtraPageKeys,
     HighlightKeys,
+    ExtraCandidateNavigation,
     TogglePunctuation,
     /// 简体与上次用的繁体之间切换输出字形。
     ToggleTraditional,
@@ -52,15 +53,20 @@ pub enum Feature {
     ShowTones,
     /// 「实验功能」页：下载、启用知意与含章·通变。
     ExperimentalModels,
+    /// 「实验功能」页的青简剪贴板。
+    Clipboard,
     /// 中文组句中的小键盘数字：选候选还是进组句。
     NumpadDigit,
     /// 双拼候选窗口的拼音行显示敲的键。
     ShuangpinRawWindow,
+
+    /// 没在打字时打开符号面板翻译组的快捷键。
+    TranslatePanel,
 }
 
 impl Feature {
     #[cfg(test)]
-    pub const ALL: [Self; 26] = [
+    pub const ALL: [Self; 29] = [
         Self::AuxCode,
         Self::Schemes,
         Self::SwitchKeys,
@@ -76,6 +82,7 @@ impl Feature {
         Self::CommitKeys,
         Self::ExtraPageKeys,
         Self::HighlightKeys,
+        Self::ExtraCandidateNavigation,
         Self::TogglePunctuation,
         Self::ToggleTraditional,
         Self::SystemTextReplacements,
@@ -85,8 +92,10 @@ impl Feature {
         Self::KeyHint,
         Self::ShowTones,
         Self::ExperimentalModels,
+        Self::Clipboard,
         Self::NumpadDigit,
         Self::ShuangpinRawWindow,
+        Self::TranslatePanel,
     ];
 
     /// 当前平台显示这一项。
@@ -127,6 +136,7 @@ impl Feature {
             Self::CommitKeys => [Todo, Yes, Yes],
             Self::ExtraPageKeys => [Yes, Yes, Todo],
             Self::HighlightKeys => [Yes, Yes, Todo],
+            Self::ExtraCandidateNavigation => [Yes, Todo, Todo],
             Self::TogglePunctuation => [Yes, Yes, Todo],
             Self::ToggleTraditional => [Todo, Yes, Todo],
             // 系统的文本替换只有 macOS 有
@@ -134,11 +144,14 @@ impl Feature {
             Self::ApiUsage => [Yes, Yes, Yes],
             Self::CloudRequestControls => [Yes, Yes, Yes],
             Self::VocabularyTranslation => [Yes, Yes, Yes],
+            // 符号面板只有 macOS 与 Windows 有
+            Self::TranslatePanel => [Yes, Yes, No],
             Self::KeyHint => [Yes, Yes, Todo],
             // Fcitx 面板与应用里的行内拼音共用一串，还没分开
             Self::ShowTones => [Yes, Yes, Todo],
             // Windows、Linux 的服务进程还没接知意；没有 GPU 时 CPU 上打分要发烫，先只开 macOS（Metal）
             Self::ExperimentalModels => [Yes, Yes, Todo],
+            Self::Clipboard => [Yes, Yes, Todo],
             Self::NumpadDigit => [Todo, Yes, Todo],
             // Fcitx 面板与应用里的行内拼音共用一串，还没分开
             Self::ShuangpinRawWindow => [Yes, Yes, Todo],
@@ -164,6 +177,7 @@ impl Feature {
             Self::CommitKeys => "上屏键自定义",
             Self::ExtraPageKeys => "额外翻页键",
             Self::HighlightKeys => "高亮移动键",
+            Self::ExtraCandidateNavigation => "Emacs 风格候选键",
             Self::TogglePunctuation => "Ctrl + . 切换全半角标点",
             Self::ToggleTraditional => "Ctrl + Shift + F 切换简繁输出",
             Self::SystemTextReplacements => "也用系统的文本替换",
@@ -173,8 +187,10 @@ impl Feature {
             Self::KeyHint => "双拼键位提示",
             Self::ShowTones => "拼音行显示声调",
             Self::ExperimentalModels => "实验功能（知意、含章·通变）",
+            Self::Clipboard => "青简剪贴板",
             Self::NumpadDigit => "小键盘数字",
             Self::ShuangpinRawWindow => "双拼候选窗显示按键",
+            Self::TranslatePanel => "打开符号面板的翻译组",
         }
     }
 
@@ -198,6 +214,9 @@ impl Feature {
                 (PageId::Shortcuts, "shortcut.commit_raw"),
             ],
             Self::HighlightKeys => &[(PageId::Shortcuts, "shortcuts.highlight_keys")],
+            Self::ExtraCandidateNavigation => {
+                &[(PageId::Shortcuts, "shortcuts.extra_candidate_navigation")]
+            }
             Self::TogglePunctuation => &[(PageId::Shortcuts, "shortcuts.punctuation_width")],
             Self::ToggleTraditional => &[(PageId::Shortcuts, "shortcuts.traditional")],
             Self::SystemTextReplacements => &[(PageId::Phrases, "phrases.system_replacements")],
@@ -208,6 +227,7 @@ impl Feature {
                 (PageId::Shortcuts, "shortcut.predict"),
             ],
             Self::VocabularyTranslation => &[(PageId::Cloud, "cloud.vocabulary_translation")],
+            Self::TranslatePanel => &[(PageId::Shortcuts, "shortcut.translate_panel")],
             Self::KeyHint => &[(PageId::Input, "input.key_hint")],
             Self::ShowTones => &[(PageId::Candidates, "candidates.show_tones")],
             Self::NumpadDigit => &[(PageId::Candidates, "candidates.numpad_digit")],
@@ -219,7 +239,8 @@ impl Feature {
             | Self::HorizontalGrid
             | Self::GridPageKeys
             | Self::ApiUsage
-            | Self::ExperimentalModels => &[],
+            | Self::ExperimentalModels
+            | Self::Clipboard => &[],
         }
     }
 }
