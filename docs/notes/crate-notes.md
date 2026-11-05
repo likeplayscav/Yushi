@@ -590,7 +590,7 @@ PKG_CONFIG_PATH="$onig" PKG_CONFIG_ALLOW_CROSS=1 RUSTONIG_SYSTEM_LIBONIG=1 \
 
 `installer/build.ps1` 默认只带共享设置；`-IncludeLegacySettings` 才构建并打包旧 WinUI 设置与完整 Windows App Runtime。TSF 右键菜单按旧 exe 是否存在显示入口。打包后 `tools/release/windows-size.py` 按 `.iss` 当前选择的 `[Files]` 输出 `package-size.json`，区分压缩包与展开文件大小；PowerShell 门禁在 `tools/release/test_windows_installer.py`，CI 的 Windows job 执行。
 
-`.github/workflows/windows-package.yml` 在 `build/windows-*` 分支构建开发包：原生 workspace 测试、x86 TSF lint、真实模型停键探针及姓名/文章评测成功后调用 Inno；`tools/release/windows_package.py` 在独立 runner 验安装、两种架构的 COM 注册、数据与二进制哈希、三程序启动、设置离屏渲染和卸载，再归档安装包、校验和、源码提交与完整验证记录。产物作为 Actions artifact 下载，不创建发行标签或 Release；自动化验收不等于 Win11 搜索/开始菜单的交互验收。
+`.github/workflows/windows-package.yml` 仅在手动触发最终打包时构建：原生 workspace 测试、x86 TSF lint、真实模型停键探针及姓名/文章评测成功后调用 Inno；`tools/release/windows_package.py` 在独立 runner 验安装、两种架构的 COM 注册、数据与二进制哈希、三程序启动、设置离屏渲染和卸载，再归档安装包、校验和、源码提交与完整验证记录。产物作为 Actions artifact 下载，不创建发行标签或 Release；自动化验收不等于 Win11 搜索/开始菜单的交互验收。
 
 Inno 命令行宏可能是字符串，`/DIncludeLegacySettings=0` 必须经 `Int(IncludeLegacySettings)` 后判断；直接 `#if IncludeLegacySettings` 会将非空的 `"0"` 当真，标准包仍索取不存在的旧设置。`QINGJIAN_TEST_ISCC=<ISCC.exe>` 启用真实 Inno 的缺旧文件打包回归，CI 在编译 Rust 前执行；转换语义见 [Inno Int](https://jrsoftware.org/ishelp/topic_int.htm)。
 

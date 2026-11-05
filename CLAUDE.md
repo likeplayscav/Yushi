@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 本仓库的 `origin` 是 `https://github.com/likeplayscav/Yushi.git`。
 - 固定上游 `upstream` 为 `https://github.com/qingjian-team/qingjian.git`，以后同步上游都使用这个地址的 `main` 分支。
 - 同步时先检查工作区并获取双方最新提交，再合并 `upstream/main`，保留本仓库的独有改动；解决冲突后按下文要求验证。
+- 用户要求节制使用 GitHub Actions：日常开发、分析与回归优先本地执行；尽量只在最终安装包构建时运行云端门禁。不要为普通提交、文档修改或反复试验主动触发 Actions。fork 的常规 CI/审计仅手动运行，安装包流程也只手动触发；打包前先完成本地验证。
 
 ## 仓库现状
 

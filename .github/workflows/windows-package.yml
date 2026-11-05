@@ -2,8 +2,6 @@ name: Windows x64 validated package
 
 on:
   workflow_dispatch:
-  push:
-    branches: ['build/windows-*']
 
 permissions:
   contents: read

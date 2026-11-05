@@ -90,6 +90,8 @@
 
 ## CI 与发版
 
+本 fork 按用户要求优先本地验证，节制使用 Actions：常规 CI/审计的自动事件在 fork 上跳过任务，只保留手动入口；`windows-package.yml` 仅接受手动触发，日常推送不构建安装器。手动云端验证尽量集中到最终安装包构建。上游仓库的自动 CI 策略保留。不要为了检查文档或试探构建错误启动远程任务；依赖/编译问题先在本地能够验证的范围内解决。
+
 - CI 七个 job，全部 `--locked`：`core`（Linux 全量：fmt / 文档 / clippy / rustdoc / test / 两个 Fcitx 壳 / 安装脚本，外加 Android 那条 rustls TLS 路径的 lint 与测试）、
   `release`（release profile 下的 clippy）、`shellcheck`、`macos`（IMK 壳）、`linux-22_04`（最老受支持发行版）、`android`（debug APK）、
   `windows`（Windows 五个 crate（含青简剪贴板）+ `qingjian-platform` + 32 位 DLL）。Dependabot 升 actions。

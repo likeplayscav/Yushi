@@ -22,6 +22,7 @@ README.md 只介绍项目（各语言译本在 [i18n/](i18n/)），所有技术�
 | [design/voice-and-swipe.md](design/voice-and-swipe.md) | 语音与滑行输入（2026-10-20）：Rust 与平台壳的分工、语音结果怎么经 Core 上屏、识别方式接口 `Transcriber`、火山引擎豆包流式识别、入口与面板交互；滑行的范围、解码接口 `SwipeDecoder`、按词表打分的 `ShapeDecoder` 与判定 |
 | [plan/roadmap.md](plan/roadmap.md) | 分阶段路线图、各阶段的依赖关系与已完成项 |
 | [plan/input-efficiency-2026-11-05.md](plan/input-efficiency-2026-11-05.md) | 输入准确度、资源占用、流畅度和安装包优化的基线与实施顺序 |
+| [plan/candidate-interaction-2026-11-05.md](plan/candidate-interaction-2026-11-05.md) | 首选贴近输入行、整词浏览上限与单字入口、借鉴代码补全的调研方案 |
 | [plan/windows-focused-refactor.md](plan/windows-focused-refactor.md) | Windows 专用重构目标：全拼与自动纠错优先、按需英语句译、Win10/Win11 兼容验收、功能删减与包体优化 |
 | [plan/windows-refactor-tasks.md](plan/windows-refactor-tasks.md) | 按轮次实施的任务状态、自动测试用例与基础输入框／浏览器／VS Code／微信的兼容验收顺序 |
 | [plan/zh_tw_support_plan.md](plan/zh_tw_support_plan.md) | 繁体输出与台湾注音支持的分析与方案（贡献者 pinchiu，#22）：读音标准差异、台湾用语、简转繁一对多；两条路线 |
