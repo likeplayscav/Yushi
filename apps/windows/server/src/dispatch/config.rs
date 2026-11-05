@@ -30,6 +30,9 @@ pub struct RouterConfig {
     /// 候选排布（`[general] layout`）。
     pub layout: LayoutMode,
 
+    /// 竖排在输入行上方时反向排列（`[general] vertical_reverse_above`）。
+    pub vertical_reverse_above: bool,
+
     /// 横排时上 / 下键把单行展开成多行矩阵（`[general] horizontal_grid`）。
     pub horizontal_grid: bool,
 
@@ -183,6 +186,7 @@ impl RouterConfig {
     /// 交给 UI 线程的画法。
     pub fn render_settings(&self) -> RenderSettings {
         RenderSettings {
+            vertical_reverse_above: self.vertical_reverse_above,
             renderer: self.renderer,
             font: self.font.clone(),
             theme: self.theme.clone(),
@@ -202,6 +206,7 @@ impl From<&Config> for RouterConfig {
             shift_letter_compose: config.general.shift_letter.compose(),
             numpad_digit: config.general.numpad_digit,
             layout: config.general.layout,
+            vertical_reverse_above: config.general.vertical_reverse_above,
             horizontal_grid: config.general.horizontal_grid,
             grid_page_keys: config.general.grid_page_keys,
             appearance: config.general.appearance(),

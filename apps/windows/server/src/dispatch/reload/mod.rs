@@ -278,6 +278,8 @@ impl Router {
         self.engine
             .set_context_memory(config.model.context_memory_seconds);
         let previous = self.config.render_settings();
+        let reverse_changed =
+            self.config.vertical_reverse_above != config.general.vertical_reverse_above;
         let next = RouterConfig::from(config);
         self.reload_mode(&next);
         let themes_stamp = self.config.themes_stamp;
@@ -290,6 +292,12 @@ impl Router {
         let settings = self.config.render_settings();
         if settings != previous {
             self.candidates.configure(settings);
+        }
+        if reverse_changed {
+            // 文字与光标可能没变，强制重发正在显示的帧，避免方向键已切换而窗口仍是旧顺序。
+            self.last_shown = None;
+            let frame = self.self_drawn_frame();
+            self.reconcile_candidates(&frame);
         }
         self.reconcile_status();
         self.apply_model_config(&config.model);

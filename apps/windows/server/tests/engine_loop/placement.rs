@@ -86,9 +86,36 @@ fn delayed_placement_from_the_previous_input_cannot_override_the_new_direction()
 }
 
 #[test]
+fn disabled_vertical_reversal_keeps_downward_navigation_even_above_the_text() {
+    let mut router = router_with(RouterConfig {
+        layout: LayoutMode::Vertical,
+        vertical_reverse_above: false,
+        page_size: 2,
+        ..RouterConfig::default()
+    });
+    let sink = RecordingCandidates::default();
+    router.set_candidate_sink(Box::new(sink.clone()));
+    type_letters(&mut router, "ni");
+    router.handle(ClientMessage::PositionCandidates {
+        session: SESSION,
+        rect: rect(),
+    });
+    place(&mut router, &sink, true);
+    assert_eq!(press(&mut router, function_key(DOWN)).2.highlight, 1);
+    let (_, _, next) = press(&mut router, function_key(DOWN));
+    assert_eq!((next.page, next.highlight), (1, 0));
+    let (_, _, previous) = press(&mut router, function_key(UP));
+    assert_eq!((previous.page, previous.highlight), (0, 1));
+    assert_eq!(press(&mut router, function_key(UP)).2.highlight, 0);
+    place(&mut router, &sink, false);
+    assert_eq!(press(&mut router, function_key(DOWN)).2.highlight, 1);
+}
+
+#[test]
 fn matrix_rows_use_the_direction_returned_by_the_displayed_frame() {
     let mut router = router_with(RouterConfig {
         layout: LayoutMode::Horizontal,
+        vertical_reverse_above: false,
         horizontal_grid: true,
         page_size: 2,
         ..RouterConfig::default()

@@ -14,6 +14,8 @@ impl Router {
     pub(crate) fn apply_key(&mut self, event: &KeyEvent) -> Effect {
         // 上方候选的上下方向按视觉位置走；数字键与左右顺序不变。
         if self.candidate_upward
+            && (self.config.layout != qingjian_platform::LayoutMode::Vertical
+                || self.config.vertical_reverse_above)
             && self.composing()
             && self.panel.is_none()
             && self.translation.is_none()

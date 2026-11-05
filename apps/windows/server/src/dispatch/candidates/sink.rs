@@ -9,6 +9,9 @@ use crate::dispatch::{KeyHintView, PanelFrame};
 /// 候选窗口 / 状态条的画法。
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RenderSettings {
+    /// 竖排在输入行上方时反向排列，拼音行也移到底部。
+    pub vertical_reverse_above: bool,
+
     /// 由谁画（`[general] renderer`）。
     pub renderer: CandidateRenderer,
 

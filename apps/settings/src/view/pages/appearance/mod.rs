@@ -47,6 +47,24 @@ pub fn appearance(ui: &mut Ui<Message>, page: &Page) -> Result<Vec<NodeId>, Rend
         |value| Message::set("general", "layout", value.key()),
     )?;
     let mut layout = SettingRow::new(tr("appearance.layout")).control(layout);
+    if Feature::VerticalReverseAbove.here() {
+        let reverse = Checkbox::new(
+            general.vertical_reverse_above,
+            tr("appearance.vertical_reverse_above"),
+        )
+        .disabled(general.layout != LayoutMode::Vertical)
+        .build(
+            ui,
+            theme,
+            "vertical-reverse-above",
+            Message::set(
+                "general",
+                "vertical_reverse_above",
+                !general.vertical_reverse_above,
+            ),
+        )?;
+        layout = layout.below(reverse);
+    }
     if Feature::HorizontalGrid.here() {
         let grid = Checkbox::new(general.horizontal_grid, tr("appearance.horizontal_grid"))
             .disabled(general.layout != LayoutMode::Horizontal)

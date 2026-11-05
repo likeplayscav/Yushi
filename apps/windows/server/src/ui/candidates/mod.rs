@@ -73,6 +73,9 @@ pub(crate) struct CandidateWindow {
     /// 绘制内容。
     data: RefCell<RenderData>,
 
+    /// 竖排位于输入行上方时是否反向显示，随设置热加载。
+    vertical_reverse_above: Cell<bool>,
+
     /// 上次用的 DPI，变了重建字体。
     dpi: Cell<u32>,
 
@@ -135,6 +138,7 @@ impl CandidateWindow {
         Ok(Self {
             hwnd,
             data,
+            vertical_reverse_above: Cell::new(true),
             dpi: Cell::new(dpi),
             dark: Cell::new(dark),
             logged_dpi: Cell::new(None),
@@ -149,6 +153,17 @@ impl CandidateWindow {
     pub(crate) fn set_content(&self, frame: &Frame, mode: Mode, key_hint: Option<KeyHintView>) {
         self.data.borrow_mut().set(frame, mode);
         *self.key_hint.borrow_mut() = key_hint;
+    }
+
+    pub(crate) fn set_vertical_reverse_above(&self, enabled: bool) {
+        self.vertical_reverse_above.set(enabled);
+    }
+
+    /// 位置信息仍回传实际上下方；只对交给渲染器与 GDI 的反向标志应用开关。
+    fn reverse_above(&self, above: bool) -> bool {
+        above
+            && (self.data.borrow().layout != qingjian_platform::LayoutMode::Vertical
+                || self.vertical_reverse_above.get())
     }
 
     /// 换了主题：键位提示的渲染器也装上新主题的字体。
@@ -183,9 +198,10 @@ impl CandidateWindow {
             let overhang = measured.visible_overhang();
             let (_, y) = place(anchor, content, (overhang.0 as i32, overhang.1 as i32));
             let upward = y + content.1 <= anchor.top;
-            let changed = self.data.borrow().upward != upward;
+            let reverse = self.reverse_above(upward);
+            let changed = self.data.borrow().upward != reverse;
             if changed {
-                self.data.borrow_mut().upward = upward;
+                self.data.borrow_mut().upward = reverse;
                 let data = self.data.borrow();
                 rendered = self.painter.borrow_mut().as_mut().and_then(|painter| {
                     painter.forget();
@@ -290,9 +306,10 @@ impl CandidateWindow {
         // GDI 画法的投影顶影为 0，只有底边那一圈要避
         let (content_x, content_y) = place(anchor, content, (0, margin));
         let upward = content_y + content.1 <= anchor.top;
-        if self.data.borrow().upward != upward {
+        let reverse = self.reverse_above(upward);
+        if self.data.borrow().upward != reverse {
             let mut data = self.data.borrow_mut();
-            data.upward = upward;
+            data.upward = reverse;
         }
         let data = self.data.borrow();
         click::send(crate::dispatch::CandidateMouse::Placement {

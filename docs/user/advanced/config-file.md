@@ -48,6 +48,7 @@ description: 青简的全部设置保存在一个文本配置文件里：位置�
 | `[general] shift_letter` | 中英文 → Shift + 字母 | `passthrough`（交给应用，缺省）或 `compose`（进组句） |
 | `[general] punct_commits` | 中英文 → 标点先上屏候选 | `true` / `false` |
 | `[general] preedit` | 外观 → 拼音显示位置 | `both`、`inline`、`window` |
+| `[general] vertical_reverse_above` | 外观 → 排布 → 竖排在输入行上方时反向排列 | Windows；`true`（默认开启）/ `false`；关闭后竖排与拼音行始终从上往下 |
 | `[general] page_keys` | 快捷键 → 翻页键 | `"[]"`、`",."`、`"-="` |
 | `[shortcut] extra_page_keys` | 快捷键 → 额外翻页键 | 列表，如 `["[]", ",.", "-="]`，缺省为空 |
 | `[shortcut] extra_candidate_navigation` | 快捷键 → Emacs 风格候选键（macOS） | `false`（默认）或 `true` |

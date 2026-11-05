@@ -58,6 +58,9 @@ pub struct GeneralConfig {
     /// 候选窗口竖排 / 横排。
     pub layout: LayoutMode,
 
+    /// Windows 竖排候选窗在输入行上方时反向排列，首选与拼音行贴近输入行。缺省开。
+    pub vertical_reverse_above: bool,
+
     /// 横排时上 / 下键把单行展开成多行矩阵（左 / 右键改为移动候选高亮，Esc 第一下先收回）。缺省关：横排下的按键与以前一样。
     pub horizontal_grid: bool,
 
@@ -249,6 +252,7 @@ impl Default for GeneralConfig {
             appearance: Some(Appearance::default()),
             theme: DEFAULT_THEME.to_owned(),
             layout: LayoutMode::default(),
+            vertical_reverse_above: true,
             horizontal_grid: false,
             grid_page_keys: false,
             renderer: CandidateRenderer::default(),

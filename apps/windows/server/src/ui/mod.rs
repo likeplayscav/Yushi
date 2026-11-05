@@ -288,6 +288,7 @@ fn apply(
             }
         }
         UiCommand::Configure(settings) => {
+            window.set_vertical_reverse_above(settings.vertical_reverse_above);
             Painter::configure(painter, &settings);
             window.theme_changed();
             if let Some(panel) = panel {

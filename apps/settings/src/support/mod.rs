@@ -30,6 +30,8 @@ pub enum Feature {
     StatusBar,
     /// 横排时 ↑ / ↓ 展开成多行。
     HorizontalGrid,
+    /// 竖排位于输入行上方时反向排列。
+    VerticalReverseAbove,
     /// 横排时翻页键也展开成多行。
     GridPageKeys,
     /// 组句时上屏候选与上屏字母的键可以换。
@@ -66,7 +68,7 @@ pub enum Feature {
 
 impl Feature {
     #[cfg(test)]
-    pub const ALL: [Self; 29] = [
+    pub const ALL: [Self; 30] = [
         Self::AuxCode,
         Self::Schemes,
         Self::SwitchKeys,
@@ -78,6 +80,7 @@ impl Feature {
         Self::AutoSpace,
         Self::StatusBar,
         Self::HorizontalGrid,
+        Self::VerticalReverseAbove,
         Self::GridPageKeys,
         Self::CommitKeys,
         Self::ExtraPageKeys,
@@ -131,6 +134,8 @@ impl Feature {
             // macOS 看菜单栏图标，Linux 看 Fcitx5 的托盘
             Self::StatusBar => [No, Yes, No],
             Self::HorizontalGrid => [Yes, Yes, Todo],
+            // macOS 自绘窗待接入；Linux 的面板排布由 Fcitx 决定。
+            Self::VerticalReverseAbove => [Todo, Yes, No],
             Self::GridPageKeys => [Yes, Yes, Todo],
             // macOS 的空格走 insertText、回车走 insertNewline:，要另接
             Self::CommitKeys => [Todo, Yes, Yes],
@@ -173,6 +178,7 @@ impl Feature {
             Self::AutoSpace => "中文与英文、数字之间自动加空格",
             Self::StatusBar => "悬浮状态条",
             Self::HorizontalGrid => "横排时 ↑ / ↓ 展开成多行",
+            Self::VerticalReverseAbove => "竖排在输入行上方时反向排列",
             Self::GridPageKeys => "横排时翻页键展开成多行",
             Self::CommitKeys => "上屏键自定义",
             Self::ExtraPageKeys => "额外翻页键",
@@ -237,6 +243,7 @@ impl Feature {
             | Self::EnglishPunctuation
             | Self::StatusBar
             | Self::HorizontalGrid
+            | Self::VerticalReverseAbove
             | Self::GridPageKeys
             | Self::ApiUsage
             | Self::ExperimentalModels

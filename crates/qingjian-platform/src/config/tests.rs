@@ -269,6 +269,32 @@ fn set_bool_starts_from_template_when_missing() {
 }
 
 #[test]
+fn vertical_reverse_defaults_on_and_reinstall_preserves_an_explicit_opt_out() {
+    let dir = std::env::temp_dir().join(format!("qingjian-reverse-config-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("config.toml");
+    assert!(Config::default().general.vertical_reverse_above);
+    // 老配置没有新字段，也沿用开启状态。
+    std::fs::write(
+        &path,
+        "[general]\nlayout = \"vertical\"\n# personal preference\npage_size = 5\n",
+    )
+    .unwrap();
+    assert!(Config::load(&path).unwrap().general.vertical_reverse_above);
+    Config::set_bool(&path, "general", "vertical_reverse_above", false).unwrap();
+    let saved = std::fs::read(&path).unwrap();
+    assert!(!Config::write_template_if_missing(&path).unwrap());
+    assert_eq!(std::fs::read(&path).unwrap(), saved);
+    let config = Config::load(&path).unwrap();
+    assert!(!config.general.vertical_reverse_above);
+    assert_eq!(config.general.page_size(), 5);
+    std::fs::remove_file(&path).unwrap();
+    assert!(Config::write_template_if_missing(&path).unwrap());
+    assert!(Config::load(&path).unwrap().general.vertical_reverse_above);
+    std::fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
 fn set_bool_refuses_broken_file() {
     let path = std::env::temp_dir().join("qingjian-config-set-bool-broken-test.toml");
     std::fs::write(&path, "[fuzzy\nz_zh = false\n").unwrap();

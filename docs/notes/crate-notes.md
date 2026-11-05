@@ -605,6 +605,8 @@ PKG_CONFIG_PATH="$onig" PKG_CONFIG_ALLOW_CROSS=1 RUSTONIG_SYSTEM_LIBONIG=1 \
 
 Inno 命令行宏可能是字符串，`/DIncludeLegacySettings=0` 必须经 `Int(IncludeLegacySettings)` 后判断；直接 `#if IncludeLegacySettings` 会将非空的 `"0"` 当真，标准包仍索取不存在的旧设置。`QINGJIAN_TEST_ISCC=<ISCC.exe>` 启用真实 Inno 的缺旧文件打包回归，CI 在编译 Rust 前执行；转换语义见 [Inno Int](https://jrsoftware.org/ishelp/topic_int.htm)。
 
+`[general] vertical_reverse_above` 缺省为 `true`，旧配置缺字段也开启，模板写明；设置页「外观 → 排布」提供 Windows 开关（macOS 待实现，Linux 由 Fcitx 决定）。`RouterConfig` 与 `RenderSettings` 同步传给按键路由、青简渲染器与 GDI；UI 的 `Placement` 仍回传实际位置，只对绘制方向应用开关，横排/矩阵不受此项影响。热加载开关时强制重发当前候选帧，防止相同文字被去重后只改了方向键、没改显示。关闭后上方竖排拼音在顶、候选从上往下，数字/点击的逻辑序号沿用；模板只补缺失文件，不覆盖用户保存的 `false`。
+
 候选窗 `ui::candidates::CandidateWindow::show` 每次更新内容后用 `SetWindowPos(HWND_TOPMOST)` 重新升到置顶序列首位，并保留 `SWP_NOACTIVATE`；Windows 搜索页后弹出的置顶窗口可能盖住较早创建的候选窗。
 
 用量接线：启动与配置热加载为 CloudPredictor 和 CloudGlossFiller 传同一个用户目录 `api-usage.json`；设置页的 ConnectionTest 使用该文件。统计页手动刷新读取累计记录，收到 JSON 响应与正文有效性分开统计；原译词自动补充、用户配置及学习文件沿用。
