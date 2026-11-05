@@ -62,7 +62,8 @@ def validate(report, seeds):
         assert all(math.isfinite(t) and t >= 0 for t in row['query_ms'])
     expected = {'same-input-learning', 'reload-learning', 'private-input', 'learning-disabled',
                 'replace-wrong-selection', 'raw-enter', 'backspace-edit',
-                'switch-input-box', 'discard-private-composition'}
+                'switch-input-box', 'discard-private-composition',
+                'existing-history-learning', 'existing-history-reload'}
     assert {c['id'] for c in report['checks']} == expected and len(report['checks']) == len(expected)
 
 

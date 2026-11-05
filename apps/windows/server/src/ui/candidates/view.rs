@@ -115,14 +115,25 @@ pub(super) fn paint(hdc: HDC, data: &RenderData, client: RECT) {
     unsafe { SetBkMode(hdc, TRANSPARENT) };
 
     let mut y = theme.padding;
-    y += draw_top_line(hdc, data, y);
+    if !data.upward {
+        y += draw_top_line(hdc, data, y);
+    }
     y += draw_notice(hdc, data, y);
+    let body_y = y;
     match data.layout {
         LayoutMode::Vertical => draw_rows(hdc, data, y, client.right - client.left),
         LayoutMode::Horizontal if data.columns > 0 => {
             draw_matrix(hdc, data, y, client.right - client.left)
         }
         LayoutMode::Horizontal => draw_horizontal(hdc, data, y, client.right - client.left),
+    }
+    if data.upward {
+        let height = match data.layout {
+            LayoutMode::Vertical => vertical_size(hdc, data).1,
+            LayoutMode::Horizontal if data.columns > 0 => matrix_size(hdc, data).1,
+            LayoutMode::Horizontal => horizontal_size(hdc, data).1,
+        };
+        draw_top_line(hdc, data, body_y + height);
     }
 }
 

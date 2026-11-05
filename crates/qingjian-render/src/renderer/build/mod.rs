@@ -75,6 +75,13 @@ impl Builder<'_> {
         {
             let candidates = children.remove(at);
             children.push(candidates);
+            if let Some(at) = children
+                .iter()
+                .position(|child| contains_preedit(child, self.theme, 0))
+            {
+                let preedit = children.remove(at);
+                children.push(preedit);
+            }
         }
         let shown = clip::shown(frame);
         let mut ctx = Context::new(&shown);
@@ -267,6 +274,25 @@ fn contains_candidates(spec: &NodeSpec) -> bool {
     match &spec.kind {
         NodeKind::Repeat { bind, .. } => bind == "candidates",
         NodeKind::Frame { children, .. } => children.iter().any(contains_candidates),
+        _ => false,
+    }
+}
+
+/// 拼音可能藏在组件引用里；把整条拼音/状态行移到候选下方，装饰与页码留在远侧。
+fn contains_preedit(spec: &NodeSpec, theme: &Theme, depth: usize) -> bool {
+    if depth >= 16 {
+        return false;
+    }
+    match &spec.kind {
+        NodeKind::Preedit { .. } => true,
+        NodeKind::Frame { children, .. } => children
+            .iter()
+            .any(|child| contains_preedit(child, theme, depth + 1)),
+        NodeKind::Use { component } => theme
+            .file()
+            .components
+            .get(component)
+            .is_some_and(|part| contains_preedit(part, theme, depth + 1)),
         _ => false,
     }
 }

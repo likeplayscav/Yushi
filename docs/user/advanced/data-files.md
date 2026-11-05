@@ -23,6 +23,7 @@ description: 青简数据文件夹的位置、每个文件记的是什么、搬�
 | `user.tsv` | 每个词被选择的次数 | 选过的词 |
 | `user-words.tsv` | 自己造的词与选过的 AI 候选 | 选过的词 |
 | `user-choices.tsv` | 某段拼音下选过的词 | 拼音与选过的词 |
+| `user-preferences.tsv` | 完全相同输入最近选中的词 | 输入与最近选中的词 |
 | `user-demoted.tsv` | 候选右键菜单里降权的词（哪段字母、哪个词、降了几次） | 拼音与词 |
 | `user-days.tsv` 等 `*-days.tsv` | 上面几张表的最近使用日 | 否 |
 | `user-english.tsv` | 原样上屏过的英文词 | 英文词 |

@@ -8,6 +8,7 @@ mod composing;
 mod english;
 mod highlight;
 mod key_hint;
+mod learning;
 mod menu;
 mod modes;
 mod numpad;

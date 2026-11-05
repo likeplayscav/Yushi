@@ -180,6 +180,7 @@ mac 存在 `Session::spelling`（`Host::follow_highlight`）、Windows / Linux �
   个人敲错表（`user-typos.tsv`，接受过的 (敲的, 要的) 音节对，词图敲错边与整段纠错的代价按它打折）与个人 n-gram（`user-ngram.tsv`，Core `sentence::UserNgram`，
   二元 + 三元在线计数，整句转换与词级排序里与静态模型插值；Tab 接受的云端整句按 `sentence::segment_text` 切词后也记；
   连着选出的两个词记够次数自动造词进用户词，一段拼音分几次选完的合成词记两次也造）。
+  完全相同输入的最近选择另存 `user-preferences.tsv`（最多 50,000 个输入）；累计次数保持不变。`Learner::preferred_choice` 在 Core 查询尾部提升覆盖整段拼音的对应候选，之后再应用降权与置顶；不把短前缀的偏好套到较长输入、不改变形码一级简码。最近 64 次偏好变更保留内存撤销信息，私密/关闭学习不写，清空/导出文件清单包含新侧车。
   候选右键菜单的降权记在 `user-demoted.tsv`（`frequency_learner/demotions.rs`，输入串 → 词 → 降了几次，封顶 99，不衰减），私密输入与关学习时照记。
   词频、个人英文词与敲错表三张表带**时间衰减**（`frequency_learner/decay.rs`，牛顿冷却）：最近使用日记在
   `user-days.tsv` 等 `*-days.tsv` 侧车文件里（主表保持旧格式两列 / 三列，旧版本读到新文件不丢数据；侧车丢了整份退回文件修改日），
@@ -440,7 +441,7 @@ id 不能撞拼音侧的写法与日志里的 `wubi`（`is_valid_id`），因为
 
 ## crates/qingjian-render
 
-`Frame.upward` 只控制视觉排布：竖排反转行、横排矩阵反转组行、横排单行保持列序；内置主题的候选区移到靠近输入行的一侧。命中仍保留原始候选/译词索引。Windows Server 按实际窗口放置设置方向，仅换边时额外重建一次；GDI 回退也支持。宿主内 TSF 候选和 macOS/Android 目前不设置此方向。
+`Frame.upward` 只控制视觉排布：竖排反转行、横排矩阵反转组行、横排单行保持列序；上方窗口的拼音行移到底部、首选紧挨其上，辅助区留在远侧。组件引用中的拼音行也会识别，字体与字符不镜像。命中仍保留原始候选/译词索引。Windows Server 按实际窗口放置设置方向，仅换边时额外重建一次；GDI 回退也支持。宿主内 TSF 候选和 macOS/Android 目前不设置此方向。
 
 画位图的部分已拆到自绘引擎 `crates/bamboo-slip`：下文的 `scene/`、`animation/`、`text/`、`fonts/`、`canvas.rs`、`shadow.rs`
 在 `crates/bamboo-slip/src/`，原 `renderer/{animate,retained,partial}.rs` 成了引擎的 `stage/`（`Stage::present` / `tick_at`），`theme/svg_image.rs` 成了 `SvgImage`。
@@ -490,7 +491,7 @@ Windows Server 自绘候选窗（GDI）按 `Frame.columns` / `column_ems` 画矩
 
 ## apps/cli
 
-`--experience <报告.json>` 使用固定产品数据和独立真实学习器回放 50 个多场景任务，逐键查询并通过真实上屏路径拆词；九项交互检查独立验学习/隐私/重载/编辑。`tools/eval/experience.py` 计算 100 分评分并核对冻结逐条基线，见 `assets/eval/experience/README.md`。`--experience-all` 是完整候选对照，`--experience-word-limit` 比较 9/18/27 额度，不写用户配置。Windows `installer/build.ps1` 正常构建先跑这道门禁，失败不构建产品。
+`--experience <报告.json>` 使用固定产品数据和独立真实学习器回放 50 个多场景任务，逐键查询并通过真实上屏路径拆词；十一项交互检查独立验空记录与已有记录下的学习/隐私/重载/编辑。`tools/eval/experience.py` 计算 100 分评分并核对冻结逐条基线，见 `assets/eval/experience/README.md`。`--experience-all` 是完整候选对照，`--experience-word-limit` 比较 9/18/27 额度，不写用户配置。Windows `installer/build.ps1` 正常构建先跑这道门禁，失败不构建产品。
 
 `tools/eval/names_sentences.py` 固定 80 条姓名/语句种子，生成 290 条全拼、简拼和尾音节未完成输入；输出全部候选与失败，分开报告常见姓名、公共人物、日常短句和含姓名句子。`--reference` 按冻结的 Linux 结果检查 Windows 逐条 Top-1/Top-5 不回退；默认不联网、不学习，`--model` 可测含章·通变。
 

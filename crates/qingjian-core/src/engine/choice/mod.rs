@@ -148,13 +148,14 @@ impl Engine {
         }
         // 词级排序已按同一输入的选择次数排好；模型不能再把用户学出的首选换掉。
         // 只保护已经排在比较组首位的词，不让其他读法的低位学习记录越过匹配规则。
-        if !english
-            && self
-                .learner
-                .choice_weight(&self.whole_scope().1, &items[whole[0].0].text)
-                > 0
-        {
-            return;
+        if !english {
+            let input = self.whole_scope().1;
+            let first = &items[whole[0].0].text;
+            if self.learner.choice_weight(&input, first) > 0
+                || self.learner.preferred_choice(&input) == Some(first.as_str())
+            {
+                return;
+            }
         }
         let limit = self.choice_tier.context_chars(english);
         let context = match &self.rescoring_before {

@@ -5,6 +5,37 @@ use crate::candidate::{Candidate, CandidateKind};
 use crate::{Language, Sense, Translation};
 
 impl Engine {
+    /// 仅提升覆盖当前整段拼音的最近选择；置顶、降权和输入匹配约束仍然有效。
+    pub(super) fn apply_preferred_choice(&self, items: &mut Vec<Candidate>) {
+        if self.english_mode
+            || !self.phonetic
+            || self.raw_mode()
+            || self.expression_mode()
+            || self.question_mode()
+            || self.aux_filter().is_some()
+        {
+            return;
+        }
+        let input = self.whole_scope().1;
+        let Some(text) = self.learner.preferred_choice(&input) else {
+            return;
+        };
+        let Some(at) = items.iter().position(|candidate| {
+            candidate.text == text
+                && match candidate.kind {
+                    CandidateKind::Chinese => {
+                        self.consumed_by(candidate).0 == self.composition.scope().len()
+                    }
+                    CandidateKind::Cloud => true,
+                    _ => false,
+                }
+        }) else {
+            return;
+        };
+        let preferred = items.remove(at);
+        items.insert(0, preferred);
+    }
+
     /// 给不走中文 Composition 的候选排序（如越南语）：选择权重优先，再应用该输入串下的降权。
     /// 调用方应给 `input` 加模式前缀，避免与拼音学习记录混用。
     pub fn rank_external_candidates(&self, input: &str, candidates: &mut [Candidate]) {

@@ -66,6 +66,7 @@ impl Learner for FrequencyLearner {
             return;
         }
         self.tick();
+        self.remember_preference(input, text);
         bump_choice(&mut self.choices, input, text);
         if generalizes(input, reading) {
             bump_choice(&mut self.choices, reading, text);
@@ -79,6 +80,10 @@ impl Learner for FrequencyLearner {
 
     fn choice_weight(&self, input: &str, text: &str) -> u32 {
         lookup_choice(&self.choices, input, text)
+    }
+
+    fn preferred_choice(&self, input: &str) -> Option<&str> {
+        self.preferences.get(input).map(String::as_str)
     }
 
     fn record_raw(&mut self, input: &str) {
@@ -98,10 +103,12 @@ impl Learner for FrequencyLearner {
     }
 
     fn unrecord_choice(&mut self, input: &str, reading: &str, text: &str) {
+        self.retract_preference(input, text);
         remove_choice(&mut self.choices, input, text);
         if generalizes(input, reading) {
             remove_choice(&mut self.choices, reading, text);
         }
+        self.choices_dirty = true;
     }
 
     fn unrecord_transition(&mut self, context: Context<'_>, word: &str, times: u32) {
@@ -209,6 +216,14 @@ impl Learner for FrequencyLearner {
 
     fn forget(&mut self, text: &str) -> Forgotten {
         let mut forgotten = Forgotten::default();
+        let before = self.preferences.len();
+        self.preferences.retain(|_, preferred| preferred != text);
+        if before != self.preferences.len() {
+            self.preferences_dirty = true;
+            forgotten.learning = true;
+        }
+        self.preference_undo
+            .retain(|(_, chosen, previous)| chosen != text && previous.as_deref() != Some(text));
         if self.words.remove(text).is_some() {
             forgotten.user_word = true;
             self.words_dirty = true;
@@ -331,6 +346,12 @@ impl Learner for FrequencyLearner {
                 Err(error) => {
                     tracing::warn!(path = %choices_path.display(), %error, "输入串选择保存失败")
                 }
+            }
+        }
+        if self.preferences_dirty {
+            let preferences_path = Self::preferences_path(&path);
+            if let Err(error) = self.save_preferences_to(&preferences_path) {
+                tracing::warn!(path = %preferences_path.display(), %error, "Failed to save recent input preferences");
             }
         }
         if self.demoted_dirty {

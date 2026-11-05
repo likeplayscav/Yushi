@@ -5,7 +5,7 @@ mod selection_model;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use qingjian_core::Engine;
+use qingjian_core::{Engine, Learner};
 use qingjian_dictionary::Dictionary;
 use qingjian_learning::FrequencyLearner;
 
@@ -48,6 +48,20 @@ fn choosing_the_fourth_candidate_promotes_it_on_the_next_same_input() {
 }
 
 #[test]
+fn a_new_choice_overrides_existing_counts_for_the_same_typed_input() {
+    let mut learner = FrequencyLearner::default();
+    for _ in 0..100 {
+        learner.record_choice("m", "mei", "没");
+    }
+    let mut engine = engine(learner);
+    assert_eq!(first(&mut engine), "没");
+    choose_ma(&mut engine);
+    assert_eq!(first(&mut engine), "吗");
+    assert_eq!(engine.learner().choice_weight("m", "没"), 100);
+    assert_eq!(engine.learner().choice_weight("m", "吗"), 1);
+}
+
+#[test]
 fn disabled_learning_and_private_input_do_not_record_the_selection() {
     for private in [false, true] {
         let mut engine = engine(FrequencyLearner::default());
@@ -86,7 +100,11 @@ fn learned_selection_survives_flushing_and_reopening() {
 
 #[test]
 fn choice_model_cannot_override_the_learned_preference_for_the_same_input() {
-    let mut engine = engine(FrequencyLearner::default());
+    let mut learner = FrequencyLearner::default();
+    for _ in 0..100 {
+        learner.record_choice("m", "mei", "没");
+    }
+    let mut engine = engine(learner);
     choose_ma(&mut engine);
     engine.set_choice_model(Some(Arc::new(selection_model::PrefersMei)));
     assert_eq!(first(&mut engine), "吗");

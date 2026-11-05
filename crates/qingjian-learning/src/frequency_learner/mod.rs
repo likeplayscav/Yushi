@@ -1,6 +1,7 @@
 mod decay;
 mod demotions;
 mod learner_impl;
+mod preferences;
 mod tables;
 
 use std::cell::Cell;
@@ -98,6 +99,14 @@ pub struct FrequencyLearner {
     /// 按输入串记的选择自上次保存后是否有变化。
     choices_dirty: bool,
 
+    /// 原样输入最近选中的词，独立于累计次数，避免旧记录压住刚改选的候选。
+    preferences: BTreeMap<String, String>,
+
+    preferences_dirty: bool,
+
+    /// 只保留进程内最近的撤销信息；持久化文件只保存每个输入的最终偏好。
+    preference_undo: std::collections::VecDeque<(String, String, Option<String>)>,
+
     /// 个人英文词：小写编码 → (第一次敲的写法, 带衰减的次数)。回车原样上屏的英文词、选过的英文候选。
     english: BTreeMap<String, (String, Decay)>,
 
@@ -135,6 +144,9 @@ impl Default for FrequencyLearner {
             ngram_dirty: false,
             choices: HashMap::default(),
             choices_dirty: false,
+            preferences: BTreeMap::default(),
+            preferences_dirty: false,
+            preference_undo: std::collections::VecDeque::new(),
             english: BTreeMap::default(),
             english_list: None,
             english_dirty: false,
@@ -235,6 +247,11 @@ impl FrequencyLearner {
             let skipped = learner.load_choices(&source);
             note_skipped(&choices_path, skipped);
         }
+        let preferences_path = Self::preferences_path(&path);
+        if let Some(source) = read_text_lossy(&preferences_path)? {
+            let skipped = learner.load_preferences(&source);
+            note_skipped(&preferences_path, skipped);
+        }
         let english_path = Self::english_path(&path);
         let english_mtime = decay::mtime_day(&english_path);
         if let Some(source) = read_text_lossy(&english_path)? {
@@ -274,6 +291,7 @@ impl FrequencyLearner {
             Self::words_path(frequency_path),
             Self::ngram_path(frequency_path),
             Self::choices_path(frequency_path),
+            Self::preferences_path(frequency_path),
             Self::english_path(frequency_path),
             Self::english_days_path(frequency_path),
             Self::typos_path(frequency_path),
@@ -338,6 +356,7 @@ impl FrequencyLearner {
             || self.english_dirty
             || self.ngram_dirty
             || self.choices_dirty
+            || self.preferences_dirty
             || self.typos_dirty
             || self.demoted_dirty
     }

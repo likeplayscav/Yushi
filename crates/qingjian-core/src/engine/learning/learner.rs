@@ -26,6 +26,11 @@ pub trait Learner: Send {
         0
     }
 
+    /// 完全相同输入最近选中的候选；不把简拼选择泛化到其他输入。
+    fn preferred_choice(&self, _input: &str) -> Option<&str> {
+        None
+    }
+
     /// 用户对输入串 `input` 按了回车原样上屏，而当时拼写纠错正生效：这个串就是要原样打的，以后不纠。
     fn record_raw(&mut self, _input: &str) {}
 

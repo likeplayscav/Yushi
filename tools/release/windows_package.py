@@ -58,6 +58,7 @@ def seed_preferences(folder):
                        'theme = "system-blue"\nlearning = true\n[model]\nenabled = false\n[predict]\nenabled = false\n',
         'user.tsv': '吗\t11\n',
         'user-choices.tsv': 'm\t吗\t7\n',
+        'user-preferences.tsv': 'm\t吗\n',
         'user-words.tsv': '测试人名\tce shi ren ming\t100\n',
         'user-ngram.tsv': '<s>\t吗\t7\n',
         'user-english.tsv': 'MyProject\t3\n',

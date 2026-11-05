@@ -236,7 +236,8 @@ fn saving_is_atomic_and_leaves_no_temporary_files() {
         .unwrap()
         .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
         .collect();
-    assert_eq!(names.len(), 9, "{names:?}");
+    assert_eq!(names.len(), 10, "{names:?}");
+    assert!(names.iter().any(|name| name == "user-preferences.tsv"));
     assert!(names.iter().all(|name| !name.contains(".tmp")), "{names:?}");
     std::fs::remove_dir_all(dir).unwrap();
 }

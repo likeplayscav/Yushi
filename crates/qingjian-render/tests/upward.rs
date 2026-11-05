@@ -45,8 +45,8 @@ fn above_vertical_reverses_rows_without_changing_click_indices() {
         }
         let preedit = rendered.preedit.as_ref().expect("preedit");
         assert!(
-            preedit.y < cell(&rendered.hits, 0).y,
-            "{}: first candidate must be near the bottom",
+            preedit.y >= cell(&rendered.hits, 0).y + cell(&rendered.hits, 0).height - 0.5,
+            "{}: preedit must be below the first candidate",
             theme.id()
         );
         for hit in rendered
@@ -77,6 +77,12 @@ fn above_horizontal_keeps_columns_and_reverses_only_matrix_rows() {
             let rendered = renderer
                 .render(&frame, Layout::Horizontal, theme, 1.0)
                 .unwrap();
+            let preedit = rendered.preedit.as_ref().expect("preedit");
+            assert!(
+                preedit.y >= cell(&rendered.hits, 0).y + cell(&rendered.hits, 0).height - 0.5,
+                "{}: preedit must be at the input edge",
+                theme.id()
+            );
             for i in 1..frame.rows.len() {
                 let here = cell(&rendered.hits, i);
                 if columns == 0 || i % columns != 0 {
@@ -96,5 +102,24 @@ fn above_horizontal_keeps_columns_and_reverses_only_matrix_rows() {
                 }
             }
         }
+    }
+}
+
+#[test]
+fn below_vertical_keeps_the_preedit_above_the_candidates() {
+    let library = FontLibrary::system("zh-CN").expect("system fonts");
+    let mut renderer = Renderer::new(library);
+    for theme in Theme::builtins() {
+        renderer.forget();
+        let frame = scenes::nihao();
+        let rendered = renderer
+            .render(&frame, Layout::Vertical, theme, 1.0)
+            .unwrap();
+        let preedit = rendered.preedit.as_ref().expect("preedit");
+        assert!(
+            preedit.y + preedit.height <= cell(&rendered.hits, 0).y + 0.5,
+            "{}",
+            theme.id()
+        );
     }
 }

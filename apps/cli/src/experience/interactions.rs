@@ -47,6 +47,22 @@ pub(super) fn run(folder: &Path) -> Result<Vec<Value>, CliError> {
         folder.join("user.tsv"),
     )?));
     checks.push(json!({"id":"reload-learning", "passed":first(&mut engine,"m") == "吗"}));
+    let legacy_dir = folder.join("legacy");
+    std::fs::create_dir(&legacy_dir)?;
+    std::fs::write(legacy_dir.join("user-choices.tsv"), "m\t没\t100\n")?;
+    let mut legacy = super::engine()?.with_learner(Box::new(FrequencyLearner::from_path(
+        legacy_dir.join("user.tsv"),
+    )?));
+    let before = first(&mut legacy, "m");
+    let selected = select(&mut legacy, "m", "吗");
+    let after = first(&mut legacy, "m");
+    checks.push(json!({"id":"existing-history-learning", "passed":before == "没" && selected && after == "吗", "before":before, "after":after}));
+    legacy.flush_learning();
+    drop(legacy);
+    let mut legacy = super::engine()?.with_learner(Box::new(FrequencyLearner::from_path(
+        legacy_dir.join("user.tsv"),
+    )?));
+    checks.push(json!({"id":"existing-history-reload", "passed":first(&mut legacy,"m") == "吗"}));
     for (id, private) in [("private-input", true), ("learning-disabled", false)] {
         let mut engine = super::engine()?;
         if private {
@@ -58,7 +74,7 @@ pub(super) fn run(folder: &Path) -> Result<Vec<Value>, CliError> {
         engine.set_private(false);
         engine.set_learning(true);
         checks.push(
-            json!({"id":id, "passed":selected && engine.learner().choice_weight("m","吗") == 0}),
+            json!({"id":id, "passed":selected && engine.learner().choice_weight("m","吗") == 0 && engine.learner().preferred_choice("m").is_none()}),
         );
     }
     let mut engine = super::engine()?;
