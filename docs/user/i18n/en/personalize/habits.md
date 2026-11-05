@@ -17,6 +17,8 @@ Qingjian remembers your typing habits so that words you use often rank higher. E
 
 If you pick the wrong word, delete it and retype, that pick isn't remembered; see [Picked the wrong word](../getting-started/first-input.md#Picked-the-wrong-word).
 
+With learning enabled and no competing personal history, choosing 吗 for `m` moves it ahead the next time you type `m`. A single-letter choice is recorded for `m` only and does not also change preferences for `ma`. Existing choices are compared by count, so one recent choice may not outrank a word chosen many times before. Use Pin to keep a word first. The Zhiyi choice model preserves the first candidate learned for the same input.
+
 ## Slowly fading
 
 Pick counts cool off naturally over time: if you don't type a word for 90 days, its count is roughly halved, so old words make way for new ones and the candidates always follow your current habits.

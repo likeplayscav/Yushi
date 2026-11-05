@@ -37,6 +37,8 @@ TSV 的音节可带数字声调（`ni3`，轻声 5 或 0），键一律去调，
 
 知意后台任务在 `engine/choice/worker/`：单槽待办、合并通知，输入条件改变即取消旧序号，每次出字调用之间检查取消。清空、上屏、原样输出、切换会话和卸载取消剩余任务；含章也在这些边界作废输入代。单次正在运行的模型调用仍需完成。重复查询与模型结果重查不改变知意的输入条件，同一在途请求不重复提交，避免取消有效结果。验证和前后指标见 [输入效率优化](input-efficiency-2026-11-05.md)。
 
+知意选词重排保留当前输入比较组中已由 `choice_weight` 学出的第一条，不再让后台模型覆盖用户偏好；只保护现有组首，不把其他匹配等级的低位候选强行提升。真实 `FrequencyLearner` 的跨 crate 回归在 `crates/qingjian-learning/tests/selection_probe/`，覆盖 `m` 选第四项「吗」后的首选、保存重载、关闭学习/私密输入及偏向「没」的模型回包。
+
 `Engine::set_emoji_limit` / `set_kaomoji_limit` / `set_symbol_limit` 控制单次查询插入的 emoji、颜文字、符号数，各自 0–3（缺省 3 / 1 / 1）、0 关闭、越界值按 3 处理；每词 emoji 与符号最多两个、颜文字一个，普通候选相对顺序不变。三端读 `[general] emoji` / `kaomoji` / `symbols`（`qingjian_platform::EmojiCount`，旧配置 emoji 的 `true` / `false` 读成 3 / 0），CLI 用 `--emoji-limit <0..3>`。
 `with_emoji` 带上 CLDR 表时用 `emoji::is_emoji`（Unicode `Emoji` 属性，BMP 码位表取自 emoji-data.txt 15.0）筛掉 `≈` `¥` `«` 这类普通符号，并上 `crates/qingjian-core/data/emoji.tsv` 的口语叫法，同时启用同目录编进程序的 `kaomoji.tsv`、`symbols.tsv`（一行一条 `词\t条目`），以及 `words.tsv`（这些词里词库没有的，带读音，排在附加词库之后、用户词之前一起查）。符号表的中文词只收两个字以上的，单字只收白名单里的（度 → °），有测试守着。
 `EmojiTable` 的条目拼进一块缓冲、词只记序号区间，`lookup` 返回 `&str` 迭代器：每个 emoji 一个 `String` 时两张随包表常驻 3.5 MB，现在约 1.6 MB（2026-10-28 探针）。
