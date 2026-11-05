@@ -16,7 +16,6 @@ impl Router {
     /// 焦点会话的 DLL 比 Server 老时按老协议降级（见 [`Self::downgrade_for_old_dll`]）。
     pub(in crate::dispatch) fn current_frame(&self) -> Frame {
         let mut frame = self.raw_frame();
-        frame.typed_keys = self.engine.composition().text().to_owned();
         self.show_typed_keys(&mut frame);
         self.downgrade_for_old_dll(&mut frame);
         frame
@@ -78,10 +77,15 @@ impl Router {
     }
 
     fn raw_frame(&self) -> Frame {
-        if let Some(translation) = &self.translation {
-            return self.translation_frame(translation);
+        let mut frame = match &self.translation {
+            Some(translation) => self.translation_frame(translation),
+            None => self.composed_frame(),
+        };
+        // 自绘窗也按原始输入标识回传布局方向，不能只给 DLL 帧补这个字段。
+        frame.typed_keys = self.engine.composition().text().to_owned();
+        if self.translation.is_some() {
+            return frame;
         }
-        let mut frame = self.composed_frame();
         frame.symbol_panel = self.panel_open();
         if frame.symbol_panel && self.engine.panel_translating() {
             frame.panel_text_box = self.engine.composition().is_empty();

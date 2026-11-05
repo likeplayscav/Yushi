@@ -13,6 +13,7 @@ mod menu;
 mod modes;
 mod numpad;
 mod panel_translate;
+mod placement;
 mod prediction;
 mod rescoring;
 mod shortcuts;

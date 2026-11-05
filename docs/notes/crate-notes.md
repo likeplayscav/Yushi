@@ -443,6 +443,8 @@ id 不能撞拼音侧的写法与日志里的 `wubi`（`is_valid_id`），因为
 
 `Frame.upward` 只控制视觉排布：竖排反转行、横排矩阵反转组行、横排单行保持列序；上方窗口的拼音行移到底部、首选紧挨其上，辅助区留在远侧。组件引用中的拼音行也会识别，字体与字符不镜像。命中仍保留原始候选/译词索引。Windows Server 按实际窗口放置设置方向，仅换边时额外重建一次；GDI 回退也支持。宿主内 TSF 候选和 macOS/Android 目前不设置此方向。
 
+Windows 的原始展示帧（`dispatch/composed/frame.rs::raw_frame`）统一填 `typed_keys`，DLL 帧和自绘帧都携带当前原始输入；UI 回传 `CandidateMouse::Placement` 时靠它拒绝过期方向通知。只给 DLL 帧填值会使自绘窗的通知始终因空键串被拒绝，导致视觉已反向、方向键仍按下方布局移动。回归使用 `CandidateSink::show` 实际收到的帧回传方向，覆盖竖排跨页、换边、过期通知及横排矩阵。
+
 画位图的部分已拆到自绘引擎 `crates/bamboo-slip`：下文的 `scene/`、`animation/`、`text/`、`fonts/`、`canvas.rs`、`shadow.rs`
 在 `crates/bamboo-slip/src/`，原 `renderer/{animate,retained,partial}.rs` 成了引擎的 `stage/`（`Stage::present` / `tick_at`），`theme/svg_image.rs` 成了 `SvgImage`。
 这里留下帧数据、主题格式、`renderer/build/` 建树、点击区域、状态条与云朵 / 齿轮图标（`icon/`，实现引擎的 `Icon` trait）。改了引擎回来跑本 crate 的快照测试。
