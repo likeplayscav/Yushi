@@ -2,6 +2,9 @@
 name = "简体中文"
 
 [candidate_menu]
+characters = "按单字选"
+more = "更多候选"
+compact = "精简候选"
 edit_translation = "修改译文…"
 regenerate_translation = "模型重新生成译文"
 pin = "置顶"

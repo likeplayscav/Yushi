@@ -68,7 +68,18 @@ impl Builder<'_> {
             Layout::Horizontal => &windows.horizontal,
             Layout::Strip => &windows.strip,
         };
-        self.root(spec, Context::new(&clip::shown(frame)))
+        let mut spec = std::borrow::Cow::Borrowed(spec);
+        if frame.upward
+            && let NodeKind::Frame { children, .. } = &mut spec.to_mut().kind
+            && let Some(at) = children.iter().position(contains_candidates)
+        {
+            let candidates = children.remove(at);
+            children.push(candidates);
+        }
+        let shown = clip::shown(frame);
+        let mut ctx = Context::new(&shown);
+        ctx.reverse_rows = frame.upward && layout == Layout::Vertical;
+        self.root(&spec, ctx)
     }
 
     /// 状态条的根节点（主题写了 `status.root`）：格子按 `cells` 展开，各格的盒子记在 [`Self::cell_nodes`]。
@@ -153,7 +164,13 @@ impl Builder<'_> {
                 else {
                     return Ok(());
                 };
-                for (i, row) in rows.iter().enumerate() {
+                for visual in 0..rows.len() {
+                    let i = if ctx.reverse_rows {
+                        rows.len() - 1 - visual
+                    } else {
+                        visual
+                    };
+                    let row = &rows[i];
                     let row_ctx = ctx.with_row(row, i, rows.len());
                     let before = out.len();
                     self.node(component, row_ctx, &layout, out)?;
@@ -242,5 +259,14 @@ impl Builder<'_> {
             color,
             self.theme.text_gamma(),
         )
+    }
+}
+
+/// “candidates” 条件也可能只是分隔线，必须移动真正包含候选列表的区域。
+fn contains_candidates(spec: &NodeSpec) -> bool {
+    match &spec.kind {
+        NodeKind::Repeat { bind, .. } => bind == "candidates",
+        NodeKind::Frame { children, .. } => children.iter().any(contains_candidates),
+        _ => false,
     }
 }

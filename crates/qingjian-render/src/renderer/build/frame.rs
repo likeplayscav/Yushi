@@ -135,7 +135,14 @@ impl Builder<'_> {
             for (i, row) in rows.iter().enumerate() {
                 let row_ctx = ctx.with_row(row, i, rows.len());
                 let grid_row = Line {
-                    start: GridPlacement::from_line_index(i as i16 + 1),
+                    start: GridPlacement::from_line_index(
+                        (if ctx.reverse_rows {
+                            rows.len() - 1 - i
+                        } else {
+                            i
+                        }) as i16
+                            + 1,
+                    ),
                     end: GridPlacement::AUTO,
                 };
                 let mut column = 0;

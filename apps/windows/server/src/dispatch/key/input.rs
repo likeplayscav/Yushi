@@ -12,6 +12,25 @@ impl Router {
     /// 功能键靠键码，其余靠字符。组句中修饰键 + 数字是快捷键；带 Ctrl / Alt / Win 而没配到快捷键的键归应用。
     /// 表达式模式里 Shift + 数字打的是 `^ * ( )`，不当快捷键。
     pub(crate) fn apply_key(&mut self, event: &KeyEvent) -> Effect {
+        // 上方候选的上下方向按视觉位置走；数字键与左右顺序不变。
+        if self.candidate_upward
+            && self.composing()
+            && self.panel.is_none()
+            && self.translation.is_none()
+            && (self.config.layout == qingjian_platform::LayoutMode::Vertical || self.grid_keys())
+            && matches!(event.virtual_key, codes::UP | codes::DOWN)
+        {
+            let mut visual = *event;
+            visual.virtual_key = if event.virtual_key == codes::UP {
+                codes::DOWN
+            } else {
+                codes::UP
+            };
+            self.candidate_upward = false;
+            let effect = self.apply_key(&visual);
+            self.candidate_upward = true;
+            return effect;
+        }
         if event.modifiers.vietnamese_mode {
             return self.apply_vietnamese(event);
         }

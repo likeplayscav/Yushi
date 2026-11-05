@@ -57,6 +57,9 @@ pub trait CandidateSink: Send {
 /// 候选窗口上的鼠标操作（UI 线程经工人通道送给 Router）。
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CandidateMouse {
+    /// 自绘候选窗的实际方向，供按视觉方向移动高亮。
+    Placement { upward: bool, typed_keys: String },
+
     /// 左键点中候选或译词。
     Click(HitTarget),
 

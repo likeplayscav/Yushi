@@ -34,6 +34,15 @@ pub enum CandidateAction {
 
     /// 提高平台自有候选的选择权重；普通中文候选不展示，由平台候选上下文使用。
     Promote,
+
+    /// 本次拼音只看首音节单字。
+    Characters,
+
+    /// 本次拼音显示完整候选列表。
+    More,
+
+    /// 回到有限整词的普通浏览。
+    Compact,
 }
 
 /// 不经过中文 `Composition` 的输入法候选上下文。
@@ -54,7 +63,7 @@ impl IndependentInputContext<'_> {
 }
 
 impl CandidateAction {
-    const ALL: [Self; 8] = [
+    const ALL: [Self; 11] = [
         Self::EditTranslation,
         Self::RegenerateTranslation,
         Self::Pin,
@@ -63,6 +72,9 @@ impl CandidateAction {
         Self::Undemote,
         Self::Delete,
         Self::Promote,
+        Self::Characters,
+        Self::More,
+        Self::Compact,
     ];
 
     pub fn label(self) -> &'static str {
@@ -75,6 +87,9 @@ impl CandidateAction {
             Self::Undemote => tr("candidate_menu.undemote"),
             Self::Delete => tr("candidate_menu.delete"),
             Self::Promote => tr("candidate_menu.promote"),
+            Self::Characters => tr("candidate_menu.characters"),
+            Self::More => tr("candidate_menu.more"),
+            Self::Compact => tr("candidate_menu.compact"),
         }
     }
 
@@ -95,6 +110,25 @@ pub fn actions(
     phrases: &[CustomPhrase],
 ) -> Vec<CandidateAction> {
     let mut actions = Vec::new();
+    if !engine.english_mode()
+        && engine.is_phonetic()
+        && !engine.composition().is_empty()
+        && !engine.expression_mode()
+        && !engine.question_mode()
+        && matches!(
+            candidate.kind,
+            CandidateKind::Chinese
+                | CandidateKind::Sentence
+                | CandidateKind::Cloud
+                | CandidateKind::Generated
+        )
+    {
+        actions.extend([
+            CandidateAction::Characters,
+            CandidateAction::More,
+            CandidateAction::Compact,
+        ]);
+    }
     if engine.translation_target(candidate).is_some() {
         actions.push(CandidateAction::EditTranslation);
         if engine.prediction_enabled() {
@@ -204,6 +238,15 @@ pub fn perform(
         phrases_changed: false,
     };
     match action {
+        CandidateAction::Characters | CandidateAction::More | CandidateAction::Compact => {
+            let view = match action {
+                CandidateAction::Characters => qingjian_core::CandidateView::Characters,
+                CandidateAction::More => qingjian_core::CandidateView::All,
+                _ => qingjian_core::CandidateView::Compact,
+            };
+            engine.set_candidate_view(view);
+            notice(action.label().to_owned())
+        }
         CandidateAction::EditTranslation
         | CandidateAction::RegenerateTranslation
         | CandidateAction::Promote => notice(tr("candidate_menu.needs_window").to_owned()),
@@ -258,7 +301,7 @@ mod tests {
             assert_eq!(CandidateAction::from_id(action.id()), Some(action));
         }
         assert_eq!(CandidateAction::from_id(0), None);
-        assert_eq!(CandidateAction::from_id(9), None);
+        assert_eq!(CandidateAction::from_id(12), None);
     }
 
     #[test]

@@ -7,6 +7,7 @@ mod alignment;
 mod annotation;
 mod aux_code;
 mod candidate_menu;
+mod candidate_view;
 mod caret;
 mod choice;
 mod code_keys;
@@ -48,6 +49,7 @@ use qingjian_dictionary::{AuxCodeLookup, Dictionary, WordList};
 pub use alignment::Alignment;
 pub use annotation::AnnotationReport;
 pub use aux_code::is_valid_aux_code_key;
+pub use candidate_view::CandidateView;
 pub use choice::{CharTable, ChoiceModel, ChoiceScore, ChoiceTier};
 pub use commit::{LastCommit, Transition};
 pub use gloss::{FilledGloss, GlossFiller, NoGlossFiller};
@@ -204,6 +206,13 @@ pub struct Engine {
 
     /// 整句转换的搜索规模；同上，只有回放调参会改（`set_search_limits`）。见 [`sentence::SearchLimits`]。
     search_limits: sentence::SearchLimits,
+
+    /// 当前输入的浏览方式，结束组句后复位。
+    candidate_view: CandidateView,
+
+    default_candidate_view: CandidateView,
+
+    candidate_word_limit: usize,
 
     /// 敲错纠正的代价；同上，只有回放调参会改（`set_typo_costs`）。
     typo_costs: TypoCosts,
@@ -547,6 +556,9 @@ impl Engine {
             interpolation: Interpolation::DEFAULT,
             typo_costs: TypoCosts::DEFAULT,
             search_limits: sentence::SearchLimits::DEFAULT,
+            candidate_view: CandidateView::default(),
+            default_candidate_view: CandidateView::default(),
+            candidate_word_limit: CandidateView::WORD_LIMIT,
             neural_context: RESCORE_CONTEXT_CHARS,
             correction_cache: std::cell::RefCell::new(None),
             span_cache: std::cell::RefCell::new(sentence::SpanCache::default()),

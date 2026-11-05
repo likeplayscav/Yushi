@@ -42,6 +42,36 @@ def machine(path):
         return struct.unpack('<H', source.read(2))[0]
 
 
+def seed_preferences(folder):
+    """只供一次性 runner：保留非默认设置、手写注释和真实格式的学习文件。"""
+    samples = {
+        'config.toml': '# Reinstall preservation probe\n[general]\npage_size = 7\nlayout = "horizontal"\n'
+                       'theme = "system-blue"\nlearning = true\n[model]\nenabled = false\n[predict]\nenabled = false\n',
+        'user.tsv': '吗\t11\n',
+        'user-choices.tsv': 'm\t吗\t7\n',
+        'user-words.tsv': '测试人名\tce shi ren ming\t100\n',
+        'user-ngram.tsv': '<s>\t吗\t7\n',
+        'user-english.tsv': 'MyProject\t3\n',
+        'user-typos.tsv': 'tain\ttian\t4\n',
+        '.env': '# Synthetic marker, no credentials\nQINGJIAN_REINSTALL_PROBE=preserved\n',
+        'themes/reinstall-probe/keep.txt': 'custom theme assets\n',
+        'models/reinstall-probe/keep.txt': 'downloaded model marker\n',
+    }
+    for name, text in samples.items():
+        path = folder / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            raise RuntimeError(f'refusing to overwrite preexisting runner preferences: {path}')
+        path.write_bytes(text.encode('utf-8'))
+    return {name: sha(folder / name) for name in samples}
+
+
+def assert_preferences(folder, expected):
+    for name, fingerprint in expected.items():
+        path = folder / name
+        assert path.is_file() and sha(path) == fingerprint, f'user preference changed or missing: {name}'
+
+
 def smoke():
     # 安装和注册只允许在一次性的 Windows runner，避免误改开发者的输入法。
     if os.name != 'nt' or os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -54,10 +84,13 @@ def smoke():
     clsid = re.search(r'CLSID_QINGJIAN_STR: &str = "([^"]+)"', clsid_source)[1]
     key = 'SOFTWARE\\Classes\\CLSID\\' + clsid + '\\InprocServer32'
     processes = []
+    preferences = Path(os.environ['APPDATA']) / 'Qingjian'
+    expected_preferences = seed_preferences(preferences)
     report = dict(installer=source.name, installer_sha256=sha(source), architectures={}, registrations={})
     try:
         subprocess.run([str(source), '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-',
                         '/DIR=' + str(destination), '/LOG=' + str(CHECKS / 'install.log')], check=True, timeout=180)
+        assert_preferences(preferences, expected_preferences)
         version = source.name.removeprefix('qingjian-').removesuffix('-windows-x86_64-setup.exe')
         binaries = [(name, 'release/' + name, 0x8664) for name in
                     ['qingjian-server.exe', 'qingjian-settings.exe', 'qingjian-clipboard.exe']]
@@ -96,6 +129,22 @@ def smoke():
                        check=True, timeout=120)
         assert list(snapshots.rglob('*.png')), 'no settings render output'
         report['settings_render'] = 'passed'
+        for process in processes:
+            if process.poll() is None:
+                process.terminate()
+                process.wait(timeout=30)
+        # 直接覆盖重装，以及卸载后再安装，都必须逐字节保留原用户文件。
+        for round_name, remove_first in [('overinstall', False), ('reinstall', True)]:
+            if remove_first:
+                subprocess.run([str(destination / 'unins000.exe'), '/VERYSILENT', '/SUPPRESSMSGBOXES',
+                                '/NORESTART'], check=True, timeout=180)
+                assert_preferences(preferences, expected_preferences)
+            subprocess.run([str(source), '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-',
+                            '/DIR=' + str(destination), '/LOG=' + str(CHECKS / f'{round_name}.log')],
+                           check=True, timeout=180)
+            assert_preferences(preferences, expected_preferences)
+        report['preferences'] = dict(status='passed', files=expected_preferences,
+                                     operations=['install', 'overinstall', 'uninstall', 'reinstall'])
     finally:
         for process in processes:
             if process.poll() is None:
@@ -112,6 +161,7 @@ def smoke():
         except FileNotFoundError:
             pass
     assert not (destination / 'qingjian-server.exe').exists(), 'server remains after uninstall'
+    assert_preferences(preferences, expected_preferences)
     report['uninstall'] = 'passed'
     report['status'] = 'passed'
     (CHECKS / 'installer-smoke.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
@@ -128,7 +178,8 @@ def stage():
     shutil.copy2(source.with_name('package-size.json'), output / 'package-size.json')
     summaries = {path.parent.name: json.loads(path.read_text(encoding='utf-8'))
                  for path in (ROOT / 'target/package-eval').glob('*/summary.json')}
-    assert len(summaries) == 7, 'incomplete evaluation'
+    assert len(summaries) == 8, 'incomplete evaluation'
+    assert summaries['experience']['status'] == 'passed' and summaries['experience']['regressions'] == []
     assert summaries['names-static']['count'] == 290 and summaries['names-static']['regressions'] == []
     info = dict(commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
                 workflow_url=f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",

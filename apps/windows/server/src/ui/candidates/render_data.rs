@@ -11,6 +11,10 @@ use super::theme::Theme;
 
 /// 一次绘制要用的全部内容。
 pub(crate) struct RenderData {
+    pub(super) upward: bool,
+
+    pub(super) typed_keys: String,
+
     /// 配色与字体（随 DPI / 深浅重建）。
     pub(super) theme: Rc<Theme>,
 
@@ -63,6 +67,8 @@ pub(crate) struct RenderData {
 impl RenderData {
     pub(super) fn empty(theme: Rc<Theme>) -> Self {
         Self {
+            upward: false,
+            typed_keys: String::new(),
             theme,
             preedit: Vec::new(),
             cursor: 0,
@@ -84,6 +90,7 @@ impl RenderData {
 
     pub(super) fn set(&mut self, frame: &Frame, mode: Mode) {
         self.mode = mode;
+        self.typed_keys.clone_from(&frame.typed_keys);
         self.layout = frame.layout;
         self.appearance = frame.appearance;
         self.show_code = frame.aux_code_show;
@@ -147,6 +154,7 @@ impl RenderData {
             cursor: self.cursor,
         });
         qingjian_render::Frame {
+            upward: self.upward,
             preedit,
             rows: self.rows.clone(),
             // 协议里 usize::MAX 表示不高亮。

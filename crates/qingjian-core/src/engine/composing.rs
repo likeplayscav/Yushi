@@ -177,6 +177,7 @@ impl Engine {
 
     pub fn push(&mut self, c: char) {
         if self.composition.is_empty() {
+            self.candidate_view = self.default_candidate_view;
             // 新一段组句：从这一键起算耗时、翻页与重打
             self.composition_started = Some(Instant::now());
             *self.generated_forms.borrow_mut() = None;
@@ -225,6 +226,7 @@ impl Engine {
     }
 
     pub fn clear(&mut self) {
+        self.candidate_view = self.default_candidate_view;
         self.cancel_rescoring();
         self.composition.clear();
         self.held.clear();

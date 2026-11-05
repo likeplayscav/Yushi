@@ -41,6 +41,18 @@ pub fn default_config_file() -> PathBuf {
 #[derive(Debug, Parser)]
 #[command(name = "qingjian", about = "青简输入法 Core 测试工具")]
 pub struct Args {
+    /// 用隔离数据回放多场景逐键输入，输出评分报告（无网络/用户配置）。
+    #[arg(long)]
+    pub experience: Option<PathBuf>,
+
+    /// 体验评测使用完整候选，作为精简列表的对照。
+    #[arg(long)]
+    pub experience_all: bool,
+
+    /// 体验回放的普通整词额度，用于对比 9 / 18 / 27；不改产品配置。
+    #[arg(long, default_value_t = qingjian_core::CandidateView::WORD_LIMIT)]
+    pub experience_word_limit: usize,
+
     /// 每次查询的 emoji 候选上限，0 关闭；缺省保持最多三个。
     #[arg(long, default_value_t = 3, value_parser = clap::value_parser!(u8).range(0..=3))]
     pub emoji_limit: u8,

@@ -110,6 +110,8 @@ mac 存在 `Session::spelling`（`Host::follow_highlight`）、Windows / Linux �
 码表里编码不全是字母的行在 `CodeTable::parse` 时跳过（形码查询只收小写字母）。
 拼音那套在纯形码下全部不适用，靠 `modes()` 返回 `ModeKeys::LETTERLESS` 与 `active_correction` 直接返回 `None` 关掉；
 译词标注、生词记录、输入日志、用户选择学习与个人 n-gram 仍照常工作。
+`Engine::set_default_candidate_view` 允许有完整列表入口的壳启用 `Compact`；Windows 浮动窗口默认整词额度为 `CandidateView::WORD_LIMIT = 27`，单字保留，菜单可选 `Characters` / `All`。Core 缺省 `All`，没有菜单的 Linux/Android、Windows 宿主接管列表保持完整候选。`Characters` 在词级预选 500 截断前只收首音节单字，避免长简拼的整词挤掉全部单字；选完首字保留剩余拼音与视图，新组句/会话/隐私清理恢复壳默认。
+
 `Engine` 是对外唯一门面，`Translator` / `Learner` trait 在 `engine` 模块；词库是「主词库 + 附加词库（`set_extra_dictionaries`）+ 用户词」的列表。
 补充词库（`Match::secondary`，通用大词库一百多万条、不少是语料片段）低主词库一档：词级只查音节数正好对上的（`lookup_all`，不当前缀补全）、精确命中不进排序第一档（`Scored::first_tier`，与主词库的前缀词、敲错纠正一起按打分比）、兜底与词图格子预选再扣 `SECONDARY_PENALTY`、不计入总词频；整句那边「整段就是一个词就不走敲错路径 / 不出整句」只认主词库的词（`in_primary_dictionary`），词图选中的补充词库整词或撞上补充词库词的整句照样插到最前。扣分 1–4 冻结回放只差两三条，取 2。繁体输出是 `Traditional`（`crate::traditional`）：`Engine::query` 出口把候选换成繁体并记下「繁体 → 简体」，云端联想词与整句在 `poll_prediction` 那条路上走 `convert_remember` 单独转，`commit` / `annotate` / `forget` / `accept_prediction` 按这张表还原成简体，表在组句边界 `forget` 清；所以词库、词频、用户词、输入日志一律是简体。`LastCommit::chars` 按上屏的繁体算。
 词级排完序后 `ranking::arrange` 按类别重排一次（各类内部不动；这个输入串下选过的不挪），输入不止一个音节时按「句子 > 词 > 单字」分段、不穿插：词至多 `WORDS_BEFORE_SINGLE_CHARS` = 6 个（盖住整段、读音就是敲的音节的词，主词库在前、补充词库的跟着 → 至多 `COMPLETIONS_BEFORE_PREFIXES` = 3 条猜测：多出音节的补全、把打完的末音节读成更长音节的词，只在输入有一种全是完整音节的切法时算猜测 → 只盖住开头一段的主词库前缀词）→ 首音节单字（头 `SINGLE_CHARS_BEFORE_SPLIT` = 9 个之后接拆开完整音节才读得出的 `Scored::split`：`shishan` 按 `shi s h an` 读的 事实；没有词读音正好是敲的音节时它们多半是手误或没打完，`wodei` 的 我的，按词算）→ 其余的词与猜测 → 补充词库的前缀词（你邮、泥涌 这类凑不成话的）。候选全部插完、选词模型重排并把整句截到 `SENTENCE_CANDIDATES` 条之后（截之前可能有 16 条整句，在那时数会把词全挪走），`ranking::keep_single_char_on_first_page` 再看一遍：第一个单字排在 `FIRST_SINGLE_CHAR_BY` = 9 位之后（长拼音时 3 条整句 + 词配的 emoji 不占词的名额，`shiyanshiqingfanghaoxiangbaozhuang` 的 是 原在第 12 位），就把单字前离它最近的词连同配给它的 emoji 挪到单字段后面，整句与英文不动。6 个是按冻结输入日志定的：多音节输入选多字词 99.8% 在前 6 位，选单字的却有 23% 在第 9 位以后；搜狗也是几个词之后全是单字（`ceshi` → 测试 侧石 侧视 策士 侧室，接着 测 侧 册）。末尾只敲了个没打完的音节（`woganj` 的 j，且没有全是完整音节的读法）时，盖住前面完整音节的词（我敢）也算整词。2026-10-28 冻结回放（无模型）：词首选 8202 → 8203、整句首选 2769 不变、整句平均名次 1.89 → 1.58；知意：词 8301 → 8300、整句 2662 → 2660；开发集、回归集（#769 的单字上限放宽到第 18 位）都不变。原来按「覆盖字母数」排最前，拆开 `shan` 读出的两百多个词与五十个 时尚X 补全把单字挤出前 500 条（`shishan` 一个单字都没有）。2026-10-26 冻结回放（知意均衡档 + zh.ngram）：词首选 8322 → 8319 条、前五 97.3% → 97.6%、平均名次 1.51 → 1.38，进第一页 51 个、掉出 12 个（多掉到第二页；我 105 → 5、个 85 → 4）；社区开发集不变。用户报过的例子在 eval-dev 的回归集 `sets/regression.tsv`。
@@ -438,6 +440,8 @@ id 不能撞拼音侧的写法与日志里的 `wubi`（`is_valid_id`），因为
 
 ## crates/qingjian-render
 
+`Frame.upward` 只控制视觉排布：竖排反转行、横排矩阵反转组行、横排单行保持列序；内置主题的候选区移到靠近输入行的一侧。命中仍保留原始候选/译词索引。Windows Server 按实际窗口放置设置方向，仅换边时额外重建一次；GDI 回退也支持。宿主内 TSF 候选和 macOS/Android 目前不设置此方向。
+
 画位图的部分已拆到自绘引擎 `crates/bamboo-slip`：下文的 `scene/`、`animation/`、`text/`、`fonts/`、`canvas.rs`、`shadow.rs`
 在 `crates/bamboo-slip/src/`，原 `renderer/{animate,retained,partial}.rs` 成了引擎的 `stage/`（`Stage::present` / `tick_at`），`theme/svg_image.rs` 成了 `SvgImage`。
 这里留下帧数据、主题格式、`renderer/build/` 建树、点击区域、状态条与云朵 / 齿轮图标（`icon/`，实现引擎的 `Icon` trait）。改了引擎回来跑本 crate 的快照测试。
@@ -485,6 +489,8 @@ Windows Server 自绘候选窗（GDI）按 `Frame.columns` / `column_ems` 画矩
 `examples/check.rs` 手动走一遍；`tools/release-sign` 是发版侧的 keygen / sign / verify。
 
 ## apps/cli
+
+`--experience <报告.json>` 使用固定产品数据和独立真实学习器回放 50 个多场景任务，逐键查询并通过真实上屏路径拆词；九项交互检查独立验学习/隐私/重载/编辑。`tools/eval/experience.py` 计算 100 分评分并核对冻结逐条基线，见 `assets/eval/experience/README.md`。`--experience-all` 是完整候选对照，`--experience-word-limit` 比较 9/18/27 额度，不写用户配置。Windows `installer/build.ps1` 正常构建先跑这道门禁，失败不构建产品。
 
 `tools/eval/names_sentences.py` 固定 80 条姓名/语句种子，生成 290 条全拼、简拼和尾音节未完成输入；输出全部候选与失败，分开报告常见姓名、公共人物、日常短句和含姓名句子。`--reference` 按冻结的 Linux 结果检查 Windows 逐条 Top-1/Top-5 不回退；默认不联网、不学习，`--model` 可测含章·通变。
 

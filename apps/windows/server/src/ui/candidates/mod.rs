@@ -164,7 +164,7 @@ impl CandidateWindow {
     pub(crate) fn show(&self, anchor: RECT) {
         menu::close();
         self.sync_theme(anchor);
-        let rendered = {
+        let mut rendered = {
             let data = self.data.borrow();
             self.painter.borrow_mut().as_mut().and_then(|painter| {
                 painter.render_frame(
@@ -175,6 +175,34 @@ impl CandidateWindow {
                 )
             })
         };
+        if let Some(ref measured) = rendered {
+            let content = (
+                measured.content_width as i32,
+                measured.content_height as i32,
+            );
+            let overhang = measured.visible_overhang();
+            let (_, y) = place(anchor, content, (overhang.0 as i32, overhang.1 as i32));
+            let upward = y + content.1 <= anchor.top;
+            let changed = self.data.borrow().upward != upward;
+            if changed {
+                self.data.borrow_mut().upward = upward;
+                let data = self.data.borrow();
+                rendered = self.painter.borrow_mut().as_mut().and_then(|painter| {
+                    painter.forget();
+                    painter.render_frame(
+                        &data.render_frame(),
+                        data.layout,
+                        self.dark.get(),
+                        self.dpi.get(),
+                    )
+                });
+            }
+            let data = self.data.borrow();
+            click::send(crate::dispatch::CandidateMouse::Placement {
+                upward,
+                typed_keys: data.typed_keys.clone(),
+            });
+        }
         let updated = match rendered {
             Some(rendered) => {
                 let content = (
@@ -261,7 +289,16 @@ impl CandidateWindow {
         }
         // GDI 画法的投影顶影为 0，只有底边那一圈要避
         let (content_x, content_y) = place(anchor, content, (0, margin));
+        let upward = content_y + content.1 <= anchor.top;
+        if self.data.borrow().upward != upward {
+            let mut data = self.data.borrow_mut();
+            data.upward = upward;
+        }
         let data = self.data.borrow();
+        click::send(crate::dispatch::CandidateMouse::Placement {
+            upward,
+            typed_keys: data.typed_keys.clone(),
+        });
         layered::composite(
             self.hwnd,
             &Layered {

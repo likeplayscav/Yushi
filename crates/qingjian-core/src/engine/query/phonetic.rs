@@ -342,6 +342,12 @@ impl Engine {
                 .get(..covered)
                 .map_or(0, |input| self.learner.choice_weight(input, item.hit.text))
         };
+        // 拆字视图必须在预选截断之前筛，否则长简拼的几千个整词会挤掉所有首音节单字。
+        if self.candidate_view == crate::CandidateView::Characters {
+            scored.retain(|item| {
+                item.hit.syllables().count() == 1 && item.hit.text.chars().count() == 1
+            });
+        }
         ranking::rank(&mut scored, MAX_CANDIDATES, |item| {
             (choice(item), self.word_log_prob(&item.hit, log_total))
         });

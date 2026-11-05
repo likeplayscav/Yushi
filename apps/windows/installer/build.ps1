@@ -63,6 +63,18 @@ if (-not $SkipBuild) {
     Write-Host '构建 release 产物…' -ForegroundColor Cyan
     Push-Location $Repo
     try {
+        # 先构建离线验证工具；体验回归失败时停止，不编译或打包产品。
+        cargo build --release --locked -p qingjian-cli
+        if ($LASTEXITCODE -ne 0) { throw "体验验证工具编译失败（退出码 $LASTEXITCODE）" }
+        $experienceOutput = Join-Path $Repo 'target\package-eval\experience'
+        if (Test-Path $experienceOutput) {
+            $archive = Join-Path $Repo 'target\experience-history'
+            New-Item -ItemType Directory -Path $archive -Force | Out-Null
+            Move-Item $experienceOutput (Join-Path $archive ([guid]::NewGuid().ToString('N')))
+        }
+        & $python (Join-Path $Repo 'tools\eval\experience.py') `
+            --binary (Join-Path $Repo 'target\release\qingjian-cli.exe') --output $experienceOutput
+        if ($LASTEXITCODE -ne 0) { throw "打字体验回归失败（退出码 $LASTEXITCODE）" }
         $packages = @('qingjian-windows-server', 'qingjian-windows-tsf', 'qingjian-settings', 'qingjian-clipboard-app')
         if ($IncludeLegacySettings) { $packages += 'qingjian-windows-settings' }
         $packageArgs = @($packages | ForEach-Object { '-p'; $_ })

@@ -2,6 +2,7 @@
 
 mod aux_code;
 mod candidate_menu;
+mod candidate_view;
 mod caret;
 mod chaizi;
 mod cloud;

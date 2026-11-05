@@ -82,7 +82,10 @@ impl Builder<'_> {
                 &layout,
                 &mut cells,
             )?;
-            let (grid_row, column) = (i / columns, i % columns);
+            let (mut grid_row, column) = (i / columns, i % columns);
+            if ctx.frame.upward {
+                grid_row = rows.len().div_ceil(columns) - 1 - grid_row;
+            }
             for &node in &cells[before..] {
                 self.scene.place(
                     node,

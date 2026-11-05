@@ -12,6 +12,9 @@ pub use tone::Tone;
 
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Frame {
+    /// 窗口位于输入行上方：第一行候选靠近底部，逻辑索引不变。
+    pub upward: bool,
+
     /// 顶部拼音行；配置成只在行内显示时为 `None`。
     pub preedit: Option<Preedit>,
 

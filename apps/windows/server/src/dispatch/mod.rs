@@ -55,6 +55,8 @@ const LEARNING_FLUSH_INTERVAL: Duration = Duration::from_secs(60);
 
 /// 同一时刻只有一个应用有键盘焦点，所以一个 Engine 持当前组句；焦点切到别的会话时先清掉上一个的残留。
 pub struct Router {
+    candidate_upward: bool,
+
     /// 输入内核，进程内唯一。
     engine: Engine,
 
@@ -189,6 +191,7 @@ impl Router {
     pub fn new(engine: Engine, config: RouterConfig) -> Self {
         let english = config.english_mode && config.default_english;
         Self {
+            candidate_upward: false,
             engine,
             config: RouterConfig {
                 page_size: config.page_size.max(1),

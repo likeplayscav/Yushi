@@ -61,6 +61,7 @@ pub fn assemble(spec: &AssemblySpec) -> Result<Engine, ServerError> {
         &spec.dictionaries,
     );
     dictionaries.push(Dictionary::builtin_patch()?);
+    engine.set_default_candidate_view(qingjian_core::CandidateView::Compact);
     engine.set_extra_dictionaries(dictionaries);
     let aux_sources = AuxCodeSources {
         bundled_codes: spec.bundled_codes_dir.clone(),

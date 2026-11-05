@@ -71,6 +71,7 @@ impl StripPainter {
             .map(|(i, _)| i)
             .collect();
         self.content = RenderFrame {
+            upward: false,
             preedit: (!frame.preedit.is_empty())
                 .then(|| Preedit::plain(&frame.preedit, frame.preedit_cursor)),
             rows: rows(&frame.candidates, self.text_scale, |text, size| {

@@ -10,6 +10,7 @@ mod cold;
 mod display;
 mod error;
 mod eval;
+mod experience;
 mod logging;
 mod mine;
 mod repl;
@@ -52,6 +53,9 @@ fn run() -> Result<(), CliError> {
     dotenvy::dotenv().ok();
     let args = Args::parse();
     let _log_guard = logging::init()?;
+    if let Some(output) = &args.experience {
+        return experience::run(output, args.experience_all, args.experience_word_limit);
+    }
 
     let started = Instant::now();
     let mut engine = build_engine(&args)?;

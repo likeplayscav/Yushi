@@ -23,6 +23,15 @@ impl Router {
         if self.focused != Some(session) {
             self.reset_composition();
             self.focused = Some(session);
+            let own_window = self
+                .sessions
+                .get(&session)
+                .is_none_or(|info| info.own_candidates);
+            self.engine.set_default_candidate_view(if own_window {
+                qingjian_core::CandidateView::Compact
+            } else {
+                qingjian_core::CandidateView::All
+            });
             let app = self.focused_app().map(str::to_owned);
             self.engine.set_application(app);
             let private = self.focused_private();
@@ -74,6 +83,7 @@ impl Router {
 
     /// 清掉组句、展示状态、在飞的云联想与翻译评审，收起候选窗口。
     pub(super) fn reset_composition(&mut self) {
+        self.candidate_upward = false;
         self.engine.break_chain();
         self.engine.clear();
         self.vietnamese.clear();

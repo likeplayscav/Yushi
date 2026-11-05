@@ -11,6 +11,16 @@ impl Router {
     /// 候选窗口上的鼠标操作（UI 线程经工人通道送来）。
     pub fn handle_candidate_mouse(&mut self, mouse: CandidateMouse) {
         match mouse {
+            CandidateMouse::Placement { upward, typed_keys } => {
+                if typed_keys == self.engine.composition().text()
+                    && self
+                        .focused
+                        .and_then(|id| self.sessions.get(&id))
+                        .is_some_and(|info| info.own_candidates)
+                {
+                    self.candidate_upward = upward;
+                }
+            }
             CandidateMouse::Click(target) => self.handle_click(target),
             CandidateMouse::Menu { offset, point } => self.handle_candidate_menu(offset, point),
             CandidateMouse::MenuPick { offset, id } => self.handle_candidate_menu_pick(offset, id),

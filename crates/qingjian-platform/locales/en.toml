@@ -2,6 +2,9 @@
 name = "English"
 
 [candidate_menu]
+characters = "Choose characters"
+more = "More candidates"
+compact = "Compact candidates"
 edit_translation = "Edit translation…"
 regenerate_translation = "Regenerate translation with the model"
 pin = "Pin to top"
