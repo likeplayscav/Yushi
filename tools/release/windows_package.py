@@ -17,6 +17,15 @@ ROOT = Path(__file__).resolve().parents[2]
 CHECKS = ROOT / 'target/package-checks'
 
 
+def prepare(root=ROOT):
+    """Rust 缓存可能恢复整个 target；一次性报告与安装器必须重新生成。"""
+    for name in ['package-checks', 'package-eval', 'windows-package', 'installer']:
+        path = root / 'target' / name
+        if path.exists():
+            shutil.rmtree(path)
+    (root / 'target/package-checks').mkdir(parents=True, exist_ok=True)
+
+
 def sha(path):
     digest = hashlib.sha256()
     with path.open('rb') as source:
@@ -202,4 +211,4 @@ def stage():
 
 
 if __name__ == '__main__':
-    {'smoke': smoke, 'stage': stage}[sys.argv[1]]()
+    {'prepare': prepare, 'smoke': smoke, 'stage': stage}[sys.argv[1]]()

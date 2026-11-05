@@ -77,6 +77,8 @@ powershell -ExecutionPolicy Bypass -File apps\windows\installer\build.ps1
 
 正常构建先编译 CLI，再运行 [打字体验门禁](../../../assets/eval/experience/README.md)，通过后才编译产品。结果在 `target/package-eval/experience/`；重跑时把上次报告移到 `target/experience-history/`。`-SkipBuild` 只重打既有二进制，不重新编译或执行体验回放。日常直接使用 Cargo 的人可以单独执行上述回放命令。
 
+Actions 恢复 Rust 缓存后先执行 `windows_package.py prepare`，清理 `target` 下的 `package-checks`、`package-eval`、`windows-package` 和 `installer` 四个一次性目录，避免缓存中的旧报告阻止新评测，或被当成本次证据。保留 release / debug / 32 位编译缓存，报告仍使用“目录存在即拒绝”的保护。
+
 最终 Windows 工作流还会先写入非默认偏好与真实格式的学习样例，逐字节验证首次安装、覆盖重装、卸载后重装和最终卸载均保留用户目录；检查包括配置注释、词频、选择表、个人词、搭配、英文词、敲错表、环境文件、主题与模型目录。安装脚本不把默认配置打到用户目录，也不在卸载时删除个人文件。
 
 每次打包同时生成 `target\installer\package-size.json`：从 `.iss` 的实际 `[Files]` 展开文件清单，记录安装包压缩字节、SHA256、安装文件总字节，以及二进制、数据、ONNX 与旧设置运行库的分组大小。比较标准包和 `-IncludeLegacySettings` 时使用同一批二进制制品与数据；预览发布会一并归档该清单。
