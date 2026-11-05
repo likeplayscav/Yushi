@@ -6,6 +6,7 @@ mod caret;
 mod chaizi;
 mod cloud;
 mod code;
+mod context;
 mod correction;
 mod custom;
 mod email;

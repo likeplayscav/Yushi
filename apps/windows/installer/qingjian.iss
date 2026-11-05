@@ -24,6 +24,9 @@
 #ifndef AppVersionNumeric
   #define AppVersionNumeric AppVersion
 #endif
+#ifndef IncludeLegacySettings
+  #define IncludeLegacySettings 0
+#endif
 #define AppName "青简"
 #define Publisher "青简"
 #define WebsiteUrl "https://qingjian.im"
@@ -77,11 +80,13 @@ Source: "{#Repo}\target\release\qingjian_tsf.dll";      DestDir: "{app}"; DestNa
 Source: "{#Repo}\target\i686-pc-windows-msvc\release\qingjian_tsf.dll"; DestDir: "{app}"; DestName: "{#TsfDll32}"; Flags: ignoreversion uninsrestartdelete
 Source: "{#Repo}\target\release\qingjian-settings.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#Repo}\target\release\qingjian-clipboard.exe"; DestDir: "{app}"; Flags: ignoreversion
-; 旧版设置程序（WinUI）留一个版本作回退，下个版本删掉它与下面的运行时
+; 兼容构建可额外带旧版 WinUI 设置及运行时，标准包只带共享设置程序。
+#if IncludeLegacySettings
 Source: "{#Repo}\target\release\qingjian-settings-legacy.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; 旧版设置程序自带一份 Windows App Runtime（自包含部署：Windows 10 上机器装的框架包用不了，见 docs\notes\windows-win10.md）；
 ; 文件由 build.ps1 按 settings-runtime.txt 从 target\release 挑进 target\installer\settings-runtime，必须与 exe 同级。
 Source: "{#Repo}\target\installer\settings-runtime\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+#endif
 Source: "{#Repo}\apps\windows\tsf\resources\qingjian.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; —— 随包生成数据（只装运行时要的 .qj / .tsv，不装 dev 中间产物）——
 Source: "{#Repo}\data\generated\dict.qj";        DestDir: "{app}\data\generated";       Flags: ignoreversion
@@ -127,7 +132,9 @@ Source: "{#Repo}\target\release\qingjian-server.exe";   DestDir: "{app}"; Flags:
 
 [Icons]
 Name: "{group}\青简设置"; Filename: "{app}\qingjian-settings.exe"; IconFilename: "{app}\qingjian.ico"
+#if IncludeLegacySettings
 Name: "{group}\青简旧版设置"; Filename: "{app}\qingjian-settings-legacy.exe"; IconFilename: "{app}\qingjian.ico"
+#endif
 Name: "{group}\卸载青简"; Filename: "{uninstallexe}"
 ; 登录自启：登录时 Explorer 走 ShellExecute 拉起本快捷方式 → AppInfo 授予 uiAccess，候选窗才能盖过商店 / 任务栏搜索。
 ; 用 {commonstartup}（所有用户「启动」文件夹）而非 {userstartup}：本安装器是 admin 机器级安装，

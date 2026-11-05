@@ -42,7 +42,7 @@ impl Engine {
         self.last_choice.set(None);
         self.last_choice_scores.borrow_mut().clear();
         self.corrected_alternates.borrow_mut().clear();
-        self.forget_stale_compose();
+        self.prepare_choice();
         let mut query = match self.query_inner() {
             Ok(query) => query,
             Err(error) => {

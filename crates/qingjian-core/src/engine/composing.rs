@@ -225,6 +225,7 @@ impl Engine {
     }
 
     pub fn clear(&mut self) {
+        self.cancel_rescoring();
         self.composition.clear();
         self.held.clear();
         self.take_panel();
@@ -370,6 +371,7 @@ impl Engine {
 
     /// 用一段完整拼音替换当前缓冲区，供 CLI 和测试一次性喂入。
     pub fn set_input(&mut self, input: &str) {
+        self.cancel_rescoring();
         self.composition.clear();
         self.held.clear();
         for c in input.chars() {
@@ -412,6 +414,7 @@ impl Engine {
         let lead = self.auto_space_before(&raw);
         self.composition.clear();
         self.traditional.forget();
+        self.cancel_rescoring();
         self.remember_commit(LastCommit::plain(&raw));
         self.punctuation.note_committed(&raw);
         self.note_text(&raw);

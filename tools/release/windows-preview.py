@@ -52,6 +52,9 @@ def stage():
     output = ROOT / 'target/windows-preview'
     output.mkdir(exist_ok=False)
     shutil.copy2(installer, output / installer.name)
+    size_report = installer.with_name('package-size.json')
+    if size_report.is_file():
+        shutil.copy2(size_report, output / size_report.name)
     evaluation = ROOT / 'target/journal-ci'
     summary = json.loads((evaluation / 'summary.json').read_text(encoding='utf-8'))
     if summary['clean']['count'] != 30 or summary['mutations']['count'] != 270 or summary['groups']['fuzzy']['count'] != 6:

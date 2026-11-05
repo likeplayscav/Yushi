@@ -27,6 +27,12 @@ edition = "2024"
 license = "GPL-3.0-or-later"
 repository = "https://github.com/qingjian-team/qingjian"
 
+# 跨 crate 消除未用代码并去掉符号表；保留默认的 panic 展开，平台回调仍能隔离 panic。
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
 [workspace.lints.clippy]
 all = "warn"
 

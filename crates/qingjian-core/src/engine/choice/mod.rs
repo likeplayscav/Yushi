@@ -6,6 +6,7 @@
 
 mod char_table;
 mod compose;
+mod condition;
 mod finished;
 mod job;
 mod model;
@@ -24,6 +25,7 @@ use crate::{Candidate, CandidateKind};
 
 pub use char_table::CharTable;
 pub(crate) use compose::ComposeRequest;
+use condition::Condition;
 use finished::Finished;
 use job::Job;
 pub use model::ChoiceModel;
@@ -90,6 +92,9 @@ impl Engine {
 
     /// 换档，下一次查询就按新档比。
     pub fn set_choice_tier(&mut self, tier: ChoiceTier) {
+        if self.choice_tier != tier {
+            self.cancel_choice();
+        }
         self.choice_tier = tier;
     }
 
@@ -254,11 +259,27 @@ impl Engine {
         None
     }
 
-    /// 查询开头：上一次查询记下、还没送出的出字请求作废，只留这次要的。逐键打字时每个前缀都会记一条，
-    /// 不清的话停键后几十个过时前缀排队先算，整句那张表要等好几百毫秒（空格早就上屏了）。
-    pub(super) fn forget_stale_compose(&self) {
+    /// 查询开头：输入或前文变了就取消旧任务；尚未发送的打分与出字只留这次查询需要的。
+    pub(super) fn prepare_choice(&self) {
         if let Some(choice) = &self.choice {
-            choice.compose_wanted.borrow_mut().clear();
+            let limit = self.choice_tier.context_chars(self.english_mode);
+            let context = match &self.rescoring_before {
+                Some(before) => take_last_chars(before, limit),
+                None => self.history.recent(limit).to_owned(),
+            };
+            choice.prepare(Condition {
+                input: self.composition.scope().to_owned(),
+                context,
+                english: self.english_mode,
+                tier: self.choice_tier,
+            });
+        }
+    }
+
+    /// 上屏、清空或切换会话后，不让剩余读法继续占用模型线程。
+    pub(super) fn cancel_choice(&self) {
+        if let Some(choice) = &self.choice {
+            choice.cancel();
         }
     }
 
@@ -278,13 +299,13 @@ impl Engine {
         let compose: Vec<ComposeRequest> = choice.compose_wanted.borrow_mut().drain(..).collect();
         if !compose.is_empty() {
             choice.wanted.borrow_mut().take();
-            choice.worker.submit(Job::Compose(compose));
+            choice.submit(Job::Compose(compose));
             return true;
         }
         let Some(request) = choice.wanted.borrow_mut().take() else {
             return false;
         };
-        choice.worker.submit(Job::Score(request));
+        choice.submit(Job::Score(request));
         true
     }
 
@@ -296,6 +317,7 @@ impl Engine {
         let latest = choice.worker.latest();
         let mut updated = false;
         while let Some((serial, finished)) = choice.worker.poll() {
+            choice.in_flight.borrow_mut().take();
             match finished {
                 Finished::Scored {
                     request,

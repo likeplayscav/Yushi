@@ -43,9 +43,9 @@ Click the 中 / 英 item in the menu bar to open it: the cloud suggestions switc
 
 ## The taskbar icon (Windows)
 
-Right-click the 中 / 英 icon on the taskbar: switch to Chinese / English, full-width punctuation, show or hide the floating status bar, open the symbol panel, open Settings or legacy Settings. New versions are also announced here.
+Right-click the 中 / 英 icon on the taskbar: switch to Chinese / English, full-width punctuation, show or hide the floating status bar, open the symbol panel or Settings. Legacy Settings appears when installed. New versions are also announced here.
 
 ## Legacy settings
 
-This version keeps the old settings window as a fallback; if the new one won't open or a setting doesn't take effect, use the old one: 旧版设置… (Legacy Settings…) in the macOS input method menu; 旧版设置… in the Windows taskbar icon's right-click menu, or 青简旧版设置 (Qingjian Legacy Settings) in the Start menu.
-Both change the same settings. The legacy settings will be removed in a later version; if you find you need them, please [report it](../help/feedback.md).
+macOS keeps 旧版设置… (Legacy Settings…) in the input method menu. The standard Windows installer includes the new Settings app; legacy Settings is available in an optional compatibility build. When installed, open it from the taskbar icon's right-click menu or the Start menu.
+Both change the same settings. If the new Settings app does not work, please [report it](../help/feedback.md); users who have legacy Settings installed can use it temporarily.

@@ -55,6 +55,41 @@ fn choice_waits_for_the_shell_then_moves_the_pick_up() {
     assert_eq!((note.from, note.ctx, note.app), (1, 0, false));
 }
 
+#[test]
+fn clearing_or_committing_cancels_the_pending_choice_request() {
+    for commit in [false, true] {
+        let mut engine =
+            Engine::new(Dictionary::parse("开发\tkai fa\t9000\n开罚\tkai fa\t10\n").unwrap());
+        engine.set_choice_model(Some(Arc::new(Prefers("开罚"))));
+        engine.set_input("kaifa");
+        let query = engine.query().unwrap();
+        assert!(engine.rescoring_pending());
+        if commit {
+            engine.commit(&query.candidates.items[0]);
+        } else {
+            engine.clear();
+        }
+        assert!(!engine.rescoring_pending());
+        assert!(!engine.request_rescoring());
+    }
+}
+
+#[test]
+fn repeated_queries_do_not_resubmit_the_same_inflight_work() {
+    let mut engine =
+        Engine::new(Dictionary::parse("开发\tkai fa\t9000\n开罚\tkai fa\t10\n").unwrap());
+    engine.set_choice_model(Some(Arc::new(Prefers("开罚"))));
+    engine.set_input("kaifa");
+    engine.query().unwrap();
+    assert!(engine.request_rescoring());
+    let serial = engine.choice.as_ref().unwrap().worker.latest();
+    for _ in 0..100 {
+        engine.query().unwrap();
+        assert!(engine.request_rescoring());
+        assert_eq!(engine.choice.as_ref().unwrap().worker.latest(), serial);
+    }
+}
+
 /// 假选词模型：选词打分一律相同（不重排），按音节出字时偏爱给定的字。
 struct Composes(&'static [char]);
 

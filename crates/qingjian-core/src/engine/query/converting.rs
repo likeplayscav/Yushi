@@ -127,6 +127,10 @@ impl Engine {
             s.syllables.len() == first.syllables.len()
                 && s.incomplete_count() == first.incomplete_count()
         };
+        // 没有第二种同级切分时，比分不会改变选择，最终生成候选时再搜索一次即可。
+        if segmentations.get(1).is_none_or(|next| !tied(&next)) {
+            return Some(first);
+        }
         let mut best = (f64::NEG_INFINITY, first);
         for segmentation in segmentations
             .iter()
@@ -385,6 +389,7 @@ impl Engine {
             |text| self.learner.weight(text),
             |index, syllable| expanded.cost(index, syllable),
         )
+        .with_context(self.chain.context())
         .with_limits(self.search_limits);
         sentence::convert_paths(
             &input,
@@ -464,6 +469,7 @@ impl Engine {
         )
         .with_tones(&tones)
         .with_emission(&emission)
+        .with_context(self.chain.context())
         .with_limits(self.search_limits);
         let mut paths = sentence::convert_paths(
             &input,

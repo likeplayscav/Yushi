@@ -239,6 +239,7 @@ impl Engine {
                 .request(self.translator.language(), &candidate.text);
         }
         self.composition.drain_prefix(consumed);
+        self.cancel_rescoring();
         // 上屏即收尾：码段清空、回初始态（数字键与「标点先上屏」都走这里）
         self.aux_code = None;
         let buffer_left = !self.composition.is_empty();

@@ -21,6 +21,7 @@ README.md 只介绍项目（各语言译本在 [i18n/](i18n/)），所有技术�
 | [design/core-internals.md](design/core-internals.md) | Core 与显示层拆解（2026-09-23）：`Engine` 的字段分组与线程归属、一次按键的数据流、三条异步旁路、上屏写回、缓存，三个平台的显示层与还各写一份的地方 |
 | [design/voice-and-swipe.md](design/voice-and-swipe.md) | 语音与滑行输入（2026-10-20）：Rust 与平台壳的分工、语音结果怎么经 Core 上屏、识别方式接口 `Transcriber`、火山引擎豆包流式识别、入口与面板交互；滑行的范围、解码接口 `SwipeDecoder`、按词表打分的 `ShapeDecoder` 与判定 |
 | [plan/roadmap.md](plan/roadmap.md) | 分阶段路线图、各阶段的依赖关系与已完成项 |
+| [plan/input-efficiency-2026-11-05.md](plan/input-efficiency-2026-11-05.md) | 输入准确度、资源占用、流畅度和安装包优化的基线与实施顺序 |
 | [plan/windows-focused-refactor.md](plan/windows-focused-refactor.md) | Windows 专用重构目标：全拼与自动纠错优先、按需英语句译、Win10/Win11 兼容验收、功能删减与包体优化 |
 | [plan/windows-refactor-tasks.md](plan/windows-refactor-tasks.md) | 按轮次实施的任务状态、自动测试用例与基础输入框／浏览器／VS Code／微信的兼容验收顺序 |
 | [plan/zh_tw_support_plan.md](plan/zh_tw_support_plan.md) | 繁体输出与台湾注音支持的分析与方案（贡献者 pinchiu，#22）：读音标准差异、台湾用语、简转繁一对多；两条路线 |
@@ -36,6 +37,7 @@ README.md 只介绍项目（各语言译本在 [i18n/](i18n/)），所有技术�
 | [notes/linux-fcitx4.md](notes/linux-fcitx4.md) | Ubuntu 22.04 的 Fcitx4 源码适配、安装与验证 |
 | [notes/android.md](notes/android.md) | Android 输入法：键盘、候选条、面板、剪贴板、快捷翻译怎么接到 Core，取舍与踩坑 |
 | [notes/performance.md](notes/performance.md) | 历次性能优化：起因、定位方法、改法、数字前后对比与经验 |
+| [notes/input-efficiency-2026-11-05.md](notes/input-efficiency-2026-11-05.md) | 本轮输入上下文修复、后台任务取消、包体裁剪与前后评测证据 |
 | [notes/release.md](notes/release.md) | 发版流程：CHANGELOG、标签触发的 CI 打包、产品数据包、签名公证的 Secrets、官网用的 `releases.json` |
 | [notes/model-identities.md](notes/model-identities.md) | 含章·通变与含章·知微的正式名称和检查点编号 |
 | [notes/phrase-layer.md](notes/phrase-layer.md) | 短语层（2026-09-12）：常用词表收不到的 我的 / 不知道 怎么从语料挖、怎么进语言模型而不伤整句、两把尺子的前后数字 |

@@ -33,6 +33,10 @@ TSV 的音节可带数字声调（`ni3`，轻声 5 或 0），键一律去调，
 
 ## crates/qingjian-core
 
+整句搜索的 `SearchInput::context` 沿用 `CommitChain`：起始词使用前两个已上屏词，第二个词仍带上跨输入段的前词；断链时回到句首，诊断与拼接备选采用同一上下文。只剩一种同级拼音切分时省去比较用的重复词图搜索；普通单前驱搜索不分配临时 Vec。格子中的重叠词库条目按文字全局去重后才截取名额，不能只去相邻重复。
+
+知意后台任务在 `engine/choice/worker/`：单槽待办、合并通知，输入条件改变即取消旧序号，每次出字调用之间检查取消。清空、上屏、原样输出、切换会话和卸载取消剩余任务；含章也在这些边界作废输入代。单次正在运行的模型调用仍需完成。重复查询与模型结果重查不改变知意的输入条件，同一在途请求不重复提交，避免取消有效结果。验证和前后指标见 [输入效率优化](input-efficiency-2026-11-05.md)。
+
 `Engine::set_emoji_limit` / `set_kaomoji_limit` / `set_symbol_limit` 控制单次查询插入的 emoji、颜文字、符号数，各自 0–3（缺省 3 / 1 / 1）、0 关闭、越界值按 3 处理；每词 emoji 与符号最多两个、颜文字一个，普通候选相对顺序不变。三端读 `[general] emoji` / `kaomoji` / `symbols`（`qingjian_platform::EmojiCount`，旧配置 emoji 的 `true` / `false` 读成 3 / 0），CLI 用 `--emoji-limit <0..3>`。
 `with_emoji` 带上 CLDR 表时用 `emoji::is_emoji`（Unicode `Emoji` 属性，BMP 码位表取自 emoji-data.txt 15.0）筛掉 `≈` `¥` `«` 这类普通符号，并上 `crates/qingjian-core/data/emoji.tsv` 的口语叫法，同时启用同目录编进程序的 `kaomoji.tsv`、`symbols.tsv`（一行一条 `词\t条目`），以及 `words.tsv`（这些词里词库没有的，带读音，排在附加词库之后、用户词之前一起查）。符号表的中文词只收两个字以上的，单字只收白名单里的（度 → °），有测试守着。
 `EmojiTable` 的条目拼进一块缓冲、词只记序号区间，`lookup` 返回 `&str` 迭代器：每个 emoji 一个 `String` 时两张随包表常驻 3.5 MB，现在约 1.6 MB（2026-10-28 探针）。
@@ -480,6 +484,8 @@ Windows Server 自绘候选窗（GDI）按 `Frame.columns` / `column_ems` 画矩
 
 ## apps/cli
 
+`tools/eval/typing.py --binary <release CLI> --output <新目录>` 跑固定 15 组逐键输入（三轮），保存阶段耗时、首选和输入数据/二进制哈希；Linux 有 GNU time 时另外记录进程 CPU 和峰值 RSS。CLI 会标注整份候选，报告不是桌面端到端按键延迟。
+
 测试工具，`cargo run -p qingjian-cli -- kaifa`。
 
 - `--predict` 强制开云联想并等结果打印，交互模式下上屏后也联想。
@@ -577,6 +583,8 @@ PKG_CONFIG_PATH="$onig" PKG_CONFIG_ALLOW_CROSS=1 RUSTONIG_SYSTEM_LIBONIG=1 \
 - 端到端验证可用 `osascript` 的 System Events 往 TextEdit 发按键再读回文本（终端需要辅助功能权限；输入法得在中文模式）。
 
 ## apps/windows
+
+`installer/build.ps1` 默认只带共享设置；`-IncludeLegacySettings` 才构建并打包旧 WinUI 设置与完整 Windows App Runtime。TSF 右键菜单按旧 exe 是否存在显示入口。打包后 `tools/release/windows-size.py` 按 `.iss` 当前选择的 `[Files]` 输出 `package-size.json`，区分压缩包与展开文件大小；PowerShell 门禁在 `tools/release/test_windows_installer.py`，CI 的 Windows job 执行。
 
 候选窗 `ui::candidates::CandidateWindow::show` 每次更新内容后用 `SetWindowPos(HWND_TOPMOST)` 重新升到置顶序列首位，并保留 `SWP_NOACTIVATE`；Windows 搜索页后弹出的置顶窗口可能盖住较早创建的候选窗。
 
