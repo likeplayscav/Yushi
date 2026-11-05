@@ -28,6 +28,7 @@ README.md 只介绍项目（各语言译本在 [i18n/](i18n/)），所有技术�
 | [plan/wubi.md](plan/wubi.md) | 五笔（形码）支持方案（2026-09-15）：为什么不能按双拼的方式接、两条平行管线、码表与词频、`[general] scheme` 收敛、分期 |
 | [notes/crate-notes.md](notes/crate-notes.md) | 各 crate / app / tool 的实现要点：入口类型、数据文件、常数、生成命令 |
 | [notes/windows-refactor-round1-2026-10-04.md](notes/windows-refactor-round1-2026-10-04.md) | Windows 重构第一轮：会话隔离、诊断导出、日志与下载限额修复，自动与原生 ZIP 测试结果及未验项目 |
+| [notes/windows-occlusion-2026-11-05.md](notes/windows-occlusion-2026-11-05.md) | Win11 任务栏搜索与开始菜单候选遮挡：宿主回退的覆盖范围、合并接线核对、同机定位步骤与验收边界 |
 | [notes/linux-fcitx5.md](notes/linux-fcitx5.md) | Linux 默认面板构建、协议、安装与排错 |
 | [notes/linux-packaging.md](notes/linux-packaging.md) | Linux 发行包（2026-09-23）：`build.sh` 在容器里打 deb / rpm，各包装了什么、能装哪些发行版、装法与限制，`smoke/run.sh` 在五个发行版的干净容器里装包自检 |
 | [notes/linux-dual-frontend.md](notes/linux-dual-frontend.md) | Linux 双前端（Fcitx5 / IBus）怎么验（2026-09-21）：能自动跑的三套、只能真会话手测的六条及其判据、现在验不了的两件事、踩过的四个坑 |
