@@ -81,7 +81,7 @@ Source: "{#Repo}\target\i686-pc-windows-msvc\release\qingjian_tsf.dll"; DestDir:
 Source: "{#Repo}\target\release\qingjian-settings.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#Repo}\target\release\qingjian-clipboard.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; 兼容构建可额外带旧版 WinUI 设置及运行时，标准包只带共享设置程序。
-#if IncludeLegacySettings
+#if Int(IncludeLegacySettings)
 Source: "{#Repo}\target\release\qingjian-settings-legacy.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; 旧版设置程序自带一份 Windows App Runtime（自包含部署：Windows 10 上机器装的框架包用不了，见 docs\notes\windows-win10.md）；
 ; 文件由 build.ps1 按 settings-runtime.txt 从 target\release 挑进 target\installer\settings-runtime，必须与 exe 同级。
@@ -132,7 +132,7 @@ Source: "{#Repo}\target\release\qingjian-server.exe";   DestDir: "{app}"; Flags:
 
 [Icons]
 Name: "{group}\青简设置"; Filename: "{app}\qingjian-settings.exe"; IconFilename: "{app}\qingjian.ico"
-#if IncludeLegacySettings
+#if Int(IncludeLegacySettings)
 Name: "{group}\青简旧版设置"; Filename: "{app}\qingjian-settings-legacy.exe"; IconFilename: "{app}\qingjian.ico"
 #endif
 Name: "{group}\卸载青简"; Filename: "{uninstallexe}"

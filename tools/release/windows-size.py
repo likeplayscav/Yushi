@@ -18,7 +18,7 @@ def inventory(root, legacy):
             inside = line == "[Files]"
         if not inside:
             continue
-        if line == "#if IncludeLegacySettings":
+        if line == "#if Int(IncludeLegacySettings)":
             enabled = legacy
             continue
         if line == "#endif":

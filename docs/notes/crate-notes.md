@@ -590,6 +590,8 @@ PKG_CONFIG_PATH="$onig" PKG_CONFIG_ALLOW_CROSS=1 RUSTONIG_SYSTEM_LIBONIG=1 \
 
 `.github/workflows/windows-package.yml` 在 `build/windows-*` 分支构建开发包：原生 workspace 测试、x86 TSF lint、真实模型停键探针及姓名/文章评测成功后调用 Inno；`tools/release/windows_package.py` 在独立 runner 验安装、两种架构的 COM 注册、数据与二进制哈希、三程序启动、设置离屏渲染和卸载，再归档安装包、校验和、源码提交与完整验证记录。产物作为 Actions artifact 下载，不创建发行标签或 Release；自动化验收不等于 Win11 搜索/开始菜单的交互验收。
 
+Inno 命令行宏可能是字符串，`/DIncludeLegacySettings=0` 必须经 `Int(IncludeLegacySettings)` 后判断；直接 `#if IncludeLegacySettings` 会将非空的 `"0"` 当真，标准包仍索取不存在的旧设置。`QINGJIAN_TEST_ISCC=<ISCC.exe>` 启用真实 Inno 的缺旧文件打包回归，CI 在编译 Rust 前执行；转换语义见 [Inno Int](https://jrsoftware.org/ishelp/topic_int.htm)。
+
 候选窗 `ui::candidates::CandidateWindow::show` 每次更新内容后用 `SetWindowPos(HWND_TOPMOST)` 重新升到置顶序列首位，并保留 `SWP_NOACTIVATE`；Windows 搜索页后弹出的置顶窗口可能盖住较早创建的候选窗。
 
 用量接线：启动与配置热加载为 CloudPredictor 和 CloudGlossFiller 传同一个用户目录 `api-usage.json`；设置页的 ConnectionTest 使用该文件。统计页手动刷新读取累计记录，收到 JSON 响应与正文有效性分开统计；原译词自动补充、用户配置及学习文件沿用。

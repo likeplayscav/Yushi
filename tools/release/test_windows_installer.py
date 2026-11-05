@@ -48,9 +48,9 @@ class InstallerTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8")
 
-    def package(self, legacy=False):
+    def package(self, legacy=False, iscc=None):
         args_file = self.root / "iscc-args.json"
-        env = dict(os.environ, QINGJIAN_ISCC=str(self.root / "fake-iscc.ps1"),
+        env = dict(os.environ, QINGJIAN_ISCC=iscc or str(self.root / "fake-iscc.ps1"),
                    QINGJIAN_INSTALLER_ARGS=str(args_file), PYTHONUTF8="1", PYTHON=sys.executable)
         args = [POWERSHELL, "-NoProfile", "-File", str(self.installer / "build.ps1"), "-SkipBuild"]
         if legacy:
@@ -66,6 +66,16 @@ class InstallerTests(unittest.TestCase):
         size = json.loads((self.root / "target/installer/package-size.json").read_text())
         self.assertNotIn("legacy_settings", size["groups"])
         self.assertEqual(size["installed_file_bytes"], sum(row["bytes"] for row in size["files"]))
+
+    @unittest.skipUnless(os.environ.get("QINGJIAN_TEST_ISCC"), "native Inno Setup is required")
+    def test_native_inno_excludes_missing_legacy_files_when_flag_is_zero(self):
+        # 命令行的字符串 "0" 直接用在 #if 中会意外启用旧设置，必须经过真实预处理器。
+        shutil.copy2(ROOT / "apps/windows/tsf/resources/qingjian.ico",
+                     self.root / "apps/windows/tsf/resources/qingjian.ico")
+        result, _ = self.package(iscc=os.environ["QINGJIAN_TEST_ISCC"])
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        package = self.root / "target/installer/qingjian-0.3.3-windows-x86_64-setup.exe"
+        self.assertGreater(package.stat().st_size, 100000)
 
     def test_compatibility_package_requires_and_stages_the_complete_runtime(self):
         self.write("target/release/qingjian-settings-legacy.exe", "legacy")

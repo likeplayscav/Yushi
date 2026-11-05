@@ -37,6 +37,23 @@ jobs:
           components: rustfmt, clippy
           targets: i686-pc-windows-msvc
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          cache-on-failure: true
+      - name: Install verified Inno Setup 7.1.0
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:RUNNER_TEMP 'innosetup.exe'
+          Invoke-WebRequest -Uri 'https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe' -OutFile $exe
+          if ((Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant() -ne '0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f') { throw 'Inno Setup SHA256 mismatch' }
+          $result = Start-Process -FilePath $exe -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-' -Wait -PassThru
+          if ($result.ExitCode -ne 0) { throw "Inno Setup installation failed: $($result.ExitCode)" }
+      - name: Verify real Inno preprocessor excludes the legacy runtime
+        shell: pwsh
+        run: |
+          $env:QINGJIAN_TEST_ISCC = Join-Path $env:ProgramFiles 'Inno Setup 7/ISCC.exe'
+          $env:QINGJIAN_TEST_POWERSHELL = 'powershell.exe'
+          python tools/release/test_windows_installer.py
+          if ($LASTEXITCODE -ne 0) { throw 'Native Inno integration tests failed' }
       - name: Verify frozen evaluation and packaging tools
         run: |
           mkdir -p target/package-checks
@@ -70,14 +87,6 @@ jobs:
           python tools/eval/daily_reading.py --binary target/release/qingjian-cli.exe --output target/package-eval/daily-model --model data/models/hanzhang-tongbian/hanzhang-tongbian-small.qjm
           python tools/eval/journal.py --binary target/release/qingjian-cli.exe --output target/package-eval/journal --model data/models/hanzhang-tongbian/hanzhang-tongbian-small.qjm
           python tools/eval/lexicon.py --binary target/release/qingjian-cli.exe --output target/package-eval/lexicon
-      - name: Install verified Inno Setup 7.1.0
-        shell: pwsh
-        run: |
-          $exe = Join-Path $env:RUNNER_TEMP 'innosetup.exe'
-          Invoke-WebRequest -Uri 'https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe' -OutFile $exe
-          if ((Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant() -ne '0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f') { throw 'Inno Setup SHA256 mismatch' }
-          $result = Start-Process -FilePath $exe -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-' -Wait -PassThru
-          if ($result.ExitCode -ne 0) { throw "Inno Setup installation failed: $($result.ExitCode)" }
       - name: Build x86_64 installer with 32-bit application support
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File apps/windows/installer/build.ps1
       - name: Verify installation, native architecture, startup and uninstall
