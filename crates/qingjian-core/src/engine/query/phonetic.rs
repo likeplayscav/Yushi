@@ -380,9 +380,13 @@ impl Engine {
                 span(&segmentations, &sources, 0, syllables)
             })
         };
-        ranking::arrange(&mut scored, whole, complete, first, clean, |item| {
-            choice(item) > 0
-        });
+        // 单字视图按已排序的覆盖量和学习权重展示，不能再套用“少量单字后插前缀词”的混排规则。
+        // 否则 jun'yue 的 珺 会被 ju / j 的宽泛读法挤到几百项之后。
+        if self.candidate_view != crate::CandidateView::Characters {
+            ranking::arrange(&mut scored, whole, complete, first, clean, |item| {
+                choice(item) > 0
+            });
+        }
         // 辅码态：词库候选按码段**反向**过滤（逐个问「有没有以码段开头的码」），无码词直接隐藏；
         // 命中的按「完全匹配码 > 码长降序 > 原词频序」重排（stable sort 保住 rank 排好的原序）。
         // 码段为空（刚敲下触发键）时不过滤，候选与纯拼音态一模一样。

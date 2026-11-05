@@ -93,3 +93,20 @@ fn character_view_recovers_characters_lost_at_the_word_preselection_boundary() {
     assert_eq!(engine.commit(wen), "文");
     assert_eq!(engine.composition().text(), "jfgw");
 }
+
+#[test]
+fn character_view_puts_the_complete_first_reading_before_broad_prefix_readings() {
+    let mut source = String::from("军\tjun\t9000\n珺\tjun\t1\n月\tyue\t9000\n");
+    for c in '\u{4e00}'..='\u{4e70}' {
+        source.push_str(&format!("{c}\tju\t10000\n"));
+    }
+    let mut engine = Engine::new(Dictionary::parse(&source).unwrap());
+    engine.set_input("junyue");
+    engine.set_candidate_view(CandidateView::Characters);
+    let items = engine.query().unwrap().candidates.items;
+    assert_eq!(items[0].text, "军");
+    assert_eq!(
+        items[1].text, "珺",
+        "exact first reading must precede ju/j alternatives"
+    );
+}

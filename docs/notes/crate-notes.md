@@ -110,7 +110,7 @@ mac 存在 `Session::spelling`（`Host::follow_highlight`）、Windows / Linux �
 码表里编码不全是字母的行在 `CodeTable::parse` 时跳过（形码查询只收小写字母）。
 拼音那套在纯形码下全部不适用，靠 `modes()` 返回 `ModeKeys::LETTERLESS` 与 `active_correction` 直接返回 `None` 关掉；
 译词标注、生词记录、输入日志、用户选择学习与个人 n-gram 仍照常工作。
-`Engine::set_default_candidate_view` 允许有完整列表入口的壳启用 `Compact`；Windows 浮动窗口默认整词额度为 `CandidateView::WORD_LIMIT = 27`，单字保留，菜单可选 `Characters` / `All`。Core 缺省 `All`，没有菜单的 Linux/Android、Windows 宿主接管列表保持完整候选。`Characters` 在词级预选 500 截断前只收首音节单字，避免长简拼的整词挤掉全部单字；选完首字保留剩余拼音与视图，新组句/会话/隐私清理恢复壳默认。
+`Engine::set_default_candidate_view` 允许有完整列表入口的壳启用 `Compact`；Windows 浮动窗口默认整词额度为 `CandidateView::WORD_LIMIT = 27`，单字保留，菜单可选 `Characters` / `All`。Core 缺省 `All`，没有菜单的 Linux/Android、Windows 宿主接管列表保持完整候选。`Characters` 在词级预选 500 截断前只收首音节单字，避免长简拼的整词挤掉全部单字；之后保留按覆盖量/学习权重的排序，不套用整词混排，避免完整首音节单字被宽泛匹配挤到末尾；选完首字保留剩余拼音与视图，新组句/会话/隐私清理恢复壳默认。
 
 `Engine` 是对外唯一门面，`Translator` / `Learner` trait 在 `engine` 模块；词库是「主词库 + 附加词库（`set_extra_dictionaries`）+ 用户词」的列表。
 补充词库（`Match::secondary`，通用大词库一百多万条、不少是语料片段）低主词库一档：词级只查音节数正好对上的（`lookup_all`，不当前缀补全）、精确命中不进排序第一档（`Scored::first_tier`，与主词库的前缀词、敲错纠正一起按打分比）、兜底与词图格子预选再扣 `SECONDARY_PENALTY`、不计入总词频；整句那边「整段就是一个词就不走敲错路径 / 不出整句」只认主词库的词（`in_primary_dictionary`），词图选中的补充词库整词或撞上补充词库词的整句照样插到最前。扣分 1–4 冻结回放只差两三条，取 2。繁体输出是 `Traditional`（`crate::traditional`）：`Engine::query` 出口把候选换成繁体并记下「繁体 → 简体」，云端联想词与整句在 `poll_prediction` 那条路上走 `convert_remember` 单独转，`commit` / `annotate` / `forget` / `accept_prediction` 按这张表还原成简体，表在组句边界 `forget` 清；所以词库、词频、用户词、输入日志一律是简体。`LastCommit::chars` 按上屏的繁体算。
