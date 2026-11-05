@@ -28,6 +28,7 @@ README.md 只介绍项目（各语言译本在 [i18n/](i18n/)），所有技术�
 | [plan/todo.md](plan/todo.md) | 待办清单，按「从自用到能给别人用」排 |
 | [plan/wubi.md](plan/wubi.md) | 五笔（形码）支持方案（2026-09-15）：为什么不能按双拼的方式接、两条平行管线、码表与词频、`[general] scheme` 收敛、分期 |
 | [notes/crate-notes.md](notes/crate-notes.md) | 各 crate / app / tool 的实现要点：入口类型、数据文件、常数、生成命令 |
+| [notes/yushi-xing-comparison-2026-11-05.md](notes/yushi-xing-comparison-2026-11-05.md) | Yushi-Xing fork 相对青简的实际改动、继承关系、未完成项与本轮安装包验证 |
 | [notes/windows-refactor-round1-2026-10-04.md](notes/windows-refactor-round1-2026-10-04.md) | Windows 重构第一轮：会话隔离、诊断导出、日志与下载限额修复，自动与原生 ZIP 测试结果及未验项目 |
 | [notes/windows-occlusion-2026-11-05.md](notes/windows-occlusion-2026-11-05.md) | Win11 任务栏搜索与开始菜单候选遮挡：宿主回退的覆盖范围、合并接线核对、同机定位步骤与验收边界 |
 | [notes/linux-fcitx5.md](notes/linux-fcitx5.md) | Linux 默认面板构建、协议、安装与排错 |
