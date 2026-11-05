@@ -1,5 +1,7 @@
 # 青简 Windows 安装包
 
+开发包也可由 [Windows x64 validated package](../../../.github/workflows/windows-package.yml) 在 Windows runner 构建：推送 `build/windows-*` 分支后自动运行，全部构建门禁和安装卸载检查通过才上传 `qingjian-windows-x86_64` artifact。下载内容包括安装器、SHA256SUMS、包体清单、源码与测试信息、完整准确度记录；当前构建的姓名样例和失败会如实保留。
+
 用 [Inno Setup](https://jrsoftware.org/isinfo.php) 打的安装包，把 TSF DLL（64 位与 32 位各一份）、Server、设置程序与随包数据一起装进
 `C:\Program Files\Qingjian`，注册文本服务，并设登录自启。对应 macOS 的 pkg。
 

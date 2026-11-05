@@ -484,6 +484,8 @@ Windows Server 自绘候选窗（GDI）按 `Frame.columns` / `column_ems` 画矩
 
 ## apps/cli
 
+`tools/eval/names_sentences.py` 固定 80 条姓名/语句种子，生成 290 条全拼、简拼和尾音节未完成输入；输出全部候选与失败，分开报告常见姓名、公共人物、日常短句和含姓名句子。`--reference` 按冻结的 Linux 结果检查 Windows 逐条 Top-1/Top-5 不回退；默认不联网、不学习，`--model` 可测含章·通变。
+
 `tools/eval/typing.py --binary <release CLI> --output <新目录>` 跑固定 15 组逐键输入（三轮），保存阶段耗时、首选和输入数据/二进制哈希；Linux 有 GNU time 时另外记录进程 CPU 和峰值 RSS。CLI 会标注整份候选，报告不是桌面端到端按键延迟。
 
 测试工具，`cargo run -p qingjian-cli -- kaifa`。
@@ -585,6 +587,8 @@ PKG_CONFIG_PATH="$onig" PKG_CONFIG_ALLOW_CROSS=1 RUSTONIG_SYSTEM_LIBONIG=1 \
 ## apps/windows
 
 `installer/build.ps1` 默认只带共享设置；`-IncludeLegacySettings` 才构建并打包旧 WinUI 设置与完整 Windows App Runtime。TSF 右键菜单按旧 exe 是否存在显示入口。打包后 `tools/release/windows-size.py` 按 `.iss` 当前选择的 `[Files]` 输出 `package-size.json`，区分压缩包与展开文件大小；PowerShell 门禁在 `tools/release/test_windows_installer.py`，CI 的 Windows job 执行。
+
+`.github/workflows/windows-package.yml` 在 `build/windows-*` 分支构建开发包：原生 workspace 测试、x86 TSF lint、真实模型停键探针及姓名/文章评测成功后调用 Inno；`tools/release/windows_package.py` 在独立 runner 验安装、两种架构的 COM 注册、数据与二进制哈希、三程序启动、设置离屏渲染和卸载，再归档安装包、校验和、源码提交与完整验证记录。产物作为 Actions artifact 下载，不创建发行标签或 Release；自动化验收不等于 Win11 搜索/开始菜单的交互验收。
 
 候选窗 `ui::candidates::CandidateWindow::show` 每次更新内容后用 `SetWindowPos(HWND_TOPMOST)` 重新升到置顶序列首位，并保留 `SWP_NOACTIVATE`；Windows 搜索页后弹出的置顶窗口可能盖住较早创建的候选窗。
 
