@@ -53,6 +53,9 @@ use self::translate::Translation;
 /// 学习数据落盘间隔（与 macOS 壳一致）；Server 没有定时器，借消息节拍看时间。
 const LEARNING_FLUSH_INTERVAL: Duration = Duration::from_secs(60);
 
+/// 只记录超过一帧预算的消息处理，不在日志中附输入内容。
+const SLOW_EVENT_THRESHOLD: Duration = Duration::from_millis(17);
+
 /// 同一时刻只有一个应用有键盘焦点，所以一个 Engine 持当前组句；焦点切到别的会话时先清掉上一个的残留。
 pub struct Router {
     candidate_upward: bool,
@@ -298,9 +301,25 @@ impl Router {
 
     /// 处理一条消息；`None` 表示不用回话。到点顺带把学习数据落盘。
     pub fn handle(&mut self, message: ClientMessage) -> Option<ServerMessage> {
+        let started = Instant::now();
+        let (_, message_kind) = CompositionTrace::message_label(&message);
         let response = self.traced(message);
+        let dispatch_elapsed = started.elapsed();
+        let mut flush_elapsed = Duration::ZERO;
         if self.last_flush.elapsed() >= LEARNING_FLUSH_INTERVAL {
+            let flush_started = Instant::now();
             self.flush_learning();
+            flush_elapsed = flush_started.elapsed();
+        }
+        let elapsed = started.elapsed();
+        if elapsed >= SLOW_EVENT_THRESHOLD {
+            tracing::info!(
+                message_kind,
+                dispatch_ms = dispatch_elapsed.as_secs_f64() * 1000.0,
+                learning_flush_ms = flush_elapsed.as_secs_f64() * 1000.0,
+                total_ms = elapsed.as_secs_f64() * 1000.0,
+                "Slow input event"
+            );
         }
         response
     }

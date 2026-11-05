@@ -454,8 +454,7 @@ const EMOJI_TOTAL: usize = 3;
 const KEYWORD_SCAN: usize = 5;
 
 /// 自动造词：用户连着选出的两个词，合起来不在词库里、且这条接续已记过这么多次，就记成用户词。
-/// 同一段拼音里连着选出来的（`qingjian` 选 青 再选 简）是「用户把它当一个词打」的强信号，两次就够；
-/// 第一次可能是误选或偶然。
+/// 同一段拼音里的词组接续两次就够；整段逐字选完是更强的证据，由 finish_buffer 首次造词。
 const AUTO_WORD_THRESHOLD_SAME_BUFFER: u32 = 2;
 
 /// 分两段打的（`qing` 选 青、再打 `jian` 选 简）信号弱一些，要三次，免得 了我 这类虚词接续也成词。

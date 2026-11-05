@@ -179,7 +179,7 @@ mac 存在 `Session::spelling`（`Host::follow_highlight`）、Windows / Linux �
   也不能读成「拼音头 + 英文尾」——打不出来时整串上屏的失败拼音学进去会反过来堵住混输那条路，越打不出来学得越多）、
   个人敲错表（`user-typos.tsv`，接受过的 (敲的, 要的) 音节对，词图敲错边与整段纠错的代价按它打折）与个人 n-gram（`user-ngram.tsv`，Core `sentence::UserNgram`，
   二元 + 三元在线计数，整句转换与词级排序里与静态模型插值；Tab 接受的云端整句按 `sentence::segment_text` 切词后也记；
-  连着选出的两个词记够次数自动造词进用户词，一段拼音分几次选完的合成词记两次也造）。
+  连着选出的两个词记够次数自动造词进用户词；同段拼音全部逐字明确选完、长度 2–4 字时首次即造，夹有词组或模型整句仍需两次。`CommitChain::buffer_has_implicit` 区分模型拆词与单字确认，未结束组句不走首次造词）。
   完全相同输入的最近选择另存 `user-preferences.tsv`（最多 50,000 个输入）；累计次数保持不变。`Learner::preferred_choice` 在 Core 查询尾部提升覆盖整段拼音的对应候选，之后再应用降权与置顶；不把短前缀的偏好套到较长输入、不改变形码一级简码。最近 64 次偏好变更保留内存撤销信息，私密/关闭学习不写，清空/导出文件清单包含新侧车。
   候选右键菜单的降权记在 `user-demoted.tsv`（`frequency_learner/demotions.rs`，输入串 → 词 → 降了几次，封顶 99，不衰减），私密输入与关学习时照记。
   词频、个人英文词与敲错表三张表带**时间衰减**（`frequency_learner/decay.rs`，牛顿冷却）：最近使用日记在
@@ -493,7 +493,7 @@ Windows Server 自绘候选窗（GDI）按 `Frame.columns` / `column_ems` 画矩
 
 ## apps/cli
 
-`--experience <报告.json>` 使用固定产品数据和独立真实学习器回放 50 个多场景任务，逐键查询并通过真实上屏路径拆词；十一项交互检查独立验空记录与已有记录下的学习/隐私/重载/编辑。`tools/eval/experience.py` 计算 100 分评分并核对冻结逐条基线，见 `assets/eval/experience/README.md`。`--experience-all` 是完整候选对照，`--experience-word-limit` 比较 9/18/27 额度，不写用户配置。Windows `installer/build.ps1` 正常构建先跑这道门禁，失败不构建产品。
+`--experience <报告.json>` 使用固定产品数据回放 131 个多场景任务（原 50 条 + 24 个三/四字短语的全拼、简拼、退格修正各一条 + 三组连续会话共 9 条），通过默认暂存组句与真实上屏路径拆词；独立任务隔离学习，同组会话保留上下文。18 项交互检查独立验空记录与已有记录下的学习/隐私/重载/编辑和首次逐字造词。报告 schema 2：热查询仅测同状态稳定性，首次查询与按键/上屏处理分别计时，50/80ms 虚拟到达间隔估算排队；简拼三页单字仍未命中时取消并改用预置全拼，保留初始名次且补救动作计费。`tools/eval/experience.py` 计算 100 分评分并核对 `reference-v2.json` 冻结逐条基线（旧 50 条逐字保留），响应分与门禁使用事件耗时，见 `assets/eval/experience/README.md`。`--experience-all` 是完整候选对照，`--experience-word-limit` 比较 9/18/27 额度，不写用户配置。Windows `installer/build.ps1` 正常构建先跑这道门禁，失败不构建产品。
 
 `tools/eval/names_sentences.py` 固定 80 条姓名/语句种子，生成 290 条全拼、简拼和尾音节未完成输入；输出全部候选与失败，分开报告常见姓名、公共人物、日常短句和含姓名句子。`--reference` 按冻结的 Linux 结果检查 Windows 逐条 Top-1/Top-5 不回退；默认不联网、不学习，`--model` 可测含章·通变。
 
@@ -596,6 +596,8 @@ PKG_CONFIG_PATH="$onig" PKG_CONFIG_ALLOW_CROSS=1 RUSTONIG_SYSTEM_LIBONIG=1 \
 - 端到端验证可用 `osascript` 的 System Events 往 TextEdit 发按键再读回文本（终端需要辅助功能权限；输入法得在中文模式）。
 
 ## apps/windows
+
+`Router::handle` 对超过 17ms 的消息记录 `Slow input event`（info）：仅事件类别、分派耗时 `dispatch_ms`、学习保存耗时 `learning_flush_ms`、合计 `total_ms`，不含键值/拼音/文本。它计到 Server 回包生成与每 60 秒顺带保存，未覆盖管道往返和异步绘制，不能充当端到端延迟。
 
 `installer/build.ps1` 默认只带共享设置；`-IncludeLegacySettings` 才构建并打包旧 WinUI 设置与完整 Windows App Runtime。TSF 右键菜单按旧 exe 是否存在显示入口。打包后 `tools/release/windows-size.py` 按 `.iss` 当前选择的 `[Files]` 输出 `package-size.json`，区分压缩包与展开文件大小；PowerShell 门禁在 `tools/release/test_windows_installer.py`，CI 的 Windows job 执行。
 

@@ -352,8 +352,8 @@ impl Engine {
     }
 
     /// 一段拼音分几次选完了（`jidiaole` 先选 挤、剩下的走整句 掉了）：这几个词合起来就是用户对这段拼音的答案。
-    /// 记一次「整段拼音 → 合成词」的选择；选到 [`AUTO_WORD_THRESHOLD_SAME_BUFFER`] 次、词库里没有、
-    /// 不超过 [`AUTO_WORD_MAX_CHARS`] 字就造成用户词，下次整段打出来它直接排第一。返回记下的选择，撤销时退回。
+    /// 记一次「整段拼音 → 合成词」的选择；逐字明确选择一次即记，含词组或整句的仍需
+    /// [`AUTO_WORD_THRESHOLD_SAME_BUFFER`] 次。最长 [`AUTO_WORD_MAX_CHARS`] 字；返回选择供撤销。
     pub(super) fn finish_buffer(&mut self) -> Option<(String, Choice)> {
         let words = self.chain.buffer_words();
         if words.len() < 2 {
@@ -377,9 +377,11 @@ impl Engine {
         let reading = reading_key(candidate.syllables.iter().map(String::as_str));
         self.learner.record_choice(&key, &reading, &candidate.text);
         if !self.knows_word(&candidate)
-            && self.learner.choice_weight(&key, &candidate.text) >= AUTO_WORD_THRESHOLD_SAME_BUFFER
+            && (self.chain.explicit_characters()
+                || self.learner.choice_weight(&key, &candidate.text)
+                    >= AUTO_WORD_THRESHOLD_SAME_BUFFER)
         {
-            tracing::debug!(text = %candidate.text, "整段拼音分次选完，自动造词");
+            tracing::debug!(text = %candidate.text, "Learned word from completed composition");
             self.learner
                 .learn_word(&candidate.text, &candidate.syllables);
         }
@@ -603,6 +605,8 @@ impl Engine {
                 AUTO_WORD_THRESHOLD
             };
             self.try_auto_word(text, syllables, threshold);
+        } else {
+            self.chain.note_implicit_word();
         }
         self.chain.advance(text, syllables, buffer_left);
     }

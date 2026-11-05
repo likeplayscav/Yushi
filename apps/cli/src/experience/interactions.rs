@@ -102,6 +102,7 @@ pub(super) fn run(folder: &Path) -> Result<Vec<Value>, CliError> {
     checks.push(json!({"id":"switch-input-box", "passed":isolated && engine.composition().text() == "zhangwei"}));
     engine.discard_input();
     checks.push(json!({"id":"discard-private-composition", "passed":engine.composition().is_empty() && engine.candidate_view() == CandidateView::Compact}));
+    checks.extend(super::word_learning::run(folder)?);
     std::fs::remove_dir_all(folder)?;
     Ok(checks)
 }
