@@ -125,7 +125,7 @@ Source: "{#Repo}\assets\lexicon\supplement\README.md"; DestDir: "{app}\licenses\
 Source: "{#Repo}\assets\lexicon\supplement\manifest.json"; DestDir: "{app}\licenses\lexicon"; Flags: ignoreversion
 ; —— 知意（ONNX）的运行库：Server 按路径加载 exe 旁边的 onnxruntime.dll；
 ;    由 build.ps1 调 fetch-onnxruntime.ps1 取到 target\installer\onnxruntime（含许可）——
-Source: "{#Repo}\target\installer\onnxruntime\onnxruntime.dll"; DestDir: "{app}"; Flags: ignoreversion uninsrestartdelete
+Source: "{#Repo}\target\installer\onnxruntime\*.dll"; DestDir: "{app}"; Flags: ignoreversion uninsrestartdelete
 Source: "{#Repo}\target\installer\onnxruntime\*.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
 ; —— Server 放最后：它一落地，旧版 DLL 就能把它拉起来并占住数据文件（见文件头）——
 Source: "{#Repo}\target\release\qingjian-server.exe";   DestDir: "{app}"; Flags: ignoreversion

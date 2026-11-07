@@ -59,7 +59,8 @@ cargo run -p qingjian-cli -- <拼音>...          # Core 的主要验证方式�
 apps/macos/scripts/bundle.sh --install        # mac 壳装到 ~/Library/Input Methods/（IMK 不能 cargo run 验证）
 ```
 
-Windows 本机只 `cargo check --target x86_64-pc-windows-gnu`，真编译与真机测试在 Windows 机器上做（部署方式见 `apps/windows/README.md`）；
+Windows 安装包默认在 InstaBox 用 MSVC 交叉工具链与 Inno Setup 构建，流程见 `docs/notes/windows-instabox.md`；
+Windows 真机交互验收仍需在 Windows 上完成（部署方式见 `apps/windows/README.md`）；
 端到端验证 mac 可用 `osascript` 往 TextEdit 发按键再读回文本。
 
 ## 约定

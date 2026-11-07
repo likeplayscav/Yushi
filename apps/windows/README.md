@@ -46,14 +46,14 @@ Core 的任何一行。
 
 ## 构建
 
-本机（macOS / Linux）只做交叉 `check`，产出不了可用二进制，但协议层的端到端测试能跑：
+本 fork 在 InstaBox 的 Linux 环境通过 MSVC 交叉工具链产出 Windows 二进制，完整流程见 [InstaBox 构建说明](../../docs/notes/windows-instabox.md)。以下命令仅检查类型与协议，不生成安装包：
 
 ```bash
 cargo check --target x86_64-pc-windows-gnu -p qingjian-windows-server -p qingjian-windows-tsf
 cargo test -p qingjian-windows-server -p qingjian-windows-tsf
 ```
 
-真正编译与试用都在 Windows 机器上（MSVC 工具链）。
+原生 Windows 试用仍需在 Windows 机器上进行；Wine 下的启动与安装检查不能代替 TSF、UWP 和各宿主应用的真机验证。
 
 ### 本地联调：`scripts/test-local.ps1`
 

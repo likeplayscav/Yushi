@@ -90,14 +90,14 @@
 
 ## CI 与发版
 
-本 fork 按用户要求优先本地验证，节制使用 Actions：常规 CI/审计的自动事件在 fork 上跳过任务，只保留手动入口；`windows-package.yml` 仅接受手动触发，日常推送不构建安装器。手动云端验证尽量集中到最终安装包构建。上游仓库的自动 CI 策略保留。不要为了检查文档或试探构建错误启动远程任务；依赖/编译问题先在本地能够验证的范围内解决。
+本 fork 的编译与构建验证使用 InstaBox；本地只做代码编辑与不需编译的检查。除非用户明确要求，不使用 GitHub Actions。所有工作流仅保留手动入口，普通推送、标签推送与定时任务均不自动启动。Windows 安装包的 MSVC 交叉构建与 Wine 验证见 [windows-instabox.md](notes/windows-instabox.md)，发布记录必须区分 Wine 检查与 Windows 真机验收。
 
 - CI 七个 job，全部 `--locked`：`core`（Linux 全量：fmt / 文档 / clippy / rustdoc / test / 两个 Fcitx 壳 / 安装脚本，外加 Android 那条 rustls TLS 路径的 lint 与测试）、
   `release`（release profile 下的 clippy）、`shellcheck`、`macos`（IMK 壳）、`linux-22_04`（最老受支持发行版）、`android`（debug APK）、
   `windows`（Windows 五个 crate（含青简剪贴板）+ `qingjian-platform` + 32 位 DLL）。Dependabot 升 actions。
 - 依赖门禁分两处，同一份豁免清单：`cargo deny check` 在 `core` job 里当**合并门禁**（每个 PR 查许可证 / 来源 / 重复版本 / RustSec 漏洞 / yanked），
-  `audit.yml` 的 `audit-check` 每周一次定时查漏洞并开 issue（没人提 PR 时也能发现新披露的）。两处的 `RUSTSEC-*` 清单由 CI 机械校验必须一致。
-- 发版：推 `<平台>-v<版本>` 标签触发 `release.yml`，门禁是版本号 = 标签且不带 -dev、标签在 main 上、产品数据按 SHA256SUMS 校验。
+  上游 `audit.yml` 的 `audit-check` 每周定时查漏洞；本 fork 仅在用户明确要求时手动运行。两处的 `RUSTSEC-*` 清单由 CI 机械校验必须一致。
+- 发版：版本号与标签一致、标签在 main 上、产品数据按 SHA256SUMS 校验。Windows 测试版使用 `yushi-windows-v<版本>` 标签并标记 GitHub 预发布；标签推送不触发 Actions。只有用户明确要求时才手动运行发布工作流。
 - CHANGELOG 手写、发版时由维护者统一改（PR 不动它）。流程与 Secrets 见 [notes/release.md](notes/release.md)。
 
 ## 外部 PR

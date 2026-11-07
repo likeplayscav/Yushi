@@ -280,7 +280,7 @@ CPU 上有 AVX2 + FMA 时 `CharLm` 把各层线性层与输出层量化成 int8�
 
 feature `zhiyi` 是知意的选词模型（`zhiyi::ChoiceScorer`，实现 Core 的 `ChoiceModel`）：分词、对齐、序列拼法共用，前向两个实现——
 safetensors 版由 candle 跑（mac），feature `zhiyi-onnx` 加上 int8 ONNX 版由 ONNX Runtime 跑（Windows，CPU 两线程）。`ort` 用 `load-dynamic`，编译时不链接，
-运行时按路径加载 `onnxruntime.dll` 1.24.4（`api-24`），由 `apps/windows/installer/fetch-onnxruntime.ps1` 从 NuGet 取、按包的 SHA-256 核对。
+运行时按路径加载 `onnxruntime.dll` 1.24.4（`api-24`），由 `apps/windows/installer/fetch-onnxruntime.ps1` 从 NuGet 取、按包的 SHA-256 核对。 同一脚本还按 SHA-256 锁定 Microsoft VC Runtime 14.44.35211，随 ONNX 的共享提供程序 DLL 一起部署在应用目录；Rust 产物的静态 CRT 不会消除 ONNX DLL 自己的动态 CRT 依赖。
 DirectML 试过不用：每次打分的序列长度都不同，Radeon 880M 集显上均衡档中位 200 ms、准确档 182 ms，同机 CPU 两线程 28 / 37 ms、省电档 18 ms（2026-10-21）。
 两版对拍：`zhiyi::tests::onnx_agrees_with_candle`（设三个环境变量才跑，见测试注释）。
 分词是自己的 `zhiyi::bpe`（只编码）而不是 `tokenizers`：25.6 万词、58 万条合并规则的 `tokenizer.json` 用 `tokenizers` 读要常驻 65 MB、

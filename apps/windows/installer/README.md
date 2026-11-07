@@ -1,6 +1,6 @@
 # 青简 Windows 安装包
 
-最终安装包可由 [Windows x64 validated package](../../../.github/workflows/windows-package.yml) 在 Windows runner 手动构建。日常回归在本地执行，推送分支不自动打包；全部构建门禁和安装卸载检查通过才上传 `qingjian-windows-x86_64` artifact。下载内容包括安装器、SHA256SUMS、包体清单、源码与测试信息、完整准确度记录；姓名样例和失败会如实保留。
+本 fork 默认在 InstaBox 上使用 Windows MSVC 交叉工具链构建，再通过 Wine 运行 Inno Setup 生成安装 EXE，见 [InstaBox 构建说明](../../../docs/notes/windows-instabox.md)。发布附件包括安装器、SHA256SUMS、包体清单、源码与构建信息及验证记录。只有用户明确要求时才运行 GitHub Actions；Wine 检查不代表 Windows 真机验收通过。
 
 用 [Inno Setup](https://jrsoftware.org/isinfo.php) 打的安装包，把 TSF DLL（64 位与 32 位各一份）、Server、设置程序与随包数据一起装进
 `C:\Program Files\Qingjian`，注册文本服务，并设登录自启。对应 macOS 的 pkg。
@@ -92,3 +92,5 @@ Actions 恢复 Rust 缓存后先执行 `windows_package.py prepare`，清理 `ta
 - **签名**：发版证书就绪后在这里加 `SignTool`（对应 mac 的 Developer ID）；开发期用 `-Sign` 的自签证书。
 - **没证书的包**（CI 内测版）：先设 `$env:QINGJIAN_UIACCESS = '0'` 再打，Server 不嵌 uiAccess——没签名的 exe 带 uiAccess=true 会起不来。
   代价是候选窗在 UWP 宿主里可能被盖住。`release.yml` 的 `windows` job 就是这么打的。
+
+ONNX Runtime 自身依赖 Visual C++ Runtime。`fetch-onnxruntime.ps1` 同时按 SHA-256 锁定下载 Microsoft 的发行版 CRT，将 DLL 放在应用目录，标准包也必须携带这些运行库；它与 Rust 产物的静态 CRT 设置是两件事。
