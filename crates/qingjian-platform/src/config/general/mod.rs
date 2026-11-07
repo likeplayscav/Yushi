@@ -80,6 +80,10 @@ pub struct GeneralConfig {
     /// 译文字号（点），同上。
     pub annotation_font_size: FontSize,
 
+    /// 候选字字重（100–900，与 CSS 的 `font-weight` 一样），盖过主题 `candidate` 样式的；0 用主题的。
+    /// 不在范围里的当 0，其余取最近的整百。只对青简渲染器生效。
+    pub candidate_font_weight: u16,
+
     /// 候选窗口的过渡与循环动画。关掉与系统「减弱动态效果」一样：高亮直接跳过去，循环动画停在第一帧。
     pub animations: bool,
 
@@ -144,6 +148,16 @@ pub struct GeneralConfig {
 
     /// 英文模式下的同一件事，中英各记一份；缺省半角。只有 Windows 用（macOS 英文模式一律半角）。
     pub english_full_width_punctuation: bool,
+
+    /// 中文与日文模式下敲左括号、左引号、左书名号时连右半边一起补上，光标停在中间（#928）；缺省开。
+    pub pair_punctuation: bool,
+
+    /// 英文模式下的同一件事（半角括号与双引号）；缺省关：代码编辑器、浏览器地址栏自己会补，两边一起补会多出一个。
+    pub english_pair_punctuation: bool,
+
+    /// 中文标点开着也保持半角的符号，几个字符连写（如 `` ` `` 让它出反引号而不是 `·`，#893）；缺省空。
+    /// 只认会转全角的标点，别的字符忽略。
+    pub half_width_symbols: String,
 
     /// 组句中敲会转全角的标点（`,` `.` `?` `!` 等，翻页键除外）先把高亮候选上屏、再补该标点
     ///（`nihao,` 一气打完「你好，」）。缺省关：标点进英文直输段整段原样上屏，与以前一致。
@@ -259,6 +273,7 @@ impl Default for GeneralConfig {
             font: String::new(),
             candidate_font_size: FontSize::default(),
             annotation_font_size: FontSize::default(),
+            candidate_font_weight: 0,
             animations: true,
             preedit: PreeditMode::default(),
             english_candidates: true,
@@ -279,6 +294,9 @@ impl Default for GeneralConfig {
             double_shift_input: ThirdInputMethod::default(),
             full_width_punctuation: true,
             english_full_width_punctuation: false,
+            pair_punctuation: true,
+            english_pair_punctuation: false,
+            half_width_symbols: String::new(),
             punct_commits: false,
             aux_code_key: qingjian_core::DEFAULT_AUX_CODE_KEY.to_string(),
             aux_code_show: false,
@@ -460,6 +478,13 @@ impl GeneralConfig {
             (Some(key), None) if qingjian_core::is_valid_aux_code_key(key, self.page_keys()) => key,
             _ => qingjian_core::DEFAULT_AUX_CODE_KEY,
         }
+    }
+
+    /// 设置里的候选字字重：100–900 取最近的整百，0 和范围外的为 `None`（用主题的）。
+    pub fn candidate_font_weight(&self) -> Option<u16> {
+        (100..=900)
+            .contains(&self.candidate_font_weight)
+            .then(|| ((self.candidate_font_weight + 50) / 100 * 100).min(900))
     }
 
     /// 夹到合法范围的每页候选数。

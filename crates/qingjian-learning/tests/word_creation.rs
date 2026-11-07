@@ -136,17 +136,30 @@ fn separate_buffers_and_punctuation_do_not_immediately_join_words() {
 }
 
 #[test]
-fn long_compositions_do_not_become_words_after_one_input() {
+fn completed_long_compositions_are_remembered_within_twenty_characters() {
     let mut engine = engine(FrequencyLearner::default());
     assert_eq!(
         spell(&mut engine, "junyueqingzhouqiao", "珺玥青舟桥"),
         "珺玥青舟桥"
     );
-    assert!(engine.learner().user_words().is_none());
+    assert!(learned(
+        &engine,
+        "珺玥青舟桥",
+        &["jun", "yue", "qing", "zhou", "qiao"]
+    ));
+    engine.set_input("jyqzq");
+    assert_eq!(
+        engine.query().unwrap().candidates.items[0].text,
+        "珺玥青舟桥"
+    );
+
+    let text = "珺".repeat(21);
+    assert_eq!(spell(&mut engine, &"jun".repeat(21), &text), text);
+    assert!(!learned(&engine, &text, &["jun"; 21]));
 }
 
 #[test]
-fn accepting_a_generated_sentence_does_not_count_as_explicit_character_selection() {
+fn a_sentence_completed_after_an_explicit_selection_is_remembered() {
     let mut engine = engine(FrequencyLearner::default());
     engine.set_input("junyueqing");
     select(&mut engine, "珺");
@@ -160,5 +173,7 @@ fn accepting_a_generated_sentence_does_not_count_as_explicit_character_selection
         .find(|c| c.kind == CandidateKind::Sentence && c.text == "玥青")
         .unwrap();
     assert_eq!(engine.commit(&rest), "珺玥青");
-    assert!(engine.learner().user_words().is_none());
+    assert!(learned(&engine, "珺玥青", &["jun", "yue", "qing"]));
+    engine.set_input("jyq");
+    assert_eq!(engine.query().unwrap().candidates.items[0].text, "珺玥青");
 }

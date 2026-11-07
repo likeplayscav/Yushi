@@ -35,6 +35,9 @@ class InputSettingsActivity : PageActivity() {
                 ui.toggle(R.string.hold_selections_title, R.string.hold_selections_note, options.holdSelections) {
                     prefs.edit().putBoolean(Settings.KEY_HOLD_SELECTIONS, it).apply()
                 },
+                ui.toggle(R.string.follow_ups_title, R.string.follow_ups_note, options.followUps) {
+                    prefs.edit().putBoolean(Settings.KEY_FOLLOW_UPS, it).apply()
+                },
                 footer = R.string.fuzzy_note,
             ),
             ui.group(getString(R.string.section_mixed), mixedRows(settings), getString(R.string.english_in_chinese_note)),
@@ -49,6 +52,16 @@ class InputSettingsActivity : PageActivity() {
                 R.string.section_punctuation,
                 ui.toggle(R.string.full_width_title, R.string.full_width_note, options.fullWidthPunctuation) {
                     prefs.edit().putBoolean(Settings.KEY_FULL_WIDTH, it).apply()
+                },
+                ui.toggle(R.string.pair_punctuation_title, R.string.pair_punctuation_note, options.pairPunctuation) {
+                    prefs.edit().putBoolean(Settings.KEY_PAIR_PUNCTUATION, it).apply()
+                },
+                ui.toggle(
+                    R.string.english_pair_punctuation_title,
+                    R.string.english_pair_punctuation_note,
+                    options.englishPairPunctuation,
+                ) {
+                    prefs.edit().putBoolean(Settings.KEY_ENGLISH_PAIR_PUNCTUATION, it).apply()
                 },
                 variantPicker(settings),
                 footer = R.string.traditional_variant_note,

@@ -9,6 +9,9 @@
   按住空格左右滑挪光标（`space_cursor`，缺省开；横向挪过 14dp 且比竖向多才算，起手在空格上，与字母键起手的滑行、上滑分得开；组句中不响应：先 `commitRaw` 再挪会把没选的字母上屏；拼音里的光标靠点拼音行挪，见下条）、按住不动进语音（见下文「语音输入」）；回车键按输入框的动作写 发送 / 搜索 / 前往 / 下一项 / 完成（`EnterLabel`），多行框画回车图标。
 - 点拼音行挪光标（#881）：渲染器给出拼音行各字之间的位置（`StripMeta.preedit_edges`），候选条点在拼音行里按最近的缝走 `Native.moveCaret`，
   Core `Engine::move_cursor_to_marked` 换回缓冲区光标（全拼按字母、双拼展开全拼时按最近的音节边界、显示敲的键时按键；纠错 / 辅码 / 注音 / 九宫格对不上，不挪）；`Frame.preedit_cursor` 让候选条把光标画在中间。光标在开头时 `Session::backspace` 先挪到末尾再删（没有方向键挪回去，不然退格就卡住了）。
+- 九宫格拼音行的下划线：`Frame.preedit_pinned` 是拼音行里定下的音节（字符起止，前面留着的词 + `Engine::nine_key_pinned`），`strip::preedit` 把它切成 `PreeditStyle::Pinned` 一段。
+- 删除键上划清空（`flick_clear`，缺省开）：删除键按下照旧先删一个字并起连删，同时 `onBackspaceDown` 记下按下那一刻光标前的文字（最多 `MAX_CLEAR` = 5000）；往上划够上滑距离就停掉连删，抬手 `Composer.clearBefore`；连删已经起来（`REPEAT_DELAY_MS` 之后）这一笔就作废，不当清空。
+  按下时在组句只清拼音；否则 `deleteSurroundingText` 删光标前的文字，`Native.cleared` 让会话在补全里放「撤销」（光标前还是空的就一直留着），撤销放回按下那一刻的文字，所以按下时删的那个字（按键事件可能还没到应用）也回来。
 - 上滑（`flick_symbols`，缺省开，#882）：只看方向不看列。手指离开按下那一点 10dp 起就得一直在往上的扇形里（横向不超过往上的 1.2 倍，约偏离竖直 50°，含历史点），
   往上过 18dp 抬手出 `Key.flick`（长按不滑直接抬手那一项：字母键是角标，九宫格是数字），出的总是按下的键；中途偏出扇形（横走、往下、拐弯）这一笔就作废，交给滑行或点按。
   两者同时成立时上滑优先（一路往斜上走的滑行词很少）。手指一进扇形就撤掉等着的长按：慢慢往斜上划时长按先到点弹气泡、手指再一歪就选上了气泡左边的大写，这是 #882 说的「误触大写」。
@@ -77,6 +80,9 @@ PC 上只对实体键盘有意义的项（Shift + 字母、切换键、翻页键
 - 导入走 SAF（`ACTION_OPEN_DOCUMENT`，`*/*` 多选：TSV 与 Rime 文件的 MIME 各家文件管理器给得不一样）。壳按原文件名拷到缓存目录，Rust 的 `store::dictionaries` 交 `qingjian_dictionary::import` 转成 `.qj` 放进 `files/user/dicts/`，再删掉拷贝。导入与删除后改设置里的 `dictionaries_stamp`，开着的键盘重建、重交选项、会话按文件重挂。
 - 「删除」直接删文件：PC 的「移除」是挪进 `removed/`，手机上用户碰不到这个目录，挪过去等于留垃圾。
 - 有的厂商文件选择器按自己的文件索引列文件，`adb push` 进去的要先发 `MEDIA_SCANNER_SCAN_FILE` 广播才搜得到。
+- 通讯录（#876，设计见 `docs/design/contacts.md`）：`contacts/ContactsSync` 在设置开着、有 `READ_CONTACTS` 时后台读 `Contacts` 与 `Data`（电话、邮箱）两张表，回主线程交 `Native.setContacts`；55 个联系人读加建词库约 20 ms。
+  MIUI 上只给「仅在使用中允许」时，输入法服务在后台启动那次读到空结果（权限仍显示允许），所以读到零个不算读过，`onStartInputView` 里再读（`retryIfEmpty`）。
+  shell 的 `content delete` 在 MIUI 上删不掉联系人（不报错、不生效），真机测试加的联系人要在通讯录 App 里删。
 
 ## 剪贴板与常用语
 
@@ -119,7 +125,7 @@ PC 上只对实体键盘有意义的项（Shift + 字母、切换键、翻页键
   组句中 Composer 每 150 ms `pollPrediction`，结果插在本地首选之后：先整句补全，再云端词，与本地重复的不要；选中整句走 `accept_prediction`。
 - 九宫格敲的是数字，Core 用这次查询的拼音行（`QuerySnapshot.pinyin`，九宫格时取 `typed_display`）问云端，没查过这段就不发。
 - 候选条的 `strip_cell` 给 `cloud` 候选前加小云朵、字用 `@cloud` 色（同 PC 候选窗）；展开的网格里同样画云朵（`PanelIcons.Icon.CLOUD`），字用 `Palette.cloud`。
-- 「只在 Wi-Fi 下使用」缺省开：服务 `syncCloud` 在键盘建起、每次开始输入和云端配置改了时看 `Network.onWifi`（Wi-Fi 或有线，开 VPN 也认得出），不在就退回只翻译。
+- 「只在 Wi-Fi 下使用」缺省开：`service/CloudServices.sync` 在键盘建起、每次开始输入和云端配置改了时看 `Network.onWifi`（Wi-Fi 或有线，开 VPN 也认得出），不在就退回只翻译。
   打字途中换网络要到下次开始输入才跟上。快捷翻译与释义兜底不看这个开关。
 - 工具框（快捷翻译、常用语编辑）开着时会话不发、不收联想（`set_metered(false)` 时 `tools_open`），快捷翻译的译文不被组句联想作废。
 

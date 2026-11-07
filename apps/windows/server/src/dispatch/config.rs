@@ -2,8 +2,8 @@ use qingjian_core::TraditionalVariant;
 use qingjian_platform::protocol::KeyModifiers;
 use qingjian_platform::{
     Appearance, AppsConfig, CandidateRenderer, CommitKeys, Config, FontSize, HighlightKeys,
-    KeyCombo, KeyHintMode, LayoutMode, NumpadDigit, PageKeys, PreeditMode, Scheme, SwitchKeys,
-    ThirdInputMethod,
+    KeyCombo, KeyHintMode, LayoutMode, NumpadDigit, PageKeys, PreeditMode, Scheme, ShortcutConfig,
+    SwitchKeys, ThirdInputMethod,
 };
 
 use super::RenderSettings;
@@ -53,6 +53,9 @@ pub struct RouterConfig {
 
     /// 候选字、译文字号（`[general] candidate_font_size` / `annotation_font_size`）。
     pub font_sizes: (FontSize, FontSize),
+
+    /// 候选字字重（`[general] candidate_font_weight`）；只对青简渲染器生效。
+    pub candidate_weight: Option<u16>,
 
     /// 过渡动画（`[general] animations`）。
     pub animations: bool,
@@ -128,6 +131,9 @@ pub struct RouterConfig {
     /// 简繁切换快捷键；与选区翻译相同时不登记，保留翻译行为。
     pub toggle_traditional: Option<KeyCombo>,
 
+    /// 组句中切换单字模式的快捷键（`[shortcut] single_chars`）；与别的组合键撞了时不用（见本文件的 `single_chars_key`）。
+    pub single_chars: Option<KeyCombo>,
+
     /// 悬浮状态条开关（`[status_bar] enabled`）。
     pub status_enabled: bool,
 
@@ -191,6 +197,7 @@ impl RouterConfig {
             font: self.font.clone(),
             theme: self.theme.clone(),
             font_sizes: self.font_sizes,
+            candidate_weight: self.candidate_weight,
             animations: self.animations,
             themes_stamp: self.themes_stamp,
         }
@@ -217,6 +224,7 @@ impl From<&Config> for RouterConfig {
                 config.general.candidate_font_size,
                 config.general.annotation_font_size,
             ),
+            candidate_weight: config.general.candidate_font_weight(),
             animations: config.general.animations,
             themes_stamp: 0,
             preedit: config.general.preedit,
@@ -247,6 +255,7 @@ impl From<&Config> for RouterConfig {
                 .shortcut
                 .toggle_traditional
                 .filter(|key| *key != config.shortcut.translate_selection),
+            single_chars: single_chars_key(&config.shortcut),
             status_enabled: config.status_bar.enabled,
             status_pos: config.status_bar.x.zip(config.status_bar.y),
             status_size: config.status_bar.size.clamp(60, 150),
@@ -269,4 +278,22 @@ impl Default for RouterConfig {
     fn default() -> Self {
         Self::from(&Config::default())
     }
+}
+
+/// 单字模式的有效组合键：和别的组合键（翻译、AI、剪贴板、简繁、全半角）撞了，或是「译词修饰键 + 数字」时不用，
+/// 让那一项照旧——手改配置文件才会撞，设置程序录的时候就不让撞。
+fn single_chars_key(shortcut: &ShortcutConfig) -> Option<KeyCombo> {
+    let combo = shortcut.single_chars?;
+    let others = [
+        Some(shortcut.translate_selection),
+        Some(shortcut.translate_panel),
+        Some(shortcut.predict),
+        Some(shortcut.clipboard),
+        shortcut.toggle_traditional,
+        shortcut.toggle_punctuation,
+    ];
+    let (first, second) = shortcut.translation_keys();
+    let translation =
+        combo.key.is_ascii_digit() && (combo.modifiers == first || combo.modifiers == second);
+    (!translation && !others.contains(&Some(combo))).then_some(combo)
 }

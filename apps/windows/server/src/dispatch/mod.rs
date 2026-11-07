@@ -27,7 +27,8 @@ use qingjian_core::candidate::arrows::Focus;
 use qingjian_core::{Engine, Grid, TelexComposer};
 use qingjian_platform::logs::CompositionTrace;
 use qingjian_platform::protocol::{
-    ClientMessage, Frame, IndicatorState, InputSettings, ScreenRect, ServerMessage, SessionId,
+    CaretEdit, ClientMessage, Frame, IndicatorState, InputSettings, ScreenRect, ServerMessage,
+    SessionId,
 };
 use qingjian_platform::{LocalModelConfig, SchemeSlot};
 use qingjian_render::Mode;
@@ -86,6 +87,9 @@ pub struct Router {
 
     /// 「翻译选中文字」请求号计数器。
     selection_seq: u64,
+
+    /// 这一键要 DLL 对文档做的成对符号编辑（#928），随这次 `KeyResult` 带走。
+    pending_caret: Option<CaretEdit>,
 
     /// 整句补全（preedit 右侧、Tab 上屏）；缓冲变化时清空。
     sentence: Option<String>,
@@ -207,6 +211,7 @@ impl Router {
             pending_selection: None,
             clicked: None,
             selection_seq: 0,
+            pending_caret: None,
             sentence: None,
             notice: None,
             candidate_translation: None,
@@ -260,6 +265,7 @@ impl Router {
             english_candidates: self.config.english_candidates_in(app),
             predict: (self.config.cloud_enabled && self.engine.prediction_enabled())
                 .then_some(self.config.predict),
+            single_chars: self.config.single_chars,
         }
     }
 

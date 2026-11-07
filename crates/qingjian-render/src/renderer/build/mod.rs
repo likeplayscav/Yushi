@@ -85,7 +85,7 @@ impl Builder<'_> {
         }
         let shown = clip::shown(frame);
         let mut ctx = Context::new(&shown);
-        ctx.reverse_rows = frame.upward && layout == Layout::Vertical;
+        ctx.reverse_rows = frame.reversed || (frame.upward && layout == Layout::Vertical);
         self.root(&spec, ctx)
     }
 

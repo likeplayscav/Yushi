@@ -70,7 +70,7 @@
 - [x] 语料里少的领域词（对齐 / 后端 / 词库 / 候选框）：2026-09-12 从日志人工挑 48 条进 `assets/lexicon/domain_words.tsv`，语言模型走合成计数（`docs/notes/domain-words.md`）；
   语料 0 次的（微软拼音 / 悬浮条）按规矩没进，要进得另立白名单
 - [x] 中英混杂词与英文专名（2026-09-15）：`assets/lexicon/mixed_words.tsv`（C盘 / B站 / U盘 / T恤 / A股…，`cpan`→C盘，`youpan`→U盘，
-  可进整句 `wozaibzhan`→我在B站）；`dict-convert english` 同编码优先大写专名（Windows ≠ windows），`07_display_forms.tsv` 补 VSCode / Bilibili 等；
+  可进整句 `wozaibzhan`→我在B站）；`dict-convert english` 同编码优先全小写（or 不出 OR），`07_display_forms.tsv` 补 I / China / VSCode / Bilibili 等；
   产品 `dict.tsv` / `english.tsv` 已更新。句中英文仍只支持句末尾段，见「中英混输」。
 - [x] 按输入串记的选择只认字面：已按「候选全拼记一份、查询取两者最大」做了（`user-choices.tsv` 字面键 + 读音键各一份；读音键只在当前输入是读音前缀且不少于两个字母时参与，简拼不带全拼的选择；英文词位置的仲裁只按字面键）
 - [ ] 已经学进用户词的错读音云端词（`我的 wo di`、`我的哦 wo di e` 这类）没有清理入口：偏好设置词库页给「按读音核对用户词」，或一次性脚本
@@ -155,9 +155,9 @@
   - [ ] 按应用记住中英模式：macOS、Linux
   - [ ] 中文与英文、数字之间自动加空格：Linux
   - [ ] 横排时 ↑ / ↓ 展开成多行：Linux
-  - [ ] 竖排在输入行上方时反向排列：macOS
   - [ ] 横排时翻页键展开成多行：Linux
   - [ ] 上屏键自定义：macOS
+  - [ ] 回车优先上屏译词：Windows、Linux
   - [ ] 额外翻页键：Linux
   - [ ] 高亮移动键：Linux
   - [ ] Emacs 风格候选键：Windows、Linux
@@ -169,6 +169,10 @@
   - [ ] 青简剪贴板：Linux
   - [ ] 小键盘数字：macOS、Linux
   - [ ] 双拼候选窗显示按键：Linux
+  - [ ] 组句时切换单字模式：macOS、Linux
+  - [ ] 候选字粗细：macOS
+  - [ ] 成对符号自动补全：macOS、Linux
+  - [ ] 竖排在光标上方时倒着排：macOS
 - [ ] 剪贴板局域网同步：Linux；扫码配对、Android 全屏霓虹灯、蓝牙兜底
 
 ## 四、其他输入方案

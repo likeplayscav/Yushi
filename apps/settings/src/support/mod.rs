@@ -30,12 +30,12 @@ pub enum Feature {
     StatusBar,
     /// 横排时 ↑ / ↓ 展开成多行。
     HorizontalGrid,
-    /// 竖排位于输入行上方时反向排列。
-    VerticalReverseAbove,
     /// 横排时翻页键也展开成多行。
     GridPageKeys,
     /// 组句时上屏候选与上屏字母的键可以换。
     CommitKeys,
+    /// macOS 回车优先上屏译词。
+    EnterTranslation,
     ExtraPageKeys,
     HighlightKeys,
     ExtraCandidateNavigation,
@@ -64,11 +64,20 @@ pub enum Feature {
 
     /// 没在打字时打开符号面板翻译组的快捷键。
     TranslatePanel,
+
+    /// 组句时切换单字模式的快捷键（#848）。
+    SingleChars,
+    /// 候选字字重。
+    CandidateFontWeight,
+    /// 成对符号（中文与英文两个开关）。
+    PairPunctuation,
+    /// 竖排窗口在光标上方时倒着排。
+    VerticalReverseAbove,
 }
 
 impl Feature {
     #[cfg(test)]
-    pub const ALL: [Self; 30] = [
+    pub const ALL: [Self; 34] = [
         Self::AuxCode,
         Self::Schemes,
         Self::SwitchKeys,
@@ -80,9 +89,9 @@ impl Feature {
         Self::AutoSpace,
         Self::StatusBar,
         Self::HorizontalGrid,
-        Self::VerticalReverseAbove,
         Self::GridPageKeys,
         Self::CommitKeys,
+        Self::EnterTranslation,
         Self::ExtraPageKeys,
         Self::HighlightKeys,
         Self::ExtraCandidateNavigation,
@@ -99,6 +108,10 @@ impl Feature {
         Self::NumpadDigit,
         Self::ShuangpinRawWindow,
         Self::TranslatePanel,
+        Self::SingleChars,
+        Self::CandidateFontWeight,
+        Self::PairPunctuation,
+        Self::VerticalReverseAbove,
     ];
 
     /// 当前平台显示这一项。
@@ -134,11 +147,10 @@ impl Feature {
             // macOS 看菜单栏图标，Linux 看 Fcitx5 的托盘
             Self::StatusBar => [No, Yes, No],
             Self::HorizontalGrid => [Yes, Yes, Todo],
-            // macOS 自绘窗待接入；Linux 的面板排布由 Fcitx 决定。
-            Self::VerticalReverseAbove => [Todo, Yes, No],
             Self::GridPageKeys => [Yes, Yes, Todo],
             // macOS 的空格走 insertText、回车走 insertNewline:，要另接
             Self::CommitKeys => [Todo, Yes, Yes],
+            Self::EnterTranslation => [Yes, Todo, Todo],
             Self::ExtraPageKeys => [Yes, Yes, Todo],
             Self::HighlightKeys => [Yes, Yes, Todo],
             Self::ExtraCandidateNavigation => [Yes, Todo, Todo],
@@ -160,6 +172,12 @@ impl Feature {
             Self::NumpadDigit => [Todo, Yes, Todo],
             // Fcitx 面板与应用里的行内拼音共用一串，还没分开
             Self::ShuangpinRawWindow => [Yes, Yes, Todo],
+            Self::SingleChars => [Todo, Yes, Todo],
+            // Linux 用 Fcitx 自己的候选面板
+            Self::CandidateFontWeight => [Todo, Yes, No],
+            // macOS 自绘窗待接入；Linux 的面板排布由 Fcitx 决定。
+            Self::VerticalReverseAbove => [Todo, Yes, No],
+            Self::PairPunctuation => [Todo, Yes, Todo],
         }
     }
 
@@ -178,9 +196,9 @@ impl Feature {
             Self::AutoSpace => "中文与英文、数字之间自动加空格",
             Self::StatusBar => "悬浮状态条",
             Self::HorizontalGrid => "横排时 ↑ / ↓ 展开成多行",
-            Self::VerticalReverseAbove => "竖排在输入行上方时反向排列",
             Self::GridPageKeys => "横排时翻页键展开成多行",
             Self::CommitKeys => "上屏键自定义",
+            Self::EnterTranslation => "回车优先上屏译词",
             Self::ExtraPageKeys => "额外翻页键",
             Self::HighlightKeys => "高亮移动键",
             Self::ExtraCandidateNavigation => "Emacs 风格候选键",
@@ -197,6 +215,10 @@ impl Feature {
             Self::NumpadDigit => "小键盘数字",
             Self::ShuangpinRawWindow => "双拼候选窗显示按键",
             Self::TranslatePanel => "打开符号面板的翻译组",
+            Self::SingleChars => "组句时切换单字模式",
+            Self::CandidateFontWeight => "候选字粗细",
+            Self::VerticalReverseAbove => "竖排在光标上方时倒着排",
+            Self::PairPunctuation => "成对符号自动补全",
         }
     }
 
@@ -215,6 +237,7 @@ impl Feature {
             Self::RememberModePerApp => &[(PageId::Language, "language.remember_per_app")],
             Self::AutoSpace => &[(PageId::Language, "language.auto_space")],
             Self::ExtraPageKeys => &[(PageId::Shortcuts, "shortcuts.extra_page_keys")],
+            Self::EnterTranslation => &[(PageId::Shortcuts, "shortcuts.enter_translation")],
             Self::CommitKeys => &[
                 (PageId::Shortcuts, "shortcut.commit_candidate"),
                 (PageId::Shortcuts, "shortcut.commit_raw"),
@@ -238,12 +261,21 @@ impl Feature {
             Self::ShowTones => &[(PageId::Candidates, "candidates.show_tones")],
             Self::NumpadDigit => &[(PageId::Candidates, "candidates.numpad_digit")],
             Self::ShuangpinRawWindow => &[(PageId::Input, "input.raw_window")],
+            Self::SingleChars => &[
+                (PageId::Shortcuts, "shortcuts.single_chars"),
+                (PageId::Shortcuts, "shortcut.single_chars"),
+            ],
+            Self::CandidateFontWeight => &[(PageId::Appearance, "appearance.candidate_weight")],
+            Self::VerticalReverseAbove => &[(PageId::Appearance, "appearance.reverse_above")],
+            Self::PairPunctuation => &[
+                (PageId::Language, "language.pair_punctuation"),
+                (PageId::Language, "language.english_pair_punctuation"),
+            ],
             Self::SwitchKeyCombos
             | Self::SystemCtrlSpace
             | Self::EnglishPunctuation
             | Self::StatusBar
             | Self::HorizontalGrid
-            | Self::VerticalReverseAbove
             | Self::GridPageKeys
             | Self::ApiUsage
             | Self::ExperimentalModels

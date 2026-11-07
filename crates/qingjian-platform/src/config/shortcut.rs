@@ -38,6 +38,9 @@ pub struct ShortcutConfig {
     /// 数字键配这些修饰键：上屏候选的第二个译词（候选右侧有两个译词时）。
     pub translation_second: Modifiers,
 
+    /// macOS：回车优先上屏高亮候选的第一条非中文译词；没有可用译词时仍走原回车逻辑。
+    pub enter_translation: bool,
+
     /// 把应用里选中的文字译成学习语言（需要云服务开着）。
     pub translate_selection: KeyCombo,
 
@@ -54,6 +57,11 @@ pub struct ShortcutConfig {
     /// 缺省不开：只要青简是当前输入法，这个组合在所有应用里都会被拿走，编辑器的「在文件中查找」也用它。
     #[serde(with = "super::optional_key_combo")]
     pub toggle_traditional: Option<KeyCombo>,
+
+    /// 组句中切换单字模式（Windows 用，#848）：候选只留单字，再按一次恢复，上屏完自动回到正常候选。
+    /// 空串禁用。只在组句时拿走这个组合，没在打字时应用照常收到（缺省 Ctrl + D 不影响书签、复制行）。
+    #[serde(with = "super::optional_key_combo")]
+    pub single_chars: Option<KeyCombo>,
 
     /// 组句时上屏高亮候选的键（Windows、Linux 用），缺省不带 Shift 的空格。详见 [`CommitKey`]。
     pub commit_candidate: CommitKey,
@@ -89,11 +97,13 @@ impl Default for ShortcutConfig {
             extra_page_keys: PageKeys::default(),
             translation,
             translation_second,
+            enter_translation: false,
             translate_selection,
             predict: KeyCombo::PREDICT_DEFAULT,
             translate_panel: KeyCombo::TRANSLATE_PANEL_DEFAULT,
             clipboard: KeyCombo::CLIPBOARD_DEFAULT,
             toggle_traditional: None,
+            single_chars: Some(KeyCombo::SINGLE_CHARS_DEFAULT),
             commit_candidate: CommitKey::SPACE,
             commit_raw: CommitKey::ENTER,
         }
@@ -130,6 +140,22 @@ impl ShortcutConfig {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn enter_translation_defaults_off_and_round_trips() {
+        let old: ShortcutConfig = toml::from_str("expression = 'i'").unwrap();
+        assert!(!old.enter_translation);
+        for enabled in [false, true] {
+            let config: ShortcutConfig =
+                toml::from_str(&format!("enter_translation = {enabled}")).unwrap();
+            let restored: ShortcutConfig =
+                toml::from_str(&toml::to_string(&config).unwrap()).unwrap();
+            assert_eq!(restored.enter_translation, enabled);
+            assert_eq!(restored.commit_raw, old.commit_raw);
+            assert_eq!(restored.commit_candidate, old.commit_candidate);
+        }
+        assert!(toml::from_str::<ShortcutConfig>("enter_translation = 'yes'").is_err());
+    }
 
     #[test]
     fn optional_punctuation_and_extra_page_keys_round_trip() {
@@ -172,6 +198,20 @@ mod tests {
             assert_eq!(config.toggle_traditional.is_none(), text.is_empty());
         }
         assert!(toml::from_str::<ShortcutConfig>("toggle_traditional = \"f\"").is_err());
+    }
+
+    #[test]
+    fn single_chars_shortcut_defaults_on_and_can_be_disabled() {
+        let default: ShortcutConfig = toml::from_str("").unwrap();
+        assert_eq!(default.single_chars, Some(KeyCombo::SINGLE_CHARS_DEFAULT));
+        for text in ["", "ctrl+d", "ctrl+shift+d"] {
+            let config: ShortcutConfig =
+                toml::from_str(&format!("single_chars = {text:?}")).unwrap();
+            let restored: ShortcutConfig =
+                toml::from_str(&toml::to_string(&config).unwrap()).unwrap();
+            assert_eq!(restored.single_chars, config.single_chars);
+            assert_eq!(config.single_chars.is_none(), text.is_empty());
+        }
     }
 
     #[test]

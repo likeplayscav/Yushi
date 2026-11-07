@@ -3,6 +3,9 @@
 use super::Session;
 use crate::frame::{Frame, FrameCandidate};
 
+/// 清空之后候选条上那一项的字。
+const UNDO_LABEL: &str = "撤销";
+
 impl Session {
     /// 不在组句时按光标前的文字给补全（「用户名@」之后的邮箱后缀、刚打完的算式的结果），放进帧的候选；组句中不动。
     pub fn complete(&mut self, before_cursor: &str) -> Frame {
@@ -11,7 +14,21 @@ impl Session {
         {
             return self.refresh(String::new());
         }
+        // 刚上屏的名字还在光标前：接着给它的电话、邮箱；刚上屏的词还在光标前：接着给联想词；
+        // 刚清空、光标前还是空的：留着「撤销」（`refresh` 会清掉，先拿出来）
+        let after_contact = self.after_contact.take();
+        let after_commit = self.after_commit.take();
+        let cleared = self.cleared.take();
         let mut frame = self.refresh(String::new());
+        if let Some(text) = cleared.filter(|_| before_cursor.is_empty()) {
+            self.offer_undo(text, &mut frame);
+        }
+        if let Some(name) = after_contact.filter(|name| before_cursor.ends_with(name.as_str())) {
+            self.offer_contact(&name, &mut frame);
+        }
+        if let Some(text) = after_commit.filter(|text| before_cursor.ends_with(text.as_str())) {
+            self.offer_follow_ups(&text, &mut frame);
+        }
         let mut labels = Vec::new();
         for completion in qingjian_core::email_completions(before_cursor) {
             labels.push(completion.domain.to_owned());
@@ -22,10 +39,9 @@ impl Session {
             self.completions
                 .push((completion.replace, completion.insert));
         }
-        frame.candidates = labels
-            .iter()
-            .map(|label| FrameCandidate::plain(label))
-            .collect();
+        frame
+            .candidates
+            .extend(labels.iter().map(|label| FrameCandidate::plain(label)));
         frame
     }
 
@@ -66,6 +82,9 @@ impl Session {
     pub fn select(&mut self, index: usize) -> Frame {
         if !self.completions.is_empty() {
             let (replace, commit) = self.completions.get(index).cloned().unwrap_or_default();
+            if self.follow_up_at.is_some_and(|at| index >= at) {
+                return self.select_follow_up(&commit);
+            }
             let mut frame = self.refresh(commit);
             frame.replace = replace;
             return frame;
@@ -80,11 +99,17 @@ impl Session {
         if let Some(commit) = self.select_sentence(index) {
             return self.refresh(commit);
         }
-        let commit = match self.candidates.items.get(index) {
-            Some(candidate) => self.engine.commit(candidate),
-            None => String::new(),
+        let Some(candidate) = self.candidates.items.get(index).cloned() else {
+            return self.refresh(String::new());
         };
-        self.refresh(commit)
+        let commit = self.engine.commit(&candidate);
+        let mut frame = self.refresh(commit.clone());
+        if self.engine.is_contact(&candidate.text) {
+            self.offer_contact(&candidate.text, &mut frame);
+        } else {
+            self.offer_follow_ups(&commit, &mut frame);
+        }
+        frame
     }
 
     /// 上屏第 `index` 个候选的第 `sense` 条译文；学习与拼音消耗同选了这个候选。没有那条译文就不动。
@@ -128,6 +153,12 @@ impl Session {
         self.refresh(raw)
     }
 
+    /// 展开面板的「全部 / 单字」：切换单字模式（#848），只管这一段组句；没在组句时不变。
+    pub fn toggle_single_chars(&mut self) -> Frame {
+        self.engine.toggle_single_chars();
+        self.refresh(String::new())
+    }
+
     /// 清空组句（九宫格的「重输」）。
     pub fn clear(&mut self) -> Frame {
         if let Some(kana) = &mut self.kana {
@@ -152,6 +183,27 @@ impl Session {
         } else {
             self.commit_raw()
         }
+    }
+
+    /// 删除键上划清掉了光标前的 `text`（壳已经删了）：候选条放一个「撤销」，点了原样放回；光标前又有字就收起。
+    /// 组句中的上划只清拼音，壳调 [`Self::clear`]，不经这里。
+    pub fn cleared(&mut self, text: &str) -> Frame {
+        let mut frame = self.refresh(String::new());
+        if !text.is_empty() {
+            self.offer_undo(text.to_owned(), &mut frame);
+        }
+        frame
+    }
+
+    /// 候选条上放着上屏名字后的电话邮箱、或清空后的「撤销」：删除键、重输键先只收起它们，不动输入框里的字。
+    pub fn has_offer(&self) -> bool {
+        self.after_contact.is_some() || self.cleared.is_some()
+    }
+
+    fn offer_undo(&mut self, text: String, frame: &mut Frame) {
+        frame.candidates.push(FrameCandidate::plain(UNDO_LABEL));
+        self.completions.push((0, text.clone()));
+        self.cleared = Some(text);
     }
 
     /// 九宫格拼音列里点了一个写法。

@@ -22,6 +22,7 @@ fn candidate(text: &str, senses: &[(Option<&'static str>, &str, bool)]) -> Frame
             .collect(),
         forgettable: true,
         cloud: false,
+        contact: false,
     }
 }
 
@@ -95,4 +96,35 @@ fn cloud_candidates_carry_the_cloud_mark() {
     let rows = rows(&[candidate("空间", &[]), cloud], 1.0, chars);
     assert!(!rows[0].cloud);
     assert!(rows[1].cloud);
+}
+
+#[test]
+fn pinned_syllables_are_their_own_underlined_segment() {
+    let frame = Frame {
+        commit: String::new(),
+        replace: 0,
+        preedit: "开kai'fa".into(),
+        preedit_cursor: 7,
+        preedit_pinned: (1, 4),
+        notice: String::new(),
+        pinyin_choices: Vec::new(),
+        candidates: Vec::new(),
+        expression: false,
+        single_chars: false,
+    };
+    let preedit = preedit(&frame);
+    let parts: Vec<(&str, PreeditStyle)> = preedit
+        .segments
+        .iter()
+        .map(|s| (s.text.as_str(), s.style))
+        .collect();
+    assert_eq!(
+        parts,
+        [
+            ("开", PreeditStyle::Typed),
+            ("kai", PreeditStyle::Pinned),
+            ("'fa", PreeditStyle::Typed)
+        ]
+    );
+    assert_eq!(preedit.text(), "开kai'fa");
 }

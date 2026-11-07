@@ -1,3 +1,4 @@
+# 本 fork 仅在用户明确要求时手动运行，并选择版本标签作为 ref。
 # 推 v<版本> 标签发四个平台（共用一个 GitHub Release）；单平台补丁推 macos-v / windows-v / linux-v / android-v<版本>，只打那一个平台。
 # 版本号读各平台壳：macOS apps/macos/Cargo.toml、Windows apps/windows/server/Cargo.toml、Linux apps/linux/server/Cargo.toml、Android apps/android/core/Cargo.toml，要打的平台都得与标签一致。
 # 流程：prepare 核对版本、建草稿 Release → 各平台 job 并行打包，把安装包与摘要 / 构建信息片段传到草稿上
@@ -29,8 +30,7 @@
 name: release
 
 on:
-  push:
-    tags: ['v*', 'macos-v*', 'windows-v*', 'linux-v*', 'android-v*']
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always

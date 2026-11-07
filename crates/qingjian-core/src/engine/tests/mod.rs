@@ -1,5 +1,6 @@
 //! Engine 的测试：共用的样例词库、辅助函数与 mock 在这里，用例按主题分文件。
 
+mod auto_word;
 mod aux_code;
 mod candidate_menu;
 mod candidate_view;
@@ -7,12 +8,14 @@ mod caret;
 mod chaizi;
 mod cloud;
 mod code;
+mod contacts;
 mod context;
 mod correction;
 mod custom;
 mod email;
 mod emoji;
 mod english;
+mod follow_up;
 mod fuzzy_sequences;
 mod general;
 mod generated;
@@ -23,6 +26,7 @@ mod learning;
 mod lookup;
 mod nine_key;
 mod p2c_placement;
+mod pairing;
 mod panel;
 mod panel_translate;
 mod polyphone;
@@ -30,6 +34,7 @@ mod privacy;
 mod raw;
 mod reading;
 mod shuangpin;
+mod single_chars;
 mod spacing;
 mod spelling;
 mod traditional;
@@ -337,6 +342,17 @@ struct WordLearner {
     choices: HashMap<String, u32>,
 }
 
+impl WordLearner {
+    fn rebuild_words(&mut self) {
+        let tsv: String = self
+            .words
+            .iter()
+            .map(|(t, s)| format!("{t}\t{}\t100\n", s.join(" ")))
+            .collect();
+        self.dictionary = Some(Dictionary::parse(&tsv).unwrap());
+    }
+}
+
 impl Learner for WordLearner {
     fn record(&mut self, _candidate: &Candidate) {}
 
@@ -363,13 +379,20 @@ impl Learner for WordLearner {
 
     fn learn_word(&mut self, text: &str, syllables: &[String]) {
         self.words.push((text.to_owned(), syllables.to_vec()));
-        let tsv: String = self
-            .words
-            .iter()
-            .map(|(t, s)| format!("{t}\t{}\t100\n", s.join(" ")))
-            .collect();
-        self.dictionary = Some(Dictionary::parse(&tsv).unwrap());
+        self.rebuild_words();
         self.shared.lock().unwrap().0.push(text.to_owned());
+    }
+
+    fn forget(&mut self, text: &str) -> Forgotten {
+        let before = self.words.len();
+        self.words.retain(|(t, _)| t != text);
+        self.rebuild_words();
+        let suffix = format!("\t{text}");
+        self.choices.retain(|key, _| !key.ends_with(&suffix));
+        Forgotten {
+            user_word: self.words.len() < before,
+            learning: true,
+        }
     }
 
     fn user_words(&self) -> Option<&Dictionary> {

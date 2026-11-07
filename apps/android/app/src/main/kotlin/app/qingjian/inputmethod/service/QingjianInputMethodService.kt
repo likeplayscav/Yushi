@@ -6,7 +6,6 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.graphics.Rect
 import android.inputmethodservice.InputMethodService
 import android.view.KeyEvent
 import android.view.View
@@ -22,9 +21,7 @@ import app.qingjian.inputmethod.clipboard.sync.ClipboardSync
 import app.qingjian.inputmethod.clipboard.ClipboardWatcher
 import app.qingjian.inputmethod.clipboard.sync.NeonEdgeView
 import org.json.JSONObject
-import app.qingjian.inputmethod.cloud.CloudConfig
-import app.qingjian.inputmethod.cloud.Network
-import app.qingjian.inputmethod.cloud.SecretStore
+import app.qingjian.inputmethod.contacts.ContactsSync
 import app.qingjian.inputmethod.core.AppLog
 import app.qingjian.inputmethod.core.Engine
 import app.qingjian.inputmethod.core.InputOptions
@@ -47,6 +44,7 @@ import app.qingjian.inputmethod.service.input.Composer
 import app.qingjian.inputmethod.service.input.Language
 import app.qingjian.inputmethod.service.input.enterLabel
 import app.qingjian.inputmethod.service.input.wantsDirectInput
+import app.qingjian.inputmethod.service.input.wantsPlainPunctuation
 import app.qingjian.inputmethod.service.input.wantsNumbers
 import app.qingjian.inputmethod.service.input.wantsPrivacy
 import app.qingjian.inputmethod.settings.BottomAction
@@ -59,21 +57,19 @@ import app.qingjian.inputmethod.settings.page.VoiceSettingsActivity
 import app.qingjian.inputmethod.theme.Palette
 import app.qingjian.inputmethod.translate.QuickTranslate
 import app.qingjian.inputmethod.translate.TranslateBar
-import app.qingjian.inputmethod.voice.VoiceConfig
 import app.qingjian.inputmethod.voice.VoiceInput
 
 /** 输入法服务：管生命周期、设置与视图，输入逻辑在 [Composer]。 */
 class QingjianInputMethodService :
     InputMethodService(), Composer.Host, CandidateBarView.Listener, KeyboardView.Listener, PanelActions, VoiceInput.Host,
-    GameFrame.Listener {
+    GameMode.Host {
     private lateinit var engine: Engine
     private lateinit var composer: Composer
     private var panel: InputPanel? = null
 
-    /** 游戏键盘开着时它浮着的那一层，与它给的应用（包名）；普通键盘时都是 null。 */
-    private var gameFrame: GameFrame? = null
-    private var gamePackage: String? = null
-    private val gameTouch = Rect()
+    private val game = GameMode(this, this)
+
+    private lateinit var cloud: CloudServices
 
     /** 当前输入框的回车键文字，见 [enterLabel]。 */
     private var enterLabel: String? = null
@@ -122,44 +118,35 @@ class QingjianInputMethodService :
     /** 自己写设置（拖完高度）时不重建键盘。 */
     private var writingSettings = false
 
+    override fun writeSettings(block: () -> Unit) {
+        writingSettings = true
+        try {
+            block()
+        } finally {
+            writingSettings = false
+        }
+    }
+
     /** 设置页改了就重建键盘，开着键盘能马上看到。 */
     private val settingsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+        contacts.sync()
         if (!writingSettings) setInputView(onCreateInputView())
     }
 
-    /** 云端配置（地址、模型、密钥）在设置页改了，云联想、释义兜底跟着换。 */
-    private val cloudListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> syncCloud() }
-
-    /** 「语音识别」设置页改了，识别方跟着换。 */
-    private val voiceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> syncVoice() }
-
-    /** 「语音识别」配好了就交给引擎；解密钥走 Keystore，配置没变 [Engine] 不重交。 */
-    private fun syncVoice() {
-        engine.setVoice(VoiceConfig.load(this))
-    }
-
-    /**
-     * 按设置接云端：释义兜底开着就交配置；云联想开着且网络允许（「只在 Wi-Fi 下使用」）就连联想一起开。
-     * 两样都不要时不去接，等快捷翻译用到再接（[translate]）；之前开着联想、现在不该开了就退回只翻译。
-     * 配置没变 [Engine] 不重交。返回能不能翻译。
-     */
-    private fun syncCloud(settings: Settings = Settings.load(this), translate: Boolean = false): Boolean {
-        // 解密钥要走 Keystore，用到才读
-        val cloud by lazy { CloudConfig.load(this) }
-        engine.setGlossFill(if (settings.glossFill) cloud else null)
-        val predict = settings.cloudPredict && (!settings.cloudWifiOnly || Network.onWifi(this))
-        if (!predict && !translate && !engine.predicting) return engine.cloudConnected
-        return engine.setCloud(cloud, predict)
-    }
+    /** 通讯录里的名字（设置里开了才读）。 */
+    private lateinit var contacts: ContactsSync
 
     override fun onCreate() {
         super.onCreate()
         AppLog.info("ime create")
         engine = Engine(this) {
             composer.onEngineReady()
-            syncCloud()
-            syncVoice()
+            cloud.sync()
+            cloud.syncVoice()
+            contacts.sync()
         }
+        contacts = ContactsSync(this, engine)
+        cloud = CloudServices(this, engine)
         composer = Composer(engine, this)
         quickTranslate = QuickTranslate(engine) { currentInputConnection }
         voice = VoiceInput(this, engine, this)
@@ -170,8 +157,7 @@ class QingjianInputMethodService :
             )
         }
         Settings.preferences(this).registerOnSharedPreferenceChangeListener(settingsListener)
-        SecretStore.prefs(this).registerOnSharedPreferenceChangeListener(cloudListener)
-        VoiceConfig.prefs(this).registerOnSharedPreferenceChangeListener(voiceListener)
+        cloud.start()
         clipboardWatcher.onChanged = { panel?.refreshClipboard() }
         clipboardWatcher.start()
         ClipboardSync.addListener(syncListener)
@@ -181,10 +167,10 @@ class QingjianInputMethodService :
     override fun onDestroy() {
         AppLog.info("ime destroy")
         clipboardWatcher.stop()
+        contacts.stop()
         ClipboardSync.removeListener(syncListener)
         Settings.preferences(this).unregisterOnSharedPreferenceChangeListener(settingsListener)
-        SecretStore.prefs(this).unregisterOnSharedPreferenceChangeListener(cloudListener)
-        VoiceConfig.prefs(this).unregisterOnSharedPreferenceChangeListener(voiceListener)
+        cloud.stop()
         engine.close()
         super.onDestroy()
     }
@@ -192,9 +178,9 @@ class QingjianInputMethodService :
     override fun onCreateInputView(): View {
         // 键盘重建，开着的语音面板跟着没了
         voice.cancel()
-        val game = gameTarget()
-        AppLog.info("create input view${if (game != null) " (game keyboard)" else ""}")
-        val gameSettings = game?.let { GameKeyboard.load(this) }
+        val target = game.target()
+        AppLog.info("create input view${if (target != null) " (game keyboard)" else ""}")
+        val gameSettings = target?.let { GameKeyboard.load(this) }
         val settings = Settings.load(this).let { settings ->
             gameSettings ?: return@let settings
             settings.copy(heightPercent = gameSettings.size.heightPercent, fullscreenAdapt = false)
@@ -210,7 +196,7 @@ class QingjianInputMethodService :
         }
         composer.englishCandidates = settings.englishCandidates
         engine.setAppearance(settings.theme, settings.textSize.scale)
-        syncCloud(settings)
+        cloud.sync(settings)
         // 布局没变时 layout 的 setter 不会重设方案，双拼方案、混输这些改了也得补上
         composer.applyScheme()
         val panel = InputPanel(
@@ -219,113 +205,44 @@ class QingjianInputMethodService :
             keyboardListener = this,
             actions = this,
             onBottomAction = ::onBottomAction,
-            floating = game != null,
+            floating = target != null,
         )
         this.panel = panel
         showKeyboard()
         showSideItems(emptyList())
         reopenPanel?.let(panel::open)
         reopenPanel = null
-        gamePackage = game
-        if (game != null && gameSettings != null) {
+        game.wrap(target, settings, gameSettings, panel.view)?.let { frame ->
             neon = null
-            val (x, y) = GameKeyboard.position(this, game) ?: (0.5f to 1f)
-            val frame = GameFrame(
-                this, Palette.of(settings.theme, dark = true), panel.view,
-                gameSettings.size.widthFraction, gameSettings.transparency, x, y, this,
-            )
-            gameFrame = frame
             return frame
         }
-        gameFrame = null
         val glow = NeonEdgeView(this)
         neon = glow
         panel.addOverlay(glow)
         return panel.view
     }
 
-    /** 现在的输入框该不该用游戏键盘：返回它的应用包名，不该用是 null（见 [GameKeyboard.wanted]）。 */
-    private fun gameTarget(): String? = currentInputEditorInfo?.packageName?.takeIf { GameKeyboard.wanted(this, it) }
-
     /** 游戏键盘不进横屏的全屏编辑（那会盖住游戏），其余照系统的判断。 */
-    override fun onEvaluateFullscreenMode(): Boolean = gameTarget() == null && super.onEvaluateFullscreenMode()
+    override fun onEvaluateFullscreenMode(): Boolean = game.target() == null && super.onEvaluateFullscreenMode()
 
-    /**
-     * 游戏键盘铺满整屏但不顶起应用：内容区与可见区都从窗口最底下算起，只有键盘那一块收触摸，
-     * 别处的点击透给游戏。
-     */
     override fun onComputeInsets(outInsets: Insets) {
         super.onComputeInsets(outInsets)
-        val frame = gameFrame ?: return
-        val height = window.window?.decorView?.height ?: return
-        outInsets.contentTopInsets = height
-        outInsets.visibleTopInsets = height
-        frame.touchableRect(gameTouch)
-        outInsets.touchableInsets = Insets.TOUCHABLE_INSETS_REGION
-        outInsets.touchableRegion.set(gameTouch)
+        game.computeInsets(outInsets, window.window?.decorView?.height)
     }
 
-    /** 横屏打字的应用记下来，游戏键盘设置页按它列出可勾的应用；自己写的不重建键盘。 */
-    private fun rememberLandscapeApp(packageName: String?) {
-        if (packageName == null || packageName == this.packageName) return
-        if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) return
-        if (GameKeyboard.seen(this).any { it.packageName == packageName }) return
-        val label = runCatching {
-            packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, 0)).toString()
-        }.getOrDefault(packageName)
-        writingSettings = true
-        GameKeyboard.remember(this, GameKeyboard.SeenApp(packageName, label))
-        writingSettings = false
-    }
+    override val editorPackage: String? get() = currentInputEditorInfo?.packageName
 
-    override fun onGameMoved(x: Float, y: Float) {
-        val game = gamePackage ?: return
-        writingSettings = true
-        GameKeyboard.savePosition(this, game, x, y)
-        writingSettings = false
-    }
-
-    override fun onGameTransparency() {
-        val steps = listOf(0, 20, 40, 60)
-        val next = steps.firstOrNull { it > GameKeyboard.load(this).transparency } ?: steps.first()
-        writingSettings = true
-        Settings.preferences(this).edit().putInt(GameKeyboard.KEY_TRANSPARENCY, next).commit()
-        writingSettings = false
-        gameFrame?.setTransparency(next)
-    }
-
-    /** 拖动栏的键盘按钮：这个应用不再用游戏键盘，马上换回普通键盘（横屏照系统进全屏编辑）。 */
-    override fun onGameNormalKeyboard() {
-        val game = gamePackage ?: return
-        writingSettings = true
-        GameKeyboard.setApp(this, game, on = false)
-        writingSettings = false
-        setInputView(onCreateInputView())
-        updateFullscreenMode()
-        toast(getString(R.string.game_switched_off))
-    }
-
-    override fun onGameHide() = onHideKeyboard()
-
-    override val gameKeyboard: Boolean?
-        get() = currentInputEditorInfo?.packageName?.takeIf { it != packageName }
-            ?.let { it in GameKeyboard.load(this).apps }
-
-    /** 给当前应用开或关游戏键盘；开的时候总开关关着就一起打开。横屏马上换，竖屏提示横过来才换。 */
-    override fun toggleGameKeyboard() {
-        val app = currentInputEditorInfo?.packageName ?: return
-        val on = gameKeyboard != true
-        writingSettings = true
-        GameKeyboard.setApp(this, app, on)
-        if (on) Settings.preferences(this).edit().putBoolean(GameKeyboard.KEY_ENABLED, true).commit()
-        writingSettings = false
+    override fun rebuild() {
         closePanel()
         setInputView(onCreateInputView())
         updateFullscreenMode()
-        if (on && resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
-            toast(getString(R.string.game_on_in_landscape))
-        }
     }
+
+    override fun hide() = onHideKeyboard()
+
+    override val gameKeyboard: Boolean? get() = game.enabledHere
+
+    override fun toggleGameKeyboard() = game.toggle()
 
     /** 深浅色跟着系统变。 */
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -336,10 +253,11 @@ class QingjianInputMethodService :
     override fun onStartInput(attribute: EditorInfo, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         composer.directInput = attribute.wantsDirectInput()
+        composer.plainPunctuation = attribute.wantsPlainPunctuation()
         composer.privateInput = attribute.wantsPrivacy()
         enterLabel = attribute.enterLabel()
         panel?.keyboard?.enterLabel = enterLabel
-        composer.abandon()
+        if (!(restarting && composer.resume())) composer.abandon()
         if (attribute.wantsNumbers()) composer.showNumbers()
     }
 
@@ -349,13 +267,15 @@ class QingjianInputMethodService :
             "start input view: ${info.packageName}, inputType 0x${Integer.toHexString(info.inputType)}, " +
                 "imeOptions 0x${Integer.toHexString(info.imeOptions)}, restarting $restarting",
         )
-        rememberLandscapeApp(info.packageName)
-        if (panel?.stale() == true || gameTarget() != gamePackage) {
+        game.rememberLandscapeApp(info.packageName)
+        if (panel?.stale() == true || game.target() != game.packageName) {
             setInputView(onCreateInputView())
             updateFullscreenMode()
         }
         // 网络可能换了（「只在 Wi-Fi 下使用」）
-        syncCloud()
+        cloud.sync()
+        // 上次读通讯录时系统给了空结果（「仅在使用中允许」时后台读不到），键盘弹出时再读
+        contacts.retryIfEmpty()
         clipboardWatcher.capture()
         // 进程可能刚被系统杀过又拉起，或开关刚改过；顺便补一轮
         ClipboardSync.apply(this)
@@ -422,16 +342,18 @@ class QingjianInputMethodService :
         shownCandidates = candidates
         panel?.bar?.show(preedit, candidates)
         if (panel?.openPanel == PanelKind.CANDIDATES) {
-            if (candidates.isEmpty()) closePanel() else panel?.showCandidates(preedit, candidates)
+            if (candidates.isEmpty()) closePanel() else panel?.showCandidates(preedit, candidates, composer.singleChars)
         }
     }
 
     override fun onExpand() {
         openPanel(PanelKind.CANDIDATES)
-        panel?.showCandidates(shownPreedit, shownCandidates)
+        panel?.showCandidates(shownPreedit, shownCandidates, composer.singleChars)
     }
 
     override fun selectCandidate(index: Int) = composer.select(index)
+
+    override fun toggleSingleChars() = composer.toggleSingleChars()
 
     override fun clearComposition() = composer.onKey(Key.Clear)
 
@@ -486,12 +408,12 @@ class QingjianInputMethodService :
 
     /** 语言换了：记进设置（自己写的不重建键盘），中英键跟着重画。 */
     override fun onLanguageChanged() {
-        writingSettings = true
-        Settings.preferences(this).edit()
-            .putString(Settings.KEY_LANGUAGE, composer.language.name)
-            .putString(Settings.KEY_PARTNER, composer.partner.name)
-            .commit()
-        writingSettings = false
+        writeSettings {
+            Settings.preferences(this).edit()
+                .putString(Settings.KEY_LANGUAGE, composer.language.name)
+                .putString(Settings.KEY_PARTNER, composer.partner.name)
+                .commit()
+        }
         showKeyboard()
     }
 
@@ -532,7 +454,14 @@ class QingjianInputMethodService :
 
     override fun closePanel() {
         // 返回键关的是语音面板：这一段不要了
-        if (voice.active) voice.cancel() else panel?.close()
+        if (voice.active) {
+            voice.cancel()
+            return
+        }
+        val candidates = panel?.openPanel == PanelKind.CANDIDATES
+        panel?.close()
+        // 单字是展开面板里的筛选：收起就回到全部候选
+        if (candidates && composer.singleChars) composer.toggleSingleChars()
     }
 
     override fun commitText(text: String) = composer.commitPanelText(text)
@@ -707,6 +636,30 @@ class QingjianInputMethodService :
         panel?.showEditor(editor)
     }
 
+    override fun editClip(index: Int, text: String) {
+        closeEditor()
+        closePanel()
+        composer.abandon()
+        val editor = PhraseEditor(
+            this, Palette.of(this), emptyList(), null, "",
+            onDone = { edited, _, _ ->
+                ClipboardStore.edit(this, index, text, edited, clipboardLimit)
+                ClipboardSync.changed()
+                closeEditor()
+                openPanel(PanelKind.CLIPBOARD)
+            },
+            onCancel = {
+                closeEditor()
+                openPanel(PanelKind.CLIPBOARD)
+            },
+            onFocusCode = {},
+            clip = text,
+        )
+        engine.setMetered(false)
+        this.editor = editor
+        panel?.showEditor(editor)
+    }
+
     /**
      * 工具栏的翻译：开快捷翻译条（再点一下收起，译文留着）。没配云端就提示去设置。
      * 方向胶囊写学习语言。
@@ -716,7 +669,7 @@ class QingjianInputMethodService :
             closeEditor()
             return
         }
-        if (!syncCloud(translate = true)) {
+        if (!cloud.sync(translate = true)) {
             needsSetup(getString(R.string.translate_needs_setup), CloudSettingsActivity::class.java)
             return
         }
@@ -765,6 +718,10 @@ class QingjianInputMethodService :
 
     override fun onSwipe(input: String) = composer.onSwipe(input)
 
+    override fun onBackspaceDown() = composer.onBackspaceDown()
+
+    override fun onClearBefore() = composer.clearBefore()
+
     // 回车键写的字（发送、搜索…）照搬到面板右边的键上；多行框没有动作，写「完成」
     override fun openVoicePanel(actions: VoicePanel.Actions): VoicePanel? =
         panel?.openVoice((editor?.enterLabel ?: enterLabel) ?: getString(R.string.voice_done), actions)
@@ -798,9 +755,7 @@ class QingjianInputMethodService :
         keyboard.setHeightPercent(percent)
         if (done) {
             resizeFrom = null
-            writingSettings = true
-            Settings.preferences(this).edit().putInt(Settings.KEY_HEIGHT, percent).commit()
-            writingSettings = false
+            writeSettings { Settings.preferences(this).edit().putInt(Settings.KEY_HEIGHT, percent).commit() }
         }
     }
 }

@@ -258,6 +258,7 @@ pub fn corrected_japanese() -> Frame {
         mode: Mode::default(),
         columns: 0,
         column_ems: Vec::new(),
+        reversed: false,
     }
 }
 
@@ -276,6 +277,7 @@ pub fn probe() -> Frame {
         mode: Mode::default(),
         columns: 0,
         column_ems: Vec::new(),
+        reversed: false,
     }
 }
 
@@ -324,6 +326,7 @@ pub fn aux_code() -> Frame {
         mode: Mode::default(),
         columns: 0,
         column_ems: Vec::new(),
+        reversed: false,
     }
 }
 
@@ -355,6 +358,7 @@ pub fn short() -> Frame {
         mode: Mode::default(),
         columns: 0,
         column_ems: Vec::new(),
+        reversed: false,
     }
 }
 
@@ -400,5 +404,6 @@ pub fn matrix() -> Frame {
         mode: Mode::default(),
         columns: 5,
         column_ems: vec![1.0; 5],
+        reversed: false,
     }
 }

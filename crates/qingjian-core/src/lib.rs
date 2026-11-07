@@ -11,6 +11,7 @@ pub mod candidate;
 pub mod chaizi;
 pub mod code_scheme;
 pub mod composition;
+pub mod contacts;
 pub mod correction;
 pub mod custom_phrase;
 pub mod email;
@@ -48,6 +49,7 @@ pub use candidate::{
 };
 pub use code_scheme::CodeScheme;
 pub use composition::Composition;
+pub use contacts::{Contact, ContactBook};
 pub use correction::Correction;
 pub use email::{EmailCompletion, email_completions};
 pub use emoji::{EmojiTable, skin_tone_variants};
@@ -70,7 +72,7 @@ pub use panel::{
     catalog_sections, common_items,
 };
 pub use parser::{ParseError, Segmentation};
-pub use punctuation::Punctuation;
+pub use punctuation::{PairEdit, Punctuation};
 pub use qingjian_dictionary as dictionary;
 pub use shuangpin::{Layout as ShuangpinLayout, Scheme as ShuangpinScheme};
 pub use swipe::{CornerDecoder, ShapeDecoder, SwipeDecoder, SwipeKey, SwipeLexicon, SwipePoint};

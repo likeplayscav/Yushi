@@ -12,6 +12,9 @@ import org.json.JSONObject
 data class InputOptions(
     val fuzzy: Set<String> = emptySet(),
     val fullWidthPunctuation: Boolean = true,
+    /** 成对符号（#928）：中文与日文键盘一份、英文键盘一份，同 PC 的 `pair_punctuation` / `english_pair_punctuation`。 */
+    val pairPunctuation: Boolean = true,
+    val englishPairPunctuation: Boolean = false,
     val englishInChinese: Boolean = true,
     val chineseFirst: Boolean = false,
     val learningLanguage: String = SettingChoices.defaultLearningLanguage,
@@ -27,6 +30,8 @@ data class InputOptions(
     val holdSelections: Boolean = true,
     /** 拼写纠错（PC 的 `[general] spelling_correction`）：关了拼音只按敲的原样与模糊音读。 */
     val spellingCorrection: Boolean = true,
+    /** 中文词上屏后候选条接着给可能跟在后面的词，点了直接上屏。 */
+    val followUps: Boolean = true,
     /** 候选后面一次最多配几个 emoji（0 不配），PC 的 `[general] emoji`；颜文字、符号同理。 */
     val emoji: Int = SettingChoices.defaultEmoji,
     val kaomoji: Int = SettingChoices.defaultKaomoji,
@@ -37,6 +42,8 @@ data class InputOptions(
     fun toJson(): String = JSONObject()
         .put("fuzzy", JSONArray(SettingChoices.fuzzy.map { it.key }.filter { it in fuzzy }))
         .put("full_width_punctuation", fullWidthPunctuation)
+        .put("pair_punctuation", pairPunctuation)
+        .put("english_pair_punctuation", englishPairPunctuation)
         .put("english_in_chinese", englishInChinese)
         .put("chinese_first", chineseFirst)
         .put("learning_language", learningLanguage)
@@ -46,6 +53,7 @@ data class InputOptions(
         .put("disabled_dictionaries", JSONArray(disabledDictionaries.sorted()))
         .put("hold_selections", holdSelections)
         .put("spelling_correction", spellingCorrection)
+        .put("follow_ups", followUps)
         .put("emoji", emoji)
         .put("kaomoji", kaomoji)
         .put("symbols", symbols)

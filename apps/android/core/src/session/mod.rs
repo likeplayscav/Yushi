@@ -2,8 +2,10 @@
 
 mod clipboard;
 mod cloud;
+mod contacts;
 mod dictionaries;
 mod display;
+mod follow_up;
 mod keys;
 mod options;
 mod prediction;
@@ -34,6 +36,9 @@ pub struct Session {
     /// 光标在 `preedit` 里的字符下标。
     preedit_cursor: usize,
 
+    /// `preedit` 里九宫格选定的音节（字符下标，起止），见 [`Frame::preedit_pinned`]。
+    preedit_pinned: (usize, usize),
+
     pinyin_choices: Vec<String>,
 
     /// 不在组句时候选条上的补全（邮箱后缀、算式结果）：上屏前删掉光标前几个字符、要上屏的文字，下标同帧里的候选；空即没在补全。
@@ -63,6 +68,24 @@ pub struct Session {
     /// 插进候选的整句补全在第几个；选它走 `accept_prediction`。
     sentence_at: Option<usize>,
 
+    /// 上屏通讯录里的名字后给不给这个人的电话、邮箱（键盘设置里的开关）。
+    contact_details: bool,
+
+    /// 刚上屏的通讯录名字，候选条上正放着它的电话、邮箱；光标前的文字不再以它结尾、或有别的操作就清掉。
+    after_contact: Option<String>,
+
+    /// 中文词上屏后候选条给不给联想词（键盘设置里的开关）。
+    follow_ups: bool,
+
+    /// 候选条上放着联想词时，刚上屏的那段文字；光标前的文字不再以它结尾、或有别的操作就清掉。
+    after_commit: Option<String>,
+
+    /// 联想词在 `completions` 里从第几个开始；选到这之后的走 [`qingjian_core::Engine::commit_follow_up`]。
+    follow_up_at: Option<usize>,
+
+    /// 删除键上划刚清掉的文字，候选条上放着「撤销」；光标前又有字、或有别的操作就清掉。
+    cleared: Option<String>,
+
     /// 快捷翻译、常用语编辑这些工具框开着：打的字不进应用，不发云联想。
     tools_open: bool,
 
@@ -89,6 +112,7 @@ impl Session {
             candidates: CandidateList::default(),
             preedit: String::new(),
             preedit_cursor: 0,
+            preedit_pinned: (0, 0),
             pinyin_choices: Vec::new(),
             completions: Vec::new(),
             kana: None,
@@ -97,6 +121,12 @@ impl Session {
             surrounding: None,
             sentence_at: None,
             tools_open: false,
+            contact_details: false,
+            after_contact: None,
+            follow_ups: true,
+            after_commit: None,
+            follow_up_at: None,
+            cleared: None,
             transcriber: Box::new(NoTranscriber),
             swipe_decoder: Box::new(ShapeDecoder),
             swipe_pinyin: OnceLock::new(),
@@ -117,6 +147,10 @@ impl Session {
         self.surrounding = None;
         self.sentence_at = None;
         self.completions.clear();
+        self.after_contact = None;
+        self.after_commit = None;
+        self.follow_up_at = None;
+        self.cleared = None;
         if let Some(kana) = &mut self.kana {
             kana.clear();
         }
@@ -124,7 +158,12 @@ impl Session {
 
     fn refresh(&mut self, commit: String) -> Frame {
         self.pinyin_choices.clear();
+        self.preedit_pinned = (0, 0);
         self.completions.clear();
+        self.after_contact = None;
+        self.after_commit = None;
+        self.follow_up_at = None;
+        self.cleared = None;
         if let Some(kana) = &self.kana {
             self.preedit = kana.preedit();
             self.preedit_cursor = self.preedit.chars().count();
@@ -139,10 +178,12 @@ impl Session {
                 replace: 0,
                 preedit: self.preedit.clone(),
                 preedit_cursor: self.preedit_cursor,
+                preedit_pinned: (0, 0),
                 notice: String::new(),
                 pinyin_choices: Vec::new(),
                 candidates,
                 expression: false,
+                single_chars: false,
             };
         }
         if self.engine.composition().is_empty() {
@@ -156,6 +197,8 @@ impl Session {
                     self.engine.annotate(&mut query.candidates);
                     self.preedit = query.marked_text();
                     self.preedit_cursor = query.marked_cursor();
+                    let held = query.held.chars().count();
+                    self.preedit_pinned = (held, held + self.engine.nine_key_pinned());
                     self.pinyin_choices = std::mem::take(&mut query.pinyin_choices);
                     self.candidates = query.candidates;
                 }
@@ -179,15 +222,20 @@ impl Session {
             replace: 0,
             preedit: self.preedit.clone(),
             preedit_cursor: self.preedit_cursor,
+            preedit_pinned: self.preedit_pinned,
             notice: String::new(),
             pinyin_choices: self.pinyin_choices.clone(),
             candidates: self
                 .candidates
                 .items
                 .iter()
-                .map(FrameCandidate::from)
+                .map(|candidate| {
+                    FrameCandidate::from(candidate)
+                        .with_contact(self.engine.is_contact(&candidate.text))
+                })
                 .collect(),
             expression: self.engine.expression_mode() || self.engine.unicode_entry(),
+            single_chars: self.engine.composition().single_chars(),
         }
     }
 }

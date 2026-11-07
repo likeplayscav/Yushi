@@ -1,3 +1,4 @@
+# 本 fork 仅在用户明确要求时手动运行，并选择版本标签作为 ref。
 # 推 clipboard-v<版本> 标签发青简剪贴板的单独安装包（Windows 安装程序、macOS 的 .app 压缩包），
 # Release 建在 qingjian-team/qingjian-clipboard（源码仍在这个仓库）。流程见 docs/notes/release.md「青简剪贴板」。
 #
@@ -8,8 +9,7 @@
 name: clipboard-release
 
 on:
-  push:
-    tags: ['clipboard-v*']
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always

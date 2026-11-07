@@ -6,7 +6,7 @@
 ## 主题文件
 
 - 一个主题一个目录：`theme.json`，加上它引用的 `images/…`（PNG、SVG）与 `fonts/…`（TTF / OTF / TTC）。包内路径一律相对 `theme.json`，拒绝 `..` 与绝对路径。
-- 内置主题九个，随 crate 编进来（`crates/qingjian-render/themes/<id>/theme.json`）：`qingjian` 青简绿（缺省）、`system-blue` 系统蓝、`wechat` 微信绿、`sujian` 素笺、`glass` 玻璃、`sakura` 樱花、`dafeiyu` 大肥鱼、`miku` 初音未来、`bocchi` 波奇酱；系统蓝、微信绿、素笺 `extends` 青简绿、只改颜色变量，玻璃 `extends` 青简绿、改了窗口与高亮组件并写了 `material`（照 macOS 26 自带简体拼音的胶囊条），后四个整套重写了窗口、组件与状态条（只有浅色）。
+- 内置主题十个，随 crate 编进来（`crates/qingjian-render/themes/<id>/theme.json`）：`qingjian` 青简绿（缺省）、`system-blue` 系统蓝、`wechat` 微信绿、`sujian` 素笺、`glass` 玻璃、`slate` 墨岩、`sakura` 樱花、`dafeiyu` 大肥鱼、`miku` 初音未来、`bocchi` 波奇酱；系统蓝、微信绿、素笺 `extends` 青简绿、只改颜色变量，玻璃 `extends` 青简绿、改了窗口与高亮组件并写了 `material`（照 macOS 26 自带简体拼音的胶囊条），墨岩 `extends` 青简绿、换掉整套颜色并把圆角与阴影改成方角，后四个整套重写了窗口、组件与状态条（只有浅色）。
   内置主题的图片用 `include_bytes!` 编进程序（`theme/mod.rs` 的 `BUILTINS` 里每个主题一张「路径 → 内容」表，与用户主题走同一套解码），不带字体文件、只用系统字体；测试检查内置主题用到的图片都编进去了。用户主题 `extends` 内置主题时，主题目录里没有的图片到那个内置主题编进程序的文件里找（只看顶层 `extends` 那一层）。
 - 用户主题放在 `<用户数据目录>/themes/<id>/`，由 `ThemeLibrary` 与内置主题合成一个列表（内置在前、用户按 id 排）。目录名必须等于 `meta.id`，不能与内置主题重名，
   不能是 `system` / `light` / `dark`；读不进来的跳过并记警告。设置界面（mac 偏好设置、Windows 设置程序「候选窗口」页）按显示名列出，写回 `[general] theme` 的 id。
@@ -70,6 +70,7 @@
   `candidate` 与 `annotation` 换成设置的字号，行高同比例；`index`、`preedit` 与表格 `row_height` 按候选字的比例缩放（`theme/text_sizes.rs`）。
   节点里在样式上写死的字号（`{ "base": "candidate", "size": 19 }`，手机候选条这样写）也按那个样式的比例缩放。
   表格行高是下限（`minmax(row_height, auto)`），内容更高时撑开。
+  `[general] candidate_font_weight`（100–900，0 用主题的）经 `Theme::with_candidate_weight` 只换 `candidate` 样式的字重；节点上自己写了 `weight` 的（键位提示的键帽字）不动，只写字号的跟着设置。
   状态条不跟设置的字号：`render_status` 去掉设置的字号按主题原样画，大小由壳按 `[status_bar] size` 乘进整条的倍数（文字、图标、边距、点击边界一起缩放）。
 - **状态条**：`status.root` 是一棵与候选窗口同写法的节点树，`repeat` 绑定 `cells` 展开格子（Windows 现在是模式、标点、齿轮三格）。
   格子里的条件 `emphasized`（当前模式、生效的全角标点）、`gear`、`first`、`last`，文字绑定 `text`；整条能用 `mode.*`（`Renderer::render_status` 收一份 `Mode`，Windows 的 `StatusView` 带着，与候选窗口同一个 `Router::input_mode`）。

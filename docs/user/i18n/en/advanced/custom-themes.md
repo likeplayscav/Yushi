@@ -32,7 +32,7 @@ The simplest approach is to start from a built-in theme and change a few colours
 ```
 
 - `theme.json` can contain comments (`//` to the end of the line, or `/* … */`), and a trailing comma after the last item of an object or list is fine.
-- `extends` names the base theme: `qingjian` (青简绿), `system-blue` (系统蓝), `wechat` (微信绿), `sujian` (素笺), `sakura` (樱花), `dafeiyu` (大肥鱼), `miku` (初音未来) or `bocchi` (波奇酱). Anything you don't write is taken from the base theme, and the base theme's images don't need to be copied into your folder. Without `extends`, 青简绿 is the base.
+- `extends` names the base theme: `qingjian` (青简绿), `system-blue` (系统蓝), `wechat` (微信绿), `sujian` (素笺), `glass` (玻璃), `slate` (墨岩), `sakura` (樱花), `dafeiyu` (大肥鱼), `miku` (初音未来) or `bocchi` (波奇酱). Anything you don't write is taken from the base theme, and the base theme's images don't need to be copied into your folder. Without `extends`, 青简绿 is the base.
 - `meta.id` must be the same as the folder name, can't be the same as a built-in theme, and can't be `system`, `light` or `dark`; `meta.name` is the name shown in the theme list.
 - Colours are written as `#rrggbb`, or `#rrggbbaa` with opacity; written as `{ "light": …, "dark": … }`, the light and dark appearances each use one.
 
@@ -99,7 +99,7 @@ Parts such as the window and the highlight can have drop shadows (`drop-shadow`)
 
 Weights are `light`, `regular`, `medium`, `semibold`, `bold`, or a number from 100 to 900. If the system font doesn't have a given weight, the nearest one is used.
 
-When 候选字号 (Candidate size) or 译文字号 (Gloss size) is changed in Settings, it overrides the theme's `candidate` and `annotation` sizes, and line heights scale in proportion; `index`, `preedit` and table row heights scale along with the candidate size so that rows line up. Cells in a table row are aligned automatically on the text baseline, so themes don't need to adjust margins for different sizes. The floating status bar scales as a whole in proportion to the candidate size, which themes don't need to handle. Other styles you name yourself in the theme aren't affected.
+When 候选字号 (Candidate size) or 译文字号 (Gloss size) is changed in Settings, it overrides the theme's `candidate` and `annotation` sizes, and line heights scale in proportion; `index`, `preedit` and table row heights scale along with the candidate size so that rows line up. Cells in a table row are aligned automatically on the text baseline, so themes don't need to adjust margins for different sizes. The floating status bar scales as a whole in proportion to the candidate size, which themes don't need to handle. Other styles you name yourself in the theme aren't affected. When 候选字粗细 (Candidate text weight) is set, only the `candidate` style's weight changes; nodes that set their own `weight` keep it.
 
 ## Fonts and italics
 

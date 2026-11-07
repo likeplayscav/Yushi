@@ -28,6 +28,14 @@ impl Engine {
         self.full_width_punctuation = enabled;
     }
 
+    /// 中文标点开着也保持半角的符号（写代码常用的 `` ` `` 之类），只认会转全角的标点（[`crate::punctuation::converts`]）。
+    pub fn set_half_width_symbols(&mut self, symbols: &str) {
+        self.half_width_symbols = symbols
+            .chars()
+            .filter(|c| crate::punctuation::converts(*c))
+            .collect();
+    }
+
     /// 原子更新自定义短语，非法规则保持旧值。
     pub fn set_custom_phrases(&mut self, phrases: Vec<crate::CustomPhrase>) -> Result<(), String> {
         crate::custom_phrase::validate_phrases(&phrases)?;
@@ -311,6 +319,9 @@ impl Engine {
     pub(super) fn marked_rest(&self, rest: &str) -> String {
         if self.code_only() || (self.shuangpin.is_some() && self.shuangpin_raw_preedit) {
             return rest.to_owned();
+        }
+        if self.nine_key {
+            return self.nine_key_rest(rest);
         }
         match self.decode(rest) {
             Some(decoded) => decoded.marked(),
@@ -701,13 +712,14 @@ impl Engine {
         self.model_words.as_ref()
     }
 
-    /// 查词用的全部词库：主词库、附加词库、内置的符号与 emoji 名字、用户词。
+    /// 查词用的全部词库：主词库、附加词库、内置的符号与 emoji 名字、通讯录、用户词。
     pub(super) fn all_dictionaries(&self) -> Vec<&Dictionary> {
         let mut all = Vec::with_capacity(self.extra_dictionaries.len() + 2);
         all.push(&self.dictionary);
         all.extend(self.extra_dictionaries.iter());
         all.extend(self.model_words.as_ref());
         all.extend(self.companion_words);
+        all.extend(self.contact_book().map(crate::ContactBook::dictionary));
         if let Some(user) = self.learner.user_words() {
             all.push(user);
         }

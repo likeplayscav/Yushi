@@ -37,7 +37,7 @@ const USER_DEMOTED_FILE: &str = "user-demoted.tsv";
 /// 一个词在一个输入串下最多降几次。
 const MAX_DEMOTION: u32 = 99;
 
-/// 个人英文词表文件名，与词频文件同目录：`词\t次数`（词按第一次敲的写法存）。
+/// 个人英文词表文件名，与词频文件同目录：`词\t次数`（词按最近一次敲的写法存）。
 const USER_ENGLISH_FILE: &str = "user-english.tsv";
 
 /// 个人敲错表文件名，与词频文件同目录：`敲的\t要的\t次数`（音节级，接受过的纠正）。
@@ -107,7 +107,7 @@ pub struct FrequencyLearner {
     /// 只保留进程内最近的撤销信息；持久化文件只保存每个输入的最终偏好。
     preference_undo: std::collections::VecDeque<(String, String, Option<String>)>,
 
-    /// 个人英文词：小写编码 → (第一次敲的写法, 带衰减的次数)。回车原样上屏的英文词、选过的英文候选。
+    /// 个人英文词：小写编码 → (最近一次敲的写法, 带衰减的次数)。回车原样上屏的英文词、选过的英文候选。
     english: BTreeMap<String, (String, Decay)>,
 
     /// 个人英文词组成的词表，随 `english` 重建。

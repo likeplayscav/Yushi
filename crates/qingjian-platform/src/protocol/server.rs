@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use super::frame::Frame;
 use super::indicator::IndicatorState;
-use super::key::KeyOutcome;
+use super::key::{CaretEdit, KeyOutcome};
 use super::session::SessionId;
 use crate::config::{KeyCombo, SwitchKeys, ThirdInputMethod};
 
@@ -52,6 +52,10 @@ pub struct InputSettings {
     /// 组句中的按需 AI 快捷键；旧 Server 没有这项。
     #[serde(default)]
     pub predict: Option<KeyCombo>,
+
+    /// 组句中切换单字模式的快捷键（`[shortcut] single_chars`）；旧 Server 没有这项，DLL 就不吃它。
+    #[serde(default)]
+    pub single_chars: Option<KeyCombo>,
 }
 
 fn english_candidates_default() -> bool {
@@ -70,6 +74,7 @@ impl Default for InputSettings {
             toggle_traditional: None,
             english_candidates: true,
             predict: None,
+            single_chars: None,
         }
     }
 }
@@ -83,6 +88,7 @@ mod tests {
     fn old_server_settings_disable_the_new_preserved_shortcut() {
         let input = InputSettings {
             predict: Some(KeyCombo::PREDICT_DEFAULT),
+            single_chars: Some(KeyCombo::SINGLE_CHARS_DEFAULT),
             ..InputSettings::default()
         };
         let mut wire = serde_json::to_value(input).unwrap();
@@ -91,8 +97,10 @@ mod tests {
             input
         );
         wire.as_object_mut().unwrap().remove("predict");
+        wire.as_object_mut().unwrap().remove("single_chars");
         let old = serde_json::from_value::<InputSettings>(wire).unwrap();
         assert_eq!(old.predict, None);
+        assert_eq!(old.single_chars, None);
         assert_eq!(old.switch_mode, input.switch_mode);
         assert_eq!(old.english_mode, input.english_mode);
     }
@@ -149,6 +157,10 @@ pub enum ServerMessage {
         /// Linux 插件拿它弹「中」/「英」提示气泡，其余平台忽略。
         #[serde(default)]
         english: Option<bool>,
+
+        /// 成对符号要对文档做的事（#928）；老 DLL 读不到时只是多插一个右半边、光标停在后面。
+        #[serde(default)]
+        caret: Option<CaretEdit>,
     },
 
     /// 对一次 [`super::ClientMessage::Commit`] 的答复：缓冲区里原样上屏的文本（拼音字母 / 英文模式下敲的字母）；

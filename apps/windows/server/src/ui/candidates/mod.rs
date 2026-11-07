@@ -27,7 +27,7 @@ use windows::core::{Error, PCWSTR, Result, w};
 
 use qingjian_platform::Appearance;
 use qingjian_platform::protocol::Frame;
-use qingjian_render::Mode;
+use qingjian_render::{Mode, Rendered};
 
 use crate::dispatch::{CandidateMenu, KeyHintView};
 
@@ -179,17 +179,7 @@ impl CandidateWindow {
     pub(crate) fn show(&self, anchor: RECT) {
         menu::close();
         self.sync_theme(anchor);
-        let mut rendered = {
-            let data = self.data.borrow();
-            self.painter.borrow_mut().as_mut().and_then(|painter| {
-                painter.render_frame(
-                    &data.render_frame(),
-                    data.layout,
-                    self.dark.get(),
-                    self.dpi.get(),
-                )
-            })
-        };
+        let mut rendered = self.render();
         if let Some(ref measured) = rendered {
             let content = (
                 measured.content_width as i32,
@@ -202,16 +192,10 @@ impl CandidateWindow {
             let changed = self.data.borrow().upward != reverse;
             if changed {
                 self.data.borrow_mut().upward = reverse;
-                let data = self.data.borrow();
-                rendered = self.painter.borrow_mut().as_mut().and_then(|painter| {
+                if let Some(painter) = self.painter.borrow_mut().as_mut() {
                     painter.forget();
-                    painter.render_frame(
-                        &data.render_frame(),
-                        data.layout,
-                        self.dark.get(),
-                        self.dpi.get(),
-                    )
-                });
+                }
+                rendered = self.render();
             }
             let data = self.data.borrow();
             click::send(crate::dispatch::CandidateMouse::Placement {
@@ -274,6 +258,19 @@ impl CandidateWindow {
             }
             Err(_) => self.hide(),
         }
+    }
+
+    /// 用当前方向画一帧；方向没变时沿用上一帧，避免高亮动画反复换边。
+    fn render(&self) -> Option<Rendered> {
+        let data = self.data.borrow();
+        self.painter.borrow_mut().as_mut().and_then(|painter| {
+            painter.render_frame(
+                &data.render_frame(),
+                data.layout,
+                self.dark.get(),
+                self.dpi.get(),
+            )
+        })
     }
 
     /// 候选窗画好之后在它旁边贴键位提示；没有键位提示、或走 GDI 画法（`content` 为 `None`）时收起。

@@ -123,3 +123,32 @@ fn below_vertical_keeps_the_preedit_above_the_candidates() {
         );
     }
 }
+
+#[test]
+fn upward_and_reversed_together_keep_the_same_visual_and_click_order() {
+    let library = FontLibrary::system("zh-CN").expect("system fonts");
+    let mut renderer = Renderer::new(library);
+    for theme in Theme::builtins() {
+        let mut frame = scenes::nihao();
+        frame.upward = true;
+        renderer.forget();
+        let upward = renderer
+            .render(&frame, Layout::Vertical, theme, 1.0)
+            .unwrap();
+        frame.reversed = true;
+        renderer.forget();
+        let combined = renderer
+            .render(&frame, Layout::Vertical, theme, 1.0)
+            .unwrap();
+        for i in 0..frame.rows.len() {
+            let expected = cell(&upward.hits, i);
+            let actual = cell(&combined.hits, i);
+            assert_eq!(actual.y, expected.y, "{} candidate {i}", theme.id());
+            assert_eq!(
+                combined.hit_at(actual.x + 2.0, actual.y + actual.height / 2.0),
+                Some(HitTarget::Candidate(i)),
+            );
+        }
+        assert_eq!(combined.preedit.unwrap().y, upward.preedit.unwrap().y);
+    }
+}

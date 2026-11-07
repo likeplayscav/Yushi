@@ -1,5 +1,3 @@
-//! 连续上屏的上下文与同段拼音的造词证据。
-
 use crate::sentence::Context;
 
 /// 连续上屏的链：记住最近上屏的两个中文词，下一个词上屏时就能记一条带前二词的转移（个人 n-gram 的三元）。
@@ -21,9 +19,6 @@ pub struct CommitChain {
 
     /// 这段拼音整段的学习键（按输入串记选择用的全部字母），第一个词上屏前记下。
     buffer_key: String,
-
-    /// 整句模型拆出的词不是逐字确认，不能触发首次造词。
-    buffer_has_implicit: bool,
 }
 
 impl CommitChain {
@@ -68,20 +63,6 @@ impl CommitChain {
     pub fn begin_buffer(&mut self, key: String) {
         self.buffer_words.clear();
         self.buffer_key = key;
-        self.buffer_has_implicit = false;
-    }
-
-    pub fn note_implicit_word(&mut self) {
-        self.buffer_has_implicit = true;
-    }
-
-    /// 每个字都经过单独选择，且没有夹入模型自动拆出的词。
-    pub fn explicit_characters(&self) -> bool {
-        !self.buffer_has_implicit
-            && self
-                .buffer_words
-                .iter()
-                .all(|(text, syllables)| text.chars().count() == 1 && syllables.len() == 1)
     }
 
     /// 当前这段拼音里已上屏的词，按顺序。

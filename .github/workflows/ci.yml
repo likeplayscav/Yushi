@@ -1,13 +1,10 @@
 # Linux 跑 fmt / clippy / 全 workspace 测试（排除 IMK 外壳）；macOS 与 Windows runner 各编各的壳并跑平台测试，Android 编 debug APK，
-# 上游保留自动 CI；本 fork 按用户要求只手动执行，日常回归在本地运行。
+# 本 fork 默认在 InstaBox 编译验证；仅在用户明确要求时手动运行此工作流。
 # actions 一律钉到 commit（注释里是对应的标签），Dependabot 每周提 PR 更新；cargo 全加 --locked，Cargo.lock 没提交就报错。
 name: ci
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-  pull_request:
 
 permissions:
   contents: read

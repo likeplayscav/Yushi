@@ -142,6 +142,7 @@ impl Router {
 
     pub(super) fn handle_key(&mut self, session: SessionId, event: KeyEvent) -> ServerMessage {
         self.ensure_focus(session);
+        self.pending_caret = None;
         self.notice = None;
         self.candidates.close_menu();
         if self.translation.is_some() {
@@ -161,6 +162,7 @@ impl Router {
                 commit: None,
                 frame: self.current_frame(),
                 english: None,
+                caret: None,
             };
         }
         if self.config.cloud_enabled
@@ -209,6 +211,7 @@ impl Router {
             commit,
             frame: self.current_frame(),
             english: None,
+            caret: self.pending_caret.take(),
         }
     }
 

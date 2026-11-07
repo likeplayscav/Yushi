@@ -1,6 +1,6 @@
 //! 快捷键页的「恢复默认」。
 
-use qingjian_platform::{PAGE_KEY_OPTIONS, ShortcutConfig};
+use qingjian_platform::{KeyCombo, PAGE_KEY_OPTIONS, ShortcutConfig};
 
 use super::Settings;
 use crate::support::Feature;
@@ -18,6 +18,9 @@ impl Settings {
         self.write("shortcut", "question", defaults.mode.question.to_string());
         self.write("shortcut", "question_mark", defaults.mode.question_mark);
         self.write("shortcut", "translation", defaults.translation.key());
+        if Feature::EnterTranslation.here() {
+            self.write("shortcut", "enter_translation", defaults.enter_translation);
+        }
         self.write(
             "shortcut",
             "translation_second",
@@ -56,6 +59,13 @@ impl Settings {
         }
         if Feature::ToggleTraditional.here() {
             self.write("shortcut", "toggle_traditional", "");
+        }
+        if Feature::SingleChars.here() {
+            self.write(
+                "shortcut",
+                "single_chars",
+                KeyCombo::SINGLE_CHARS_DEFAULT.key_string(),
+            );
         }
         if Feature::CommitKeys.here() {
             self.write(

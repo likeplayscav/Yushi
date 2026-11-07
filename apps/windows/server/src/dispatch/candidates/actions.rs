@@ -85,6 +85,7 @@ impl Router {
             commit,
             frame,
             english: None,
+            caret: None,
         }
     }
 }
