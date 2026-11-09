@@ -10,3 +10,5 @@ python3 tools/eval/names_sentences.py --binary target/release/qingjian-cli --out
 ```
 
 默认测本地拼音候选，不读取个人学习数据、不发云端请求；可选模型为含章·通变 P2C。简拼和末音节未完成衡量输入补全，不等同于上屏后无拼音的下一句续写。`reference.json` 固定本轮 Linux 实测的首选与目标排名，Windows 原生构建用 `--reference` 检查逐条 Top-1 / Top-5 无回退；命中率不足会如实记录，不冒充全部姓名都正确。
+
+数据包升级到 `data-v10` 时仅同步 `reference.json` 的数据锁指纹；种子、补充词库和全部 290 条期望结果保持不变。InstaBox 逐条比较 Top-1 / Top-5 未发现回退。
