@@ -1,4 +1,4 @@
-//! 注入与开关：词库、模糊音、双拼、翻译 / 学习 / 联想等 trait 实现的挂接，以及相应的只读访问。
+//! 注入与开关（词库的在 `dictionaries.rs`）：模糊音、双拼、翻译 / 学习 / 联想等 trait 实现的挂接，以及相应的只读访问。
 
 use super::EMOJI_TOTAL;
 use super::aux_code::is_valid_aux_code_key;
@@ -17,7 +17,7 @@ use crate::panel::PanelHistory;
 use crate::sentence::{Interpolation, LanguageModel, Personal, SearchLimits, SentenceScorer};
 use crate::shuangpin::{Layout, Scheme};
 use crate::traditional::{Traditional, TraditionalVariant};
-use qingjian_dictionary::{AuxCodeLookup, CodeTable, Dictionary, WordList};
+use qingjian_dictionary::{AuxCodeLookup, CodeTable, WordList};
 
 use crate::code_scheme::CodeScheme;
 use std::sync::Arc;
@@ -540,13 +540,18 @@ impl Engine {
         self
     }
 
-    /// 运行时换学习语言的释义表。
     /// 接英文候选用的释义表（英→中）。
     pub fn with_english_translator(mut self, translator: Box<dyn Translator>) -> Self {
         self.english_translator = translator;
         self
     }
 
+    /// 运行时换英→中释义表（下载装上之后）。
+    pub fn set_english_translator(&mut self, translator: Box<dyn Translator>) {
+        self.english_translator = translator;
+    }
+
+    /// 运行时换学习语言的释义表。
     pub fn set_translator(&mut self, translator: Box<dyn Translator>) {
         self.translator = translator;
     }
@@ -594,6 +599,26 @@ impl Engine {
 
     pub fn chinese_first(&self) -> bool {
         self.chinese_first
+    }
+
+    /// 英文候选旁显示音标（配置 `[general] show_english_pronunciation`，缺省关）。
+    /// 关着时英文候选不带音标，与加这个功能之前完全一样。
+    pub fn set_show_english_pronunciation(&mut self, on: bool) {
+        self.show_english_pronunciation = on;
+    }
+
+    pub fn show_english_pronunciation(&self) -> bool {
+        self.show_english_pronunciation
+    }
+
+    /// 英文音标表（随包 `english-ipa.qj`，`WordList::pronunciations_from_path` 读）。没设或设为空就不显示任何音标。
+    /// 重复设置会换掉旧表——热加载时改的是同一个文件。
+    pub fn set_english_pronunciations(&mut self, table: Option<WordList>) {
+        self.english_pronunciations = table;
+    }
+
+    pub fn english_pronunciations(&self) -> Option<&WordList> {
+        self.english_pronunciations.as_ref()
     }
 
     /// 拼写纠错开关（配置 `[general] spelling_correction`，缺省开）。关掉后拼音只按敲的原样（与模糊音）读：
@@ -686,54 +711,6 @@ impl Engine {
     /// 运行时换释义兜底（随云联想开关）。
     pub fn set_gloss_filler(&mut self, filler: Box<dyn GlossFiller>) {
         self.gloss_filler = filler;
-    }
-
-    pub fn dictionary(&self) -> &Dictionary {
-        &self.dictionary
-    }
-
-    /// 换掉全部附加词库（导入、移除、开关之后）。格子缓存随之作废。
-    pub fn set_extra_dictionaries(&mut self, dictionaries: Vec<Dictionary>) {
-        self.extra_dictionaries = dictionaries;
-        self.forget_span_cache();
-    }
-
-    pub fn extra_dictionaries(&self) -> &[Dictionary] {
-        &self.extra_dictionaries
-    }
-
-    /// 挂上从三元模型词表补出的词（`qingjian_dictionary::supplement`），`None` 摘掉。格子缓存随之作废。
-    pub fn set_model_words(&mut self, words: Option<Dictionary>) {
-        self.model_words = words;
-        self.forget_span_cache();
-    }
-
-    pub fn model_words(&self) -> Option<&Dictionary> {
-        self.model_words.as_ref()
-    }
-
-    /// 查词用的全部词库：主词库、附加词库、内置的符号与 emoji 名字、通讯录、用户词。
-    pub(super) fn all_dictionaries(&self) -> Vec<&Dictionary> {
-        let mut all = Vec::with_capacity(self.extra_dictionaries.len() + 2);
-        all.push(&self.dictionary);
-        all.extend(self.extra_dictionaries.iter());
-        all.extend(self.model_words.as_ref());
-        all.extend(self.companion_words);
-        all.extend(self.contact_book().map(crate::ContactBook::dictionary));
-        if let Some(user) = self.learner.user_words() {
-            all.push(user);
-        }
-        all
-    }
-
-    /// 全部词库的词频之和，词频归一化成概率时用。补充词库不算：它的词频是按主词库换算过来的，
-    /// 算进去会把所有兜底打分一起压低。
-    pub(super) fn total_frequency(&self) -> u64 {
-        self.all_dictionaries()
-            .iter()
-            .filter(|d| !d.is_secondary())
-            .map(|d| d.total_frequency())
-            .sum()
     }
 
     pub fn learner(&self) -> &dyn Learner {

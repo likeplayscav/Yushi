@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[2]
 SEEDS = ROOT / 'assets/eval/experience/scenarios.json'
 EXTENDED = ROOT / 'assets/eval/experience/extended.json'
 REFERENCE = ROOT / 'assets/eval/experience/reference-v2.json'
-PRODUCT_FILES = ['data/generated/dict.qj', 'data/generated/dicts/general.qj',
-                 'data/generated/lm.qj', 'data/generated/english.tsv',
+PRODUCT_FILES = ['data/generated/dict.qj', 'data/generated/dicts/general.qj', 'data/generated/dicts/idioms.qj',
+                 'data/generated/lm.qj', 'data/generated/english.qj',
                  'assets/lexicon/patches.tsv', 'assets/lexicon/supplement/dict.tsv']
 
 
@@ -146,7 +146,7 @@ def run(binary, output, reference=REFERENCE, all_candidates=False, word_limit=No
     report = dict(schema=2, mode=replay['mode'], word_limit=replay['word_limit'], binary_sha256=fingerprint,
                   product_data_sha256={name: sha(ROOT / name) for name in PRODUCT_FILES},
                   seed_sha256=sha(SEEDS), extended_sha256=sha(EXTENDED),
-                  data_lock_sha256=sha(ROOT / 'tools/release/data.lock'),
+                  data_locks_sha256={name: sha(ROOT / 'tools/release' / name) for name in ['dicts.lock', 'dicts-extra.lock', 'models.lock']},
                   dictionary_sha256=sha(ROOT / 'data/generated/dict.qj'),
                   supplement_sha256=sha(ROOT / 'assets/lexicon/supplement/dict.tsv'),
                   source_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -161,7 +161,7 @@ def run(binary, output, reference=REFERENCE, all_candidates=False, word_limit=No
     failures = [dict(id=c['id'], metric='interaction') for c in replay['checks'] if not c['passed']]
     if reference:
         previous = json.loads(reference.read_text(encoding='utf-8'))
-        for key in ['seed_sha256', 'extended_sha256', 'data_lock_sha256', 'dictionary_sha256', 'supplement_sha256', 'product_data_sha256']:
+        for key in ['seed_sha256', 'extended_sha256', 'data_locks_sha256', 'dictionary_sha256', 'supplement_sha256', 'product_data_sha256']:
             assert previous[key] == report[key], f'baseline fingerprint differs: {key}'
         failures += compare(rows, previous)
         if report['total_actions'] > previous['total_actions'] * 1.05:
@@ -174,7 +174,7 @@ def run(binary, output, reference=REFERENCE, all_candidates=False, word_limit=No
         failures.append(dict(id='aggregate', metric='response'))
     report['regressions'] = failures
     report['status'] = 'passed' if not failures else 'failed'
-    baseline = {key: report[key] for key in ['seed_sha256', 'extended_sha256', 'data_lock_sha256',
+    baseline = {key: report[key] for key in ['seed_sha256', 'extended_sha256', 'data_locks_sha256',
                                            'dictionary_sha256', 'supplement_sha256', 'product_data_sha256', 'total_actions']}
     baseline['results'] = [{k: r[k] for k in ['id', 'text', 'keys', 'position', 'completed']} for r in rows]
     for name, data in [('summary.json', report), ('reference.json', baseline)]:

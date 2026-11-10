@@ -16,6 +16,7 @@ mod composing;
 mod contacts;
 mod correcting;
 mod decoded;
+mod dictionaries;
 mod extras;
 mod follow_up;
 mod gloss;
@@ -146,6 +147,9 @@ pub struct Engine {
     /// 用户定义的短语，按输入码精确匹配、按权重排在最前。
     custom_phrases: Vec<crate::CustomPhrase>,
 
+    /// 屏蔽词：候选文本里含有其中任何一个就整条丢掉。自定义短语不过这一关。
+    blocked: Vec<String>,
+
     /// 通讯录（壳读系统通讯录交来，用户在设置里开了才有）：名字并进查词，见 [`Self::set_contacts`]。
     contacts: Option<crate::ContactBook>,
 
@@ -160,6 +164,13 @@ pub struct Engine {
 
     /// 中文模式下英文候选（精确词 + 补全）最多几个（配置 `[general] english_max_in_chinese`，缺省 4）。
     english_max_in_chinese: usize,
+
+    /// 英文候选旁显示音标（配置 `[general] show_english_pronunciation`，缺省关）。
+    /// 开着时把音标填进 `Candidate::reading`，平台层的 annotation 会画在候选词后面。
+    show_english_pronunciation: bool,
+
+    /// 英文音标表（随包 `english-ipa.qj`），键是小写词、值是 `/ˈkɑrɡoʊ/`。没有就一律不显示音标。
+    english_pronunciations: Option<WordList>,
 
     /// 有中文候选时英文最高排到第几位（配置 `[general] english_min_position`，缺省 1 即不限制）。
     english_min_position: usize,
@@ -470,6 +481,10 @@ const EMOJI_TOTAL: usize = 3;
 /// 「日期 / 时间 / 星期」这几个词排在前几条里才跟快捷写法（同 emoji 配词的范围；九宫格 7474 的日期常排第四）：再往后多半是长输入的前缀词。
 const KEYWORD_SCAN: usize = 5;
 
+/// 快捷写法最多几条紧跟第一个词（sj 的十五条全插在前面，会把简拼原来第一页的
+/// 词——世纪、时间——整片推到后面去）。其余垫到候选末尾。
+const INLINE_SHORTCUTS: usize = 3;
+
 /// 自动造词：用户连着选出的两个词，合起来不在词库里、且这条接续已记过这么多次，就记成用户词。
 /// 同一段拼音里连着选出来的（`qingjian` 选 青 再选 简）是「用户把它当一个词打」的强信号，一次就造：
 /// 下次整段与简拼都排在前面，不用逐字再选；选错造出的词只在敲同样的音时出现，可以删掉。
@@ -564,12 +579,15 @@ impl Engine {
             half_width_symbols: Vec::new(),
             pair_punctuation: (true, false),
             custom_phrases: Vec::new(),
+            blocked: Vec::new(),
             contacts: None,
             english_in_chinese: true,
             chinese_first: false,
             spelling_correction: true,
             english_max_in_chinese: ENGLISH_CANDIDATES_MAX,
             english_min_position: 1,
+            show_english_pronunciation: false,
+            english_pronunciations: None,
             auto_space: false,
             shift_letter_compose: false,
             predictor: Box::new(NoPredictor),

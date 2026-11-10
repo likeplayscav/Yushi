@@ -139,6 +139,7 @@ impl Engine {
                 part_of_speech,
                 text: text.to_owned(),
                 reading: None,
+                pronunciation: None,
                 fresh: false,
             }),
         }
@@ -172,6 +173,7 @@ impl Engine {
                 part_of_speech: None,
                 text: text.to_owned(),
                 reading: None,
+                pronunciation: None,
                 fresh: false,
             }),
         }

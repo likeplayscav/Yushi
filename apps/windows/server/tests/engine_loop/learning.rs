@@ -2,6 +2,7 @@
 
 use std::path::{Path, PathBuf};
 
+use qingjian_platform::UserDirs;
 use qingjian_platform::protocol::{ClientMessage, ServerMessage};
 use qingjian_render::HitTarget;
 
@@ -30,8 +31,10 @@ fn folder() -> PathBuf {
 }
 
 fn router(folder: &Path) -> Router {
+    let user = UserDirs::at(folder.to_path_buf());
+    user.prepare();
     let engine = assembly::assemble(&AssemblySpec {
-        user_dir: Some(folder.to_path_buf()),
+        user: Some(user),
         ..AssemblySpec::new(folder.join("dict.tsv"))
     })
     .unwrap();

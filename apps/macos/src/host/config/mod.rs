@@ -9,7 +9,7 @@ pub(super) use watch::ConfigWatch;
 use qingjian_platform::Config;
 use qingjian_render::TextSizes;
 
-use super::init::load_glossary;
+use super::init::{glossary_files, glossary_path, load_english_glossary, load_glossary};
 use super::*;
 
 impl Host {
@@ -95,6 +95,7 @@ impl Host {
         self.punct_commits = config.general.punct_commits;
         self.preedit_mode = config.general.preedit;
         self.translation_pos = config.general.translation_pos;
+        self.show_english_pronunciation = config.general.show_english_pronunciation;
         self.english_candidates = config.general.english_candidates;
         self.apps = config.apps.clone();
         self.window.set_appearance(config.general.appearance());
@@ -126,7 +127,7 @@ impl Host {
         if force || config.predict != self.applied_predict {
             if config.predict.enabled {
                 // 请求与 Token 记进统计页的云服务用量
-                let usage = paths::user_data_dir().map(|dir| dir.join(API_USAGE_FILE));
+                let usage = paths::user_dirs().map(|dirs| dirs.records().join(API_USAGE_FILE));
                 // 没密钥等失败只记日志、退回不联想：输入优先于一切附加功能
                 match CloudPredictor::new_with_usage(&config.predict, usage.clone()) {
                     Ok(predictor) => self.engine.set_predictor(Box::new(predictor)),
@@ -266,6 +267,27 @@ impl Host {
         if super::dictionaries::dictionary_files() != self.dictionary_files {
             self.reload_dictionaries();
         }
+        let glossaries = glossary_files();
+        if glossaries != self.glossary_files {
+            self.glossary_files = glossaries;
+            self.reload_glossaries();
+        }
+    }
+
+    /// 下载装上（或更新了）释义表：重算有表的学习语言，英→中表与当前学习语言的表都重装。
+    fn reload_glossaries(&mut self) {
+        self.languages = GLOSSARY_LANGUAGES
+            .into_iter()
+            .filter(|language| glossary_path(*language).is_ok())
+            .collect();
+        // 下载的删了、又没随包的：英文候选右侧留空
+        match load_english_glossary() {
+            Some(glossary) => self.engine.set_english_translator(Box::new(glossary)),
+            None => self.engine.set_english_translator(Box::new(NoTranslator)),
+        }
+        self.learning_language = None;
+        let general = self.settings.config().general.clone();
+        self.apply_learning_language(&general);
     }
 
     /// 激活期间的定时器每秒调一次：看配置文件，再看学习数据要不要落盘。
@@ -330,16 +352,16 @@ impl Host {
         self.scheme_slot.apply(
             &mut self.engine,
             config,
-            paths::user_data_dir().as_deref(),
+            paths::custom_dir().as_deref(),
             paths::bundled_schemes_dir().as_deref(),
         );
         self.code_word_files = code_word_files();
     }
 }
 
-/// 用户 `code_dicts/` 的快照，只 stat。
+/// 用户 `custom/code_dicts/` 的快照，只 stat。
 fn code_word_files() -> Vec<(std::path::PathBuf, Option<std::time::SystemTime>, u64)> {
-    paths::user_data_dir()
+    paths::custom_dir()
         .map(|dir| {
             let dir = qingjian_platform::code_schemes::user_words_dir(&dir);
             qingjian_platform::code_schemes::words_snapshot(&dir)

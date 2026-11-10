@@ -76,9 +76,19 @@ def seed_preferences(folder):
     return {name: sha(folder / name) for name in samples}
 
 
-def assert_preferences(folder, expected):
+def assert_preferences(folder, expected, local=None):
+    """同时接受旧布局与启动后迁移的布局，内容必须逐字节保留。"""
+    local = local or folder
     for name, fingerprint in expected.items():
-        path = folder / name
+        if name.startswith('user') and '.tsv' in name:
+            migrated = folder / 'learning' / name
+        elif name.startswith('themes/'):
+            migrated = folder / 'custom' / name
+        elif name.startswith('models/'):
+            migrated = local / 'downloads' / name
+        else:
+            migrated = folder / name
+        path = migrated if migrated.is_file() else folder / name
         assert path.is_file() and sha(path) == fingerprint, f'user preference changed or missing: {name}'
 
 
@@ -95,12 +105,13 @@ def smoke():
     key = 'SOFTWARE\\Classes\\CLSID\\' + clsid + '\\InprocServer32'
     processes = []
     preferences = Path(os.environ['APPDATA']) / 'Qingjian'
+    local_preferences = Path(os.environ['LOCALAPPDATA']) / 'Qingjian'
     expected_preferences = seed_preferences(preferences)
     report = dict(installer=source.name, installer_sha256=sha(source), architectures={}, registrations={})
     try:
         subprocess.run([str(source), '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-',
                         '/DIR=' + str(destination), '/LOG=' + str(CHECKS / 'install.log')], check=True, timeout=180)
-        assert_preferences(preferences, expected_preferences)
+        assert_preferences(preferences, expected_preferences, local_preferences)
         version = source.name.removeprefix('qingjian-').removesuffix('-windows-x86_64-setup.exe')
         binaries = [(name, 'release/' + name, 0x8664) for name in
                     ['qingjian-server.exe', 'qingjian-settings.exe', 'qingjian-clipboard.exe']]
@@ -148,11 +159,11 @@ def smoke():
             if remove_first:
                 subprocess.run([str(destination / 'unins000.exe'), '/VERYSILENT', '/SUPPRESSMSGBOXES',
                                 '/NORESTART'], check=True, timeout=180)
-                assert_preferences(preferences, expected_preferences)
+                assert_preferences(preferences, expected_preferences, local_preferences)
             subprocess.run([str(source), '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-',
                             '/DIR=' + str(destination), '/LOG=' + str(CHECKS / f'{round_name}.log')],
                            check=True, timeout=180)
-            assert_preferences(preferences, expected_preferences)
+            assert_preferences(preferences, expected_preferences, local_preferences)
         report['preferences'] = dict(status='passed', files=expected_preferences,
                                      operations=['install', 'overinstall', 'uninstall', 'reinstall'])
     finally:
@@ -171,7 +182,7 @@ def smoke():
         except FileNotFoundError:
             pass
     assert not (destination / 'qingjian-server.exe').exists(), 'server remains after uninstall'
-    assert_preferences(preferences, expected_preferences)
+    assert_preferences(preferences, expected_preferences, local_preferences)
     report['uninstall'] = 'passed'
     report['status'] = 'passed'
     (CHECKS / 'installer-smoke.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
@@ -195,7 +206,8 @@ def stage():
                 workflow_url=f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
                 platform='x86_64-pc-windows-msvc', x86_tsf=True, code_signed=False, uiaccess=False,
                 rust=subprocess.check_output(['rustc', '--version'], text=True).strip(),
-                data_lock=(ROOT / 'tools/release/data.lock').read_text(encoding='utf-8'),
+                data_locks={name: (ROOT / 'tools/release' / name).read_text(encoding='utf-8')
+                            for name in ['dicts.lock', 'dicts-extra.lock', 'models.lock']},
                 evaluation=summaries, installer_smoke=smoke_report,
                 gui_acceptance='Automated startup/render/install/uninstall only; interactive Win11 search occlusion unverified')
     (output / 'build-info.json').write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

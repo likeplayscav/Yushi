@@ -26,13 +26,13 @@ class InstallerTests(unittest.TestCase):
         for name in ["build.ps1", "qingjian.iss", "settings-runtime.txt"]:
             shutil.copy2(ROOT / "apps/windows/installer" / name, self.installer / name)
         self.write("apps/windows/server/Cargo.toml", '[package]\nversion = "0.3.3"\n')
-        self.write("tools/corpus/vietnamese_words.py", "# 数据已由测试准备\n")
-        (self.root / "tools/release").mkdir()
+        for name in ["models-fetch.py", "dicts-fetch.py"]:
+            self.write("tools/release/" + name, "# 数据已由测试准备\n")
         shutil.copy2(ROOT / "tools/release/windows-size.py", self.root / "tools/release/windows-size.py")
         self.write("apps/windows/installer/fetch-onnxruntime.ps1", "$global:LASTEXITCODE = 0\n")
         self.write("fake-iscc.ps1", "$args | ConvertTo-Json | Set-Content -Encoding utf8 $env:QINGJIAN_INSTALLER_ARGS\n$global:LASTEXITCODE = 0\n")
-        for name in ["dict.qj", "lm.qj", "english.tsv", "vietnamese.tsv", "vietnamese-zh.tsv",
-                     "dicts/general.qj", "codes/stroke.qj", *[f"glossary-{language}.qj" for language in ["en", "ja", "zh", "es", "vi", "de"]]]:
+        for name in ["dict.qj", "lm.qj", "english.qj", "english-ipa.qj", "vietnamese.qj", "vietnamese-chinese.qj",
+                     "dicts/idioms.qj", "dicts/general.qj", "schemes/wubi86.qj", "codes/stroke.qj", "glossary-en.qj", "glossary-zh.qj"]:
             self.write("data/generated/" + name, "fixture")
         for name in ["qingjian_tsf.dll", "qingjian-server.exe", "qingjian-settings.exe", "qingjian-clipboard.exe"]:
             self.write("target/release/" + name, "fixture")
@@ -99,7 +99,7 @@ class InstallerTests(unittest.TestCase):
         self.assertGreater(size["groups"]["legacy_settings"], 0)
 
     def test_standard_package_still_requires_32_bit_tsf_and_language_data(self):
-        for name in ["target/i686-pc-windows-msvc/release/qingjian_tsf.dll", "data/generated/glossary-ja.qj"]:
+        for name in ["target/i686-pc-windows-msvc/release/qingjian_tsf.dll", "data/generated/glossary-en.qj", "data/generated/dicts/general.qj"]:
             path = self.root / name
             previous = path.read_bytes()
             path.unlink()

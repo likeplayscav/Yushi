@@ -2,6 +2,8 @@
 
 mod auto_word;
 mod aux_code;
+mod base_words;
+mod blocked;
 mod candidate_menu;
 mod candidate_view;
 mod caret;
@@ -183,6 +185,7 @@ impl Translator for FixedTranslator {
                     text: "develop".into(),
                     reading: None,
                     fresh: false,
+                    pronunciation: None,
                 }],
             )
         })

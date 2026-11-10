@@ -1,7 +1,6 @@
 {
   "seed_sha256": "0c47c948ef2c1976030272ad84aa0016a29bc8a2e0cfb77bb13b2078cc65e0f9",
-  "data_lock_sha256": "d1fa793de3501fcdcaccf07c96b84d981c40612d574c875e8cc05726eb9dce7a",
-  "dictionary_sha256": "aa6f3a9a0167dd6039a980eb9783fd9bb555809f58e50af8a3fb3a9da55cb548",
+  "dictionary_sha256": "5d452eba356ce756acf41927558f39a38261fec9a74a6fa257ac280643dc52a4",
   "supplement_sha256": "8652e5022ef6836c804822d9d1c772e34c6255aeb597edd09ff516d67dffb887",
   "total_actions": 1801,
   "results": [
@@ -924,12 +923,13 @@
     }
   ],
   "product_data_sha256": {
-    "data/generated/dict.qj": "aa6f3a9a0167dd6039a980eb9783fd9bb555809f58e50af8a3fb3a9da55cb548",
-    "data/generated/dicts/general.qj": "863ff1daac8eba41fb2145bc6f3cf62324862075f97face160dbccba8218a8de",
+    "data/generated/dict.qj": "5d452eba356ce756acf41927558f39a38261fec9a74a6fa257ac280643dc52a4",
+    "data/generated/dicts/idioms.qj": "78d56912d3b9dd49f5a16768cb1c1e36f53cf7f5d3609860309812b9baccbd28",
     "data/generated/lm.qj": "2a864979f8b43535b510413531c2b20e7a0fd2933f41ac22cf14dcb0597a050d",
-    "data/generated/english.tsv": "f00c9b8fc5f389e6b259f2de36a6514a8ed0a774683013b8fdcfe8c61d09fb8d",
+    "data/generated/english.qj": "897ef48154cd21c1683a7e621149da92f1f90727b10e379026e7ed3dc91656c9",
     "assets/lexicon/patches.tsv": "2073471029796b927c0f3135e5855c149471bd90864d8f9a35bb9ed72c2a24db",
-    "assets/lexicon/supplement/dict.tsv": "8652e5022ef6836c804822d9d1c772e34c6255aeb597edd09ff516d67dffb887"
+    "assets/lexicon/supplement/dict.tsv": "8652e5022ef6836c804822d9d1c772e34c6255aeb597edd09ff516d67dffb887",
+    "data/generated/dicts/general.qj": "d075a32a3aa33d404caca1235f0e6640d80d12cc9b62207db703f316c06d73d6"
   },
   "extended_sha256": "13270b90084f22ad9a524b034f78ed61ba60b5bfd0f4ade6ed7612a04ba15cfc",
   "provenance": {
@@ -937,5 +937,10 @@
     "original_results": "reference.json: unchanged 50 rows, all-candidates mode",
     "extended_results": "81 rows frozen before first-use word learning; compact mode; before bounded full-spelling rescue",
     "harness": "v2 worktree; source and targets reviewed together"
+  },
+  "data_locks_sha256": {
+    "dicts.lock": "fe209ee2d440596ebda31e7d6e56f446d592a4f7a2292c8491c5fe7bebbc8000",
+    "models.lock": "7e46f7f9cc0ab675eec6fb58bc44b414329daab5c761a3d38e80b13954152b56",
+    "dicts-extra.lock": "ab965e76d2c8cb119c8c1a5620d114cffb8e2efe477039e9aa2f4ef743aa2a5b"
   }
 }

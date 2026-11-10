@@ -1,6 +1,5 @@
 {
   "seed_sha256": "005b3440fd7291301159ecf876c9b8ba2b37f7839e2a6c17e5e813ed9f63da84",
-  "data_lock_sha256": "d1fa793de3501fcdcaccf07c96b84d981c40612d574c875e8cc05726eb9dce7a",
   "supplement_sha256": "8652e5022ef6836c804822d9d1c772e34c6255aeb597edd09ff516d67dffb887",
   "results": [
     {
@@ -2033,5 +2032,10 @@
       "top": "袁隆平研究杂交水稻",
       "position": 0
     }
-  ]
+  ],
+  "data_locks_sha256": {
+    "dicts.lock": "fe209ee2d440596ebda31e7d6e56f446d592a4f7a2292c8491c5fe7bebbc8000",
+    "models.lock": "7e46f7f9cc0ab675eec6fb58bc44b414329daab5c761a3d38e80b13954152b56",
+    "dicts-extra.lock": "ab965e76d2c8cb119c8c1a5620d114cffb8e2efe477039e9aa2f4ef743aa2a5b"
+  }
 }

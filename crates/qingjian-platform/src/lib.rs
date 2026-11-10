@@ -15,10 +15,12 @@ pub mod extra_dictionaries;
 mod i18n;
 pub mod logs;
 pub mod model_words;
+pub mod pronunciations;
 pub mod protocol;
 pub mod resources;
 mod scheme;
 pub mod shuangpin_schemes;
+mod user_dirs;
 
 pub use config::{
     Appearance, AppsConfig, AuxCodeConfig, CLIPBOARD_HISTORY_LIMITS, CandidateRenderer,
@@ -35,3 +37,4 @@ pub use config::{
 };
 pub use error::ConfigError;
 pub use scheme::{SchemeMeta, SchemeSlot};
+pub use user_dirs::UserDirs;

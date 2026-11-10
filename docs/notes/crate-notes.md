@@ -11,6 +11,15 @@ TSV 解析、查询与生成工具把 `lue` / `nue` 统一成 `lve` / `nve`。
 英文词表 `WordList`（`english.tsv`，9.5 万词）编码与原样词拼进一块缓冲、条目只记位置，按编码二分：每词三个 `String` 加 `HashMap` 时常驻 18 MB，现在约 4 MB（2026-10-28 探针）。
 
 TSV 解析、查询与生成工具把 `lue` / `nue` 统一成 `lve` / `nve`，把 `jv` / `qv` / `xv` / `yv` 统一成 `ju` / `qu` / `xu` / `yu`。全拼解析接受这些别名，双拼解码也归一后查词。
+英文音标复用同一结构（随包 `english-ipa.qj`，11.7 万条，词库仓库 `official/lexicon/en/ipa/` 发版、dicts-fetch 取）：音标放「原样词」那列，TSV 由 `WordList::parse_pronunciations` 解析——**不能用 `parse`**，那个把第二列当编码，音标会被存成键；打包用 `dict-convert pack pronunciations`，各壳经 `qingjian_platform::pronunciations` 读 `.qj`；查询用 `pronunciation(code)`，键一律小写。
+数据由 `dict-convert ipa` 从 CMUdict 生成。ARPAbet → IPA 有两处不能机械查表：重音要**从元音挪到音节首**（`cargo` 是 `/ˈkɑrˌɡoʊ/` 不是 `/kˈɑrɡoʊ/`），先按最大起首音划界再插标记（元音之间的辅音从右往左取最长的合法首音串，`computer` 是 `/kəmˈpjutɚ/`，元音后的 R 留在左边）；无重音的 `AH` 是 schwa `ə` 而不是 `ʌ`（CMUdict 同一个符号表示两个音，只能靠调号区分，混了就会得到 `/hʌˈloʊ/`）。
+只覆盖产品词表的约 57%：CMUdict 不收规则派生的复数 / 过去式 / 进行式（`abacuses`、`abstracting`），查不到就不显示，不做后缀反推。
+候选侧不新增字段：音标填进 `Candidate::reading`（问字模式的带调拼音本来就走它）。英文候选的音标是辅助信息，平台层画在译文之后、用淡色；问字模式的带调拼音仍画在最前面、用译词色。
+中文候选的**英文译文**另走 `Sense::pronunciation`（与日语的 `Sense::reading` 分开：假名要按汉字段对位、`開発(かいはつ)する`；
+音标是整条译词的、`hello /həˈloʊ/`，不带括号）。由 `Engine::annotate` 在译文填好之后调 `annotate_pronunciation` 补，
+只认语言为英文且是单个词的译文——短语（`as if`）查不到就留 `None`，不按空格切词硬注。
+`[general] show_english_pronunciation`（缺省关）决定填不填；`Frame.english_reading_ipa` 决定候选自己的 reading 画成淡色还是译词色——DLL 读不到配置，开关必须经协议下发，纯加 `#[serde(default)]` 字段不 bump 协议版本。
+英文候选有三条生成路径（中英混输 `insert_english`、英文模式 `query_english`、英文直输段 `query_raw`），都走 `Engine::english_candidate`，漏一条那条就没有音标。
 旧 `.qj` 含这些键时，加载器建立规范化的内存词库。新 `.qj` 继续使用 mmap。
 TSV 的音节可带数字声调（`ni3`，轻声 5 或 0），键一律去调，声调只给显示（`Match::tones`，`tones.rs`）：五个音节以内压进 `Slot` 原来的 16 位填充（每音节 3 位，0 是不知道），
 多音字的读音占比：加载时走一遍单音节的键，记下有不止一个读音的字全部读音的词频之和（`dictionary/readings.rs`，不落盘），命中带上 `Match::reading_total`，`Match::reading_share` 是这个读音的词频占比（`区 ou` 约 0.05）；多音节的词不查表。
@@ -26,10 +35,10 @@ TSV 的音节可带数字声调（`ni3`，轻声 5 或 0），键一律去调，
 字有多码时按组合出多条（上限 16）；所以 `AuxCodeLookup` 返回 `Cow`，推出来的码是新串。
 
 `CodeTable` 是形码码表（五笔），与词库并列的另一类查表：键是编码本身（`ggll`），不是拼音音节序列，
-格式 `词\t编码\t词频`（随包五笔 `assets/schemes/wubi86/table.tsv`，8.9 万条），按编码排序、`lookup` 二分定位前缀区间。
+格式 `词\t编码\t词频`（随包五笔是词库仓库发的 `wubi86.qj`，8.9 万条：`Kind::CodeTable`，`TEXT` 一节是按原行序写回的 TSV，打开时照旧解析；`dict-convert pack codetable` 打），按编码排序、`lookup` 二分定位前缀区间。
 编码打全的词（`exact`）排在同前缀的更长编码词前面；单字母精确码按码表行序排列（五笔生成器保留上游行序），其他命中仍按词频排序，
 引擎在上下文排序后恢复这组单字候选的码表顺序。二级 / 三级简码仍是编码前缀查询的自然结果。
-与词库的一处关键差别：码表没有 `.qj` 容器，只读 TSV。
+与词库的一处关键差别：码表的 `.qj` 只是把 TSV 原文装进容器（带元数据、方便分发），打开时仍逐行解析、不映射。
 
 ## crates/qingjian-core
 
@@ -51,9 +60,9 @@ TSV 的音节可带数字声调（`ni3`，轻声 5 或 0），键一律去调，
 日语罗马音（`japanese/`，目前只给 Android 测试用）：`to_hiragana` 最长匹配转平假名（同辅音连打 → っ、`n` 后接辅音 → ん、`-` → ー，没拼完的罗马音留在末尾），`RomajiComposer` 出候选（汉字词、平假名、片假名、边敲边出的汉字词、原样罗马音）。汉字只查 `words.rs` 里约 130 条手写常用词，正式的词典与转换以后再做，那时删掉这张表。
 
 越南语 Simple Telex 在 `vietnamese/`：`TelexComposer` 只存原始按键，每次编辑后用 MIT 许可的纯 Rust `vi` crate 重算现代声调写法；外层补词首 `w` 不转 `ư`、重复声调键恢复字面文本、Esc 恢复原始按键与按词 commit。`vi` 自带越南语音节校验，所以 `linux` / `changes` 保持英文，`this` → `thí`、`mix` → `mĩ` 这类合法越南语歧义与 UniKey 一致。桌面壳只维护模式和 composition / marked text，不各写一套转换规则。
-候选词表 `vietnamese.tsv` 与反向中文释义表 `vietnamese-zh.tsv` 不进 git，由 `tools/corpus/vietnamese_words.py` 从自建的 `assets/glossary/glossary-vi.tsv` 提取译词、去重，并以释义表出现次数作为近似频率；同一越南语词对应的中文源词按出现次数取前两条。打包脚本生成后随包。输入至少两个越南语字符时用 `WordList` 前缀补全，当前转换结果排第一、原始按键排最后；候选用反向 `Glossary` 显示中文译词。
+候选词表 `vietnamese.qj` 与反向中文释义表 `vietnamese-chinese.qj` 是词库仓库的两本随包词库（`vietnamese` 与 `vietnamese-chinese`），由那边的 `tools/vietnamese.py` 从越南语释义表提取译词、去重，并以释义表出现次数作为近似频率；同一越南语词对应的中文源词按出现次数取前两条。输入至少两个越南语字符时用 `WordList` 前缀补全，当前转换结果排第一、原始按键排最后；候选用反向 `Glossary` 显示中文译词。
 越南语候选右键菜单走 `qingjian-platform::candidate_menu::IndependentInputContext` 公共接口：输入法提供命名空间、原始输入码和模型译词目标语言，即可复用提权、降权、取消降权和模型译词。越南语使用 `vi:` 学习键且固定请求中文；将来的日语、韩语应使用各自稳定命名空间，不复制平台菜单逻辑。
-越南语中文译词使用 `LayeredTranslator`：随包 `vietnamese-zh.tsv` 只读，模型重新生成的覆盖写入用户目录 `user-glossary-input-vi-zh.tsv`，个人表优先。当前候选立即从覆盖层回读，下一次输入和重启后仍生效；未来第三输入法应按输入法命名空间与翻译方向使用独立个人表。
+越南语中文译词使用 `LayeredTranslator`：随包 `vietnamese-chinese.qj` 只读，模型重新生成的覆盖写入用户的 `learning/user-glossary-input-vi-zh.tsv`，个人表优先。当前候选立即从覆盖层回读，下一次输入和重启后仍生效；未来第三输入法应按输入法命名空间与翻译方向使用独立个人表。
 macOS 所有越南语清空和提交路径都使用 IMK 已验证的空 `setMarkedText:`，不能直接向客户端代理发 `unmarkText`：部分应用会抛 Objective-C exception，异常越过 Rust FFI 后导致输入法进程 abort。正常空格、标点和候选提交先清 marked text 再 `insertText:`。菜单栏状态项按中 / 英 / 越三态显示，提交一个词不会改变越南语模式。
 越南语首键刷新与中文 `refresh` 保持同一调用顺序：先更新应用里的 marked text，再读取 caret、呈现候选窗；不要在 `setMarkedText:` 之前显示窗口，避免 IMK 首键回调发生客户端重入。
 `TelexComposer` 同时持有已确认的整段前缀与当前词：空格 / 标点只用 `commit_word` 确认当前词并继续保持 marked text，下一枚字母开始下一词；只有 Enter、失焦或切换模式才用 `commit` 一次性上屏整段。当前词为空时退格可继续删除整段前缀。平台候选始终只按 `current()` 查，不把整段前缀带进词库查询。
@@ -84,7 +93,7 @@ CandidateLayout 保持 `set_cloud` 的首页末尾布局与本地首项；`set_c
 候选右键菜单可修正学习语言译文：手工修改由 macOS / Windows 原生输入框收文字，`Engine::set_candidate_translation` 写入个人释义表并立即 flush；模型重生成使用 `PredictionKind::CandidateTranslation` 和 `Engine::request_candidate_translation`，目标语言取当前 `Translator::language`，专用词典提示请模型同时返回词性；解析层有可识别词性时规范成 `词性\t译词`，漏了或认不出词性时保留纯译词。`Engine::set_generated_candidate_translation` 只替换第一条译词：模型给了合法词性才更新原词性，原有读音和后续释义都保留；原来没有释义时才新建一条。个人释义优先于随包释义；私密输入、未选学习语言或 Predictor 未接入时不发。
 
 模块：`composition`（缓冲区与光标；中文模式下 Shift+字母按小写进 `buffer` 参与匹配、大写记在 `shifted`，`typed_text` 还原后用于原样上屏）/ `parser` / `correction`（拼写纠错：整段一处编辑的候选纠正 + `typo` 音节级敲错变体表，后者进整句词图当带代价的边）/
-`candidate` / `ranking` / `shortcut` / `sentence` / `fuzzy` / `shuangpin`（双拼：`Layout` 是键位表 + 键 → 全拼解码与消耗换算，九套内置方案的常量表在 `table.rs`、`Scheme::layout` 取出，用户方案由平台层读 `scheme.toml` 拼成 `Layout`；整串一个音节都配不出时 `decode_fuzzy` 按每键一个声母再解一次（`im` → sh'm → 什么，`decode_initials`），能正常解出的输入不走这条；`Layout::check` 报写错的键与打不出来的音节——按全部两键组合实际解出哪些音节算，不是按能不能编码；`key_hint::KeyHint` 按 `Layout` 画键位提示，用户方案也画自己的键）/ `root_chart`（86 五笔字根图，字形表 `assets/schemes/wubi86/roots86-glyphs.tsv` 编进 Core，`Engine::root_chart` 只在挂着 86 五笔时给，别的形码方案不画）/ `zhuyin`（大千注音：键 → 注音符号 → 拼音，`[general] zhuyin` 开关；声调判音节完整，不进查询、只进排序：`zhuyin::tone` 按单字声调表 `data/tones.tsv` 给每个候选算声调代价——字的首读音 0、次要读音或表里没有 1、对不上 16，多字词非首字的轻声不计——排序键里排在「末音节完整」之后、「同输入串选择次数」之前，全拼 / 双拼恒为 0；整句词图同样用它：格子选词按 `sentence::TONE_PENALTY`（每点 ln 2）打折、路径得分扣同样的分，格子缓存键带上声调（`SpanCache::toned_key`），只在要转的音节正是当前注音输入解出的那串时才给声调，纠错与英文尾段换过切分的不给）/ `emoji` /
+`candidate` / `ranking` / `shortcut` / `sentence` / `fuzzy` / `shuangpin`（双拼：`Layout` 是键位表 + 键 → 全拼解码与消耗换算，九套内置方案的常量表在 `table.rs`、`Scheme::layout` 取出，用户方案由平台层读 `scheme.toml` 拼成 `Layout`；整串一个音节都配不出时 `decode_fuzzy` 按每键一个声母再解一次（`im` → sh'm → 什么，`decode_initials`），能正常解出的输入不走这条；`Layout::check` 报写错的键与打不出来的音节——按全部两键组合实际解出哪些音节算，不是按能不能编码；`key_hint::KeyHint` 按 `Layout` 画键位提示，用户方案也画自己的键）/ `root_chart`（86 五笔字根图，字形表 `data/roots86-glyphs.tsv` 编进 Core，`Engine::root_chart` 只在挂着 86 五笔时给，别的形码方案不画）/ `zhuyin`（大千注音：键 → 注音符号 → 拼音，`[general] zhuyin` 开关；声调判音节完整，不进查询、只进排序：`zhuyin::tone` 按单字声调表 `data/tones.tsv` 给每个候选算声调代价——字的首读音 0、次要读音或表里没有 1、对不上 16，多字词非首字的轻声不计——排序键里排在「末音节完整」之后、「同输入串选择次数」之前，全拼 / 双拼恒为 0；整句词图同样用它：格子选词按 `sentence::TONE_PENALTY`（每点 ln 2）打折、路径得分扣同样的分，格子缓存键带上声调（`SpanCache::toned_key`），只在要转的音节正是当前注音输入解出的那串时才给声调，纠错与英文尾段换过切分的不给）/ `emoji` /
 `english`（英文模式候选）/ `traditional`（繁体输出：`[general] traditional_variant` 四选一，`off` / `taiwan` / `hongkong` / `standard` 对应 OpenCC 的 s2tw / s2hk / s2t，都只换字形；旧键 `traditional = true` 读成 taiwan，开发版在旧键里写过的字符串（`traditional = "off"`）按同一套写法读。新写法换键名是为了退回旧版本时旧版只认布尔、不会整个配置解析失败，字典由 `ferrous-opencc` 在编译期编进产物、运行时不读外部文件）/ `engine`（`query::EnglishTail`：句末英文词并入整句，`woxiangxuehaorust` → 我想学好rust，尾段也像拼音时按分数与拼音读法比；比分与第二条整句里的拼音读法都按整句的切分规则挑——`sentence_segmentation`，不是切分器打平时贪心的那种，否则 `zhengcenanti` 拿 zheng cen an ti 的 政策安提 去比，政策anti 赢、政策难题 连候选都没有）。
 辅码（`engine/aux_code.rs`）：`Engine.aux_code: Option<String>` 是码段（`None` 拼音态，`Some("")` 刚触发或删空停在辅码态——`Engine.aux_keep_empty`，配置 `[general] aux_code_keep_empty` 缺省开），
 不进 `Composition`；`aux_trigger`（配的触发键 + 光标在段尾 + 作用域能完整切分 + 双拼韵母键优先）、`enter_aux`、
@@ -175,6 +184,7 @@ mac 存在 `Session::spelling`（`Host::follow_highlight`）、Windows / Linux �
 
 `Glossary`，本地 TSV 释义表（词性 + 译文）；`LevelTable`，词汇等级表（`assets/levels/levels-{en,ja}.tsv`，CEFR A1–C2 / JLPT N5–N1，
 `uv run tools/corpus/levels.py` 从 `data/levels/` 的原始 CSV 生成，来源与许可见 `assets/levels/README.md`），「统计」页按级数词汇用，不进候选。
+`downloaded_glossary` 给出设置页下载的释义表位置（下载目录 `downloads/glossaries/glossary-<语言>.qj`）：各平台壳先找它、再找随包的，所以下载的新版盖过随包的；壳轮询这个目录（`extra_dictionaries::snapshot`），变了重装英→中表与学习语言的表（`Engine::set_english_translator` / `set_translator`）。
 
 ## crates/qingjian-learning
 
@@ -264,6 +274,10 @@ rustls 与 `webpki-roots` 提到了工作区依赖，与 `qingjian-predict` 的 
 `.qj` 数据容器（`Container` mmap 读、`Writer` 写、`Table<T>` / `Text` 零拷贝视图、`hash` 可落盘哈希索引、`Metadata` 名称 / 许可证 / 署名）。
 词库与语言模型都能 `write_qj` / 从 `.qj` 打开，启动 50 ms；`cargo run --release -p qingjian-dict-convert -- pack dict|lm --name … --license …`
 生成 `data/generated/{dict,lm}.qj`，`bundle.sh` 在 TSV 更新时自动重打并只把 `.qj` 打进包。设计见 `docs/design/architecture.md`「数据文件：`.qj` 容器」。
+`qjz` 模块是分发用的压缩 `.qj`（词库仓库 qingjian-dicts 的 Release 附件、设置页导入）：现在是 gzip，按开头魔数认算法，以后换 zstd / xz 扩展名不变。
+只用来传输，`unpack` 先解到旁边的 `.qj.part`（扫 `*.qj` 的看不见）、按调用方给的种类整份校验、放掉映射后才改名换上（Windows 上映射着的文件改不了名），种类不对不动原文件；
+不让引擎直接读 `.qjz`：解到堆上要多占整份大小的常驻内存（基础词库 15 MB、通用扩展 69 MB），mmap 按需换页的好处也没了。解压上限 1 GiB 挡压缩炸弹。
+`dict-convert qjz <.qj>…` 写 `<输出目录>/<主干>.qjz`（词库仓库的 `tools/pack.py` 调它）；设置程序下载词库用 `unpack` 直接解进用户词库目录；`qingjian-dictionary` 的导入认 `.qjz`：先解到系统临时目录、只收拼音词库，再按 `.qj` 导入（统一按文件名主干命名、空词库拒绝）。
 
 ## crates/qingjian-neural
 
@@ -386,7 +400,7 @@ P2C 自由生成实验：`--eval-text <集> --eval-generate data/models/hanzhang
 
 `BigramModel`，Core `sentence::LanguageModel` trait 的实现，从 `data/generated/lm.qj`（或 `lm-unigram.tsv` / `lm-bigram.tsv`）加载
 （没有这两个文件就退化为一元词频整句）。数据由 `tools/corpus/parquet_to_text.py`（uv 脚本，HF parquet → 简体纯文本）加
-`cargo run --release -p qingjian-dict-convert -- bigram --phrases assets/lexicon/phrases.tsv --phrases assets/lexicon/domain_words.tsv --brand assets/lexicon/brand.tsv --brand assets/lexicon/mixed_words.tsv data/corpus/*.txt` 生成；语料在 `data/corpus/`（gitignore）。
+`cargo run --release -p qingjian-dict-convert -- bigram --phrases ../qingjian-dicts/official/lexicon/zh/base/inputs/phrases.tsv --phrases ../qingjian-dicts/official/lexicon/zh/base/inputs/manual.tsv --brand ../qingjian-dicts/official/lexicon/zh/base/inputs/brands.tsv --brand ../qingjian-dicts/official/lexicon/zh/base/inputs/mixed.tsv data/corpus/*.txt` 生成；语料在 `data/corpus/`（gitignore）。
 短语层不当 token 统计（分词时摘掉、统计完按成分合成一元 / 二元，短语得分等于原来两个词的路径，见 `bigram.rs` 模块注释），品牌词按给定次数写进一元与句首二元。
 `LanguageModel::successors`（上屏后的联想，`Engine::follow_ups`）：`BigramModel` 从前词的 CSR 段里按二元计数取前 N 个（`select_nth_unstable` 只排前 N，「的」这类上万条后继的词也在 0.2 ms 内），
 `MixedModel` 先列第一个模型的再补第二个的；`TrigramModel` 没实现（缺省空）。Engine 先列个人 n-gram 里用户接过的，再补模型的，只给全汉字、1–4 字的词（`MAX_FOLLOW_UP_CHARS`）；
@@ -398,7 +412,7 @@ P2C 自由生成实验：`--eval-text <集> --eval-generate data/models/hanzhang
 也实现 `LanguageModel`（`log_prob_trigram` 带前前词），由 `MixedModel` 按概率与二元模型插值后当整句词图的语言模型（三元权重 `TRIGRAM_WEIGHT`，
 一边不认识的词只用另一边）。只用三元时无上文的新闻掉分（不认识的专名、技术词被拆错），插值后六个开发集都涨：devA 63.5→65.6、项目文档 40.8→46.2、新闻 74.1→76.6。`TRIGRAM_WEIGHT` = 0.5：0.3 时冻结回放整句略好（79.1%）但开发集合计略低，0.7 时新闻掉分。读取器按文件头注释的格式自己实现（知意的代码是 GPL-3.0-only，不搬）。
 模型 79 MB，不进仓库也不随包，放 `data/models/zhiyi-ngram/zh.ngram`；许可 LGPL-2.1-or-later（底子是有墨输入法 / libime 的模型，混了 FineWeb-2、
-Common Crawl、CSL、SkyPile、C4 的统计），可按 GPL-3.0-or-later 使用；再分发前要按知意的 NOTICE 列全来源并跟作者确认。CLI 用 `--ngram`，Windows Server 读用户目录的 `models/zhiyi-ngram/zh.ngram`。
+Common Crawl、CSL、SkyPile、C4 的统计），可按 GPL-3.0-or-later 使用；再分发前要按知意的 NOTICE 列全来源并跟作者确认。CLI 用 `--ngram`，Windows Server 读 `%LOCALAPPDATA%\Qingjian\downloads\models\zhiyi-ngram\zh.ngram`。
 `TrigramModel::vocabulary` 列词表与一元概率，`qingjian_dictionary::supplement` 拿它补出词库没收的词（摸鱼、老梗、七神）：已有的、能切成已有多字词的（进行分析）、非汉字的不补；读音按参照词库里每个字的读音统计猜（词里的读音权重 ×4），次要读音占比 ≥ 0.25 另收、组合至多 4 种；词频按与主词库重合的词拟 ln 词频 = a + b·log10 P（实测约 9.6 万条）。结果挂在 `Engine::set_model_words`（补充词库，单独一格，附加词库重载不动它）。只在本机生成，不分发派生数据：Windows Server 缓存到模型旁的 `zh.words.qj`（`qingjian_platform::model_words`，戳 = 规则版本 + 模型与主词库的大小 / 修改时间，第一次约 1.1 s），CLI 每次在内存里生成（`--no-ngram-words` 关掉）。社区开发集首选 74.7% → 75.0%、首页 +0.43，无上文首页 +0.43，冻结回放整句 +3；CLI 查询 95 分位 209 → 242 ms（中位 +3 ms）。B 站游戏黑话（蜂医、冥古龙）模型里也没有，补不到。
 
 ## crates/qingjian-platform
@@ -417,7 +431,7 @@ Common Crawl、CSL、SkyPile、C4 的统计），可按 GPL-3.0-or-later 使用�
 `code_schemes`：形码方案的发现。随包与用户的方案同一种格式：`schemes/<id>/` 下 `scheme.toml`（必须有，`type` 空着或 `code`）+ 码表（缺省 `table.tsv`），
 自动上屏与顶字缺省开；`SchemeMeta`（author / version / description / license）两种方案共用，留给分享与设置里显示。
 用户在设置里改的规则存配置的 `[code.<id>]`（`CodeRules`，`Config::code_rules`），盖过 `scheme.toml`：随包方案只读，换码表也不丢；
-`Config::set_value` 的分节写成 `code.wubi86` 就是嵌套表（外层隐式）。随包的 `schemes` 目录由壳给（macOS `Resources/schemes/`、Windows `assets/schemes/`），用户的在数据目录；
+`Config::set_value` 的分节写成 `code.wubi86` 就是嵌套表（外层隐式）。随包的 `schemes` 目录由壳给（macOS `Resources/schemes/`、其他平台 `data/generated/schemes/`），里面是词库仓库发的 `<id>.qj`（名字、作者、许可、版本、简介取文件头元数据，按键规则用缺省），用户的在数据目录；
 同 id 的用户方案盖过随包的，老位置 `wubi/wubi86.tsv` 只换随包五笔的码表。
 `shuangpin_schemes`：用户双拼方案的发现，与形码共用 `schemes/` 目录与 id 规则，`scheme.toml` 写 `type = "shuangpin"` 的才算（形码那边见到它跳过）；
 `base` 拿内置方案当底子，`[initials]` / `[finals]` / `[zero]` 按键（零声母按音节）整条替换。内置九套仍编在 Core 里：回放与 CLI 不依赖外部文件，日志里的 `xiaohe` 永远是同一套键位。
@@ -432,10 +446,20 @@ id 不能撞拼音侧的写法与日志里的 `wubi`（`is_valid_id`），因为
 都还在读、文件不自动改写。
 
 
+`[dictionaries] blocked` 是屏蔽词：`Engine::set_blocked_words` 收下这批词，`query` 在 `apply_demotions` 之前把文本里含有其中任何一个的候选整条丢掉（排在后面的重排、补单字、留联系人都不用管它们了）；自定义短语在过滤之后才插进来，不受影响。四个壳在装配与配置热重载两处各调一次。
+
+`[dictionaries] base = false` 时基础词库只出单字（单独一项，不放进按文件名关的 `disabled`：用户词库也可能叫 base，早期词库仓库就发过一本 `base`）：`Engine::set_base_words(false)` 给主词库与三元模型补出的词标 `Dictionary::set_chars_only`，`push_matches` 跳过多音节的键，`entries()`（反查、导入派生读音）不受影响。单字留着是因为字和读音只在基础词库里，整本摘掉就打不出字。mac、Linux、Windows 三个壳在装配与配置热重载处各调一次；Android 的词库设置不读这一项。
+
 `Config`（TOML 配置文件，`[general]` / `[shortcut]` / `[fuzzy]` / `[dictionaries]` / `[apps]` / `[predict]` 分节，首次运行写模板，
 `set_value` 用 toml_edit 原地改键保留注释；`[model] enabled` 本地整句模型开关，`LocalModelConfig`；
 中英模式两项：`[shortcut] switch_mode`（`SwitchKeys`：勾选 shift / control / ctrl+alt+space，可多选，老配置的单个字符串照读）与 `[general] english_mode`（内置英文模式总开关））；
-`extra_dictionaries` 列出 / 加载随包领域词库与用户 `dicts/`；随包的 `general` 例外：缺省加载、列进 `[dictionaries] disabled` 才关，标成补充词库
+`UserDirs` 是用户目录的分类布局，三个桌面平台的输入法与设置程序共用：根下只留 `config.toml`，`learning/`（`FrequencyLearner` 的几张表、个人释义表）、
+`records/`（输入统计、生词本、面板与 AI 用量、输入日志）、`custom/`（导入的 `dicts/` `code_dicts/` `codes/`、自制 `schemes/` `themes/`）、`clipboard/`，
+下载与缓存在「本机」根下的 `downloads/`（`dicts/` `glossaries/` `models/`，设置程序按这个相对位置装）与 `cache/`（词库列表缓存、`update.json`）；
+本机根在 Windows 是 `%LOCALAPPDATA%\Qingjian`（`dirs::user_dirs`），mac 与 Linux 就是数据根。`prepare` 建分类目录并把旧版本平铺在根下的文件搬进去
+（`migrate.rs`：`user*.tsv` 进 `learning/`，旧 `dicts/` 按词库列表缓存里的 id 拆成下载的与导入的，目标已有同名的不覆盖，跨盘先复制到临时名再改名），
+输入法与设置程序启动时各调一次。安卓还是平铺在应用私有目录里（core 不依赖本 crate）。
+`extra_dictionaries` 列出 / 加载随包领域词库与用户的导入、下载两处（`UserDirs::extra_dict_dirs`）；`general` 不管在哪都标成补充词库，随包的那本缺省加载、列进 `[dictionaries] disabled` 才关
 （mac 壳与 Windows Server 共用，同名 `.qj` 优先于 `.tsv`）；`code_tables` 同构地列出 / 加载随包根 `codes/` 与用户 `codes/` 的码表
 
 `extra_dictionaries` 列出 / 加载随包领域词库与用户 `dicts/`
@@ -602,13 +626,13 @@ PKG_CONFIG_PATH="$onig" PKG_CONFIG_ALLOW_CROSS=1 RUSTONIG_SYSTEM_LIBONIG=1 \
   单击的边沿用修饰键事件（`IMKInputController` 的 `recognizedEvents:` 声明 `NSKeyDownMask | NSFlagsChangedMask`——缺省只回 `NSKeyDownMask`，
   实测就只有 keyDown 送进来、Shift 的按下 / 抬起完全收不到，那时只能靠 30 ms 轮询采样、整拍跨越的快点会漏掉）、模式键 v / u、`question_mark`（缺省关，开了空缓冲区敲 `?` 进问字）、上屏第一 / 第二个译词的修饰键 `translation` / `translation_second`、翻译选中文字 `translate_selection`（Linux 缺省 Alt+Shift+T）；
   `[apps] english_candidates_on` 按应用标识列出英文模式给候选的应用（白名单，缺省浏览器 / 聊天 / 办公 / 笔记，`*` 前缀匹配，`["*"]` 处处都给），`english_candidates_off` 从中排除；
-  `[dictionaries] domains` 打开随包的领域词库（`Resources/dicts/` 11 本，缺省只开 `idioms`），`disabled` 关掉用户目录 `dicts/` 里的某本导入词库；
+  `[dictionaries] domains` 打开随包的领域词库（`Resources/dicts/` 11 本，缺省只开 `idioms`），`disabled` 关掉用户导入或下载的某本词库；
   偏好设置「词库」页随包的可开关、导入的可开关 / 移除，可导入 TSV / Rime yaml / .qj。
 - 系统文本替换（系统设置「键盘 → 文本替换」）：`host/config/text_replacements.rs` 从 `NSUserDefaults` 全局域读 `NSUserDictionaryReplacementItems`
   （每条 `{ on, replace, with }`），激活输入法时重读，变了就经 Core `merge_replacements` 并进配置里的自定义短语再 `set_custom_phrases`；
   `[general] system_text_replacements` 开关（缺省开，「自定义短语」页勾选框），内容可能含证件号、地址，日志只记条数。
 - 输入法进程由 launchd 拉起，看不到 shell 的环境变量：密钥写进配置同目录的 `.env`（`QINGJIAN_API_KEY=...`，输入法启动时 dotenvy 读入）或 `config.toml` 的 `api_key`。
-- 本地整句模型：安装包不带模型，通变与知意都由设置程序下载到用户目录 `models/hanzhang-tongbian/`、`models/zhiyi/`；选的没下载就不用模型（`paths::p2c_model_path` 仍认包里的同名目录与旧 `model-p2c/`，给开发时自己放的那份）。`host/model/mod.rs` 在后台线程加载并预热（首次 Metal 编译）后
+- 本地整句模型：安装包不带模型，通变与知意都由设置程序下载到 `downloads/models/hanzhang-tongbian/`、`downloads/models/zhiyi/`；选的没下载就不用模型（`paths::p2c_model_path` 仍认包里的同名目录，给开发时自己放的那份）。`host/model/mod.rs` 在后台线程加载并预热（首次 Metal 编译）后
   `set_async_sentence_scorer` 接上，`refresh` 每键先读应用光标前 64 字给 Engine 当前文、查询后 `schedule_rescoring`，`RescoreMonitor` 停键 80 ms 请求、20 ms 轮询，
   结果到了重查一次只重画当前页（翻过页 / 动过高亮不动）；「云服务」页有开关（`[model] enabled`）。
 - 端到端验证可用 `osascript` 的 System Events 往 TextEdit 发按键再读回文本（终端需要辅助功能权限；输入法得在中文模式）。
@@ -627,7 +651,7 @@ Inno 命令行宏可能是字符串，`/DIncludeLegacySettings=0` 必须经 `Int
 
 候选窗 `ui::candidates::CandidateWindow::show` 每次更新内容后用 `SetWindowPos(HWND_TOPMOST)` 重新升到置顶序列首位，并保留 `SWP_NOACTIVATE`；Windows 搜索页后弹出的置顶窗口可能盖住较早创建的候选窗。
 
-用量接线：启动与配置热加载为 CloudPredictor 和 CloudGlossFiller 传同一个用户目录 `api-usage.json`；设置页的 ConnectionTest 使用该文件。统计页手动刷新读取累计记录，收到 JSON 响应与正文有效性分开统计；原译词自动补充、用户配置及学习文件沿用。
+用量接线：启动与配置热加载为 CloudPredictor 和 CloudGlossFiller 传同一个 `records/api-usage.json`；设置页的 ConnectionTest 使用该文件。统计页手动刷新读取累计记录，收到 JSON 响应与正文有效性分开统计；原译词自动补充、用户配置及学习文件沿用。
 
 云联想接线：Ctrl+Alt+J 由可配置 TSF 保留键转发到 Engine 显式入口；自动重组仍走原自动入口。Composed 记录待收手动序号并在输入重建／取消／收结果时清除；自动结果用末尾布局，手动结果用前置布局，导航后保持候选不变，本地重排沿用当前布局模式。应用前文继续用于两类请求，译词自动补充继续装配。设置沿用默认 300/3000 ms，不写入个人偏好。
 
@@ -655,8 +679,8 @@ Windows 的 `dispatch/mode` 管理可选的初始英文与按应用模式记忆�
 `remember_mode_per_app`，缺省关闭）：exe 名不区分大小写，相同 exe 的会话共享；未知宿主按会话隔离。
 应用记忆只驻留 Server 内存，配置中的模式策略变更时重置；模式焦点与组句焦点分开，避免切应用时丢掉待提交的输入。
 `InputSettings.restore_mode` 让启用这些设置的 DLL 重连时先取 Server 状态，不用旧状态覆盖默认值；旧协议缺字段按 false 处理。
-输入方案由 `[general] scheme` 与 `code` 决定，Server 启动与热加载各装配一次（`dispatch/schemes.rs`）；随包方案目录 `assets/schemes/` 启动时由 `find_bundled_schemes` 找好
-（走 `assets/` 与 emoji / levels 一致，开发布局也对得上），装配交给 `Router::scheme_slot`，用户在设置里换方案、新放进方案热加载即生效，码表没变不重读。
+输入方案由 `[general] scheme` 与 `code` 决定，Server 启动与热加载各装配一次（`dispatch/schemes.rs`）；随包方案目录 `data/generated/schemes/` 启动时由 `find_bundled_schemes` 找好
+（安装目录与开发布局是同一个相对路径），装配交给 `Router::scheme_slot`，用户在设置里换方案、新放进方案热加载即生效，码表没变不重读。
 选了形码却找不到方案或码表读不了时只警告并按拼音跑——配置说五笔、引擎还在拼音是静默错位，宁可吵。
 顶字与满码自动上屏在 `key/input.rs` 的 `push_letter`。
 中英模式的两项设置（`[shortcut] switch_mode` 切换键：勾选 shift / control / ctrl+alt+space，`[general] english_mode` 内置英文模式开关）
@@ -691,7 +715,7 @@ Server 自己一开始就占命名互斥体 `Local\QingjianServer`（`ipc/instan
 `parse_words` 判得出）就转 [`import_word_list`] 派生读音，否则仍走 `import`（`.qj`、全带读音的 TSV / Rime 行为不变）；
 返回 `ImportedDictionary { imported, report: Option<Report> }`，设置页的结果行列出跳过的条数与前几个词。
 另有 `qingjian-dictionary::import::import_word_list` 收「只有词、没有拼音」的词表（每行 `词` / `词<Tab>词频` / `词<Tab>读音[<Tab>词频]`，`---`…`...` 的 Rime 头一并认），
-读音列可以带数字声调（`dong1 xi5`），数字只能跟在字母后面。读音按参考词库（基础词库 + `--extra-dict` + `assets/lexicon/dicts/*.tsv` 领域词库）取，顺序是：词表写明的读音 → 整词词条 → 最长匹配切分
+读音列可以带数字声调（`dong1 xi5`），数字只能跟在字母后面。读音按参考词库（基础词库 + `--extra-dict` + `../qingjian-dicts/official/lexicon/zh/domains/*/words.tsv` 领域词库）取，顺序是：词表写明的读音 → 整词词条 → 最长匹配切分
 （`中华人民共和国` → `中华` + `人民` + `共和国`）→ 单字取词频最高的读音（`和` 取 `he`）。**一个词只写一条读音组合**，不做多音字的笛卡尔积；
 字不在参考词库里的词跳过并进 `Report::unknown`（不静默丢词）。多音字词（`美露莘 mei lu xin`）在词表第二列直接写读音。
 设置程序、Windows 旧设置、macOS 旧偏好与 Android 的参考词库都是「随包基础词库 + 随包领域词库」，不与用户开关联动。
@@ -719,8 +743,8 @@ Windows 可选的 `[shortcut] toggle_punctuation` 经 `InputSettings` 下发，�
 ## assets
 
 - `assets/sample/`：手写样例词库与释义表，不是产品数据。
-- `assets/schemes/wubi86/`：随包形码方案（`scheme.toml` + `table.tsv`，码表由 `dict-convert wubi` 生成，来源与许可见同目录 README，Apache-2.0）。
-  `bundle.sh` 把 `assets/schemes/*/` 的 `scheme.toml` 与 `table.tsv` 拷到 `Resources/schemes/`，Windows 安装器拷到 `{app}\assets\schemes\`
+- 随包形码方案（五笔）：词库仓库 `official/schemes/wubi86/` 发的 `wubi86.qj`（码表由 `dict-convert wubi` 生成，来源与许可见那边的 README，Apache-2.0），
+  dicts-fetch 按 dicts.lock 取到 `data/generated/schemes/`；`bundle.sh` 按锁文件拷到 `Resources/schemes/`，Windows 安装器拷到 `{app}\data\generated\schemes\`
   （与两边的找法对齐：macOS `paths::bundled_schemes_dir`、Windows `dispatch::schemes::find_bundled_schemes`）。
 - `assets/emoji/emoji-zh.tsv` / `emoji-en.tsv`：Unicode CLDR 中文 / 英文 annotations 转出的 emoji 表（Unicode License v3，可发布；中文词与英文词各配 emoji，两张表加载时合成一张），
   `cargo run --release -p qingjian-dict-convert -- --out-dir assets/emoji emoji --language zh data/cldr/annotations-zh.json data/cldr/annotationsDerived-zh.json`（en 同理）。
@@ -732,47 +756,48 @@ Windows 可选的 `[shortcut] toggle_punctuation` 经 `InputSettings` 下发，�
 ## tools/gloss-gen
 
 用 LLM 批量生成释义表：`cargo run --release -p qingjian-gloss-gen -- generate`（密钥读 `QINGJIAN_API_KEY`，结果 JSONL 在 `data/generated/`，不进 git、可续跑，`--limit 80` 试跑）
-再 `... export`（写 `glossary-{en,ja,vi}.tsv`，产品数据在 `assets/glossary/`，见那里的 README；格式 `词\t词性. 译词[|假名]`）。只补越南语时 `generate --languages vi --out data/generated/gloss-vi-llm.jsonl`，再对这个 JSONL `export`。CLI 与 bundle.sh 用的是这些文件；打包时 `dict-convert pack glossary --language vi` 会写 `glossary-vi.qj`。
+再 `... export`（写 `glossary-{en,ja,vi}.tsv`，产品数据在 `../qingjian-dicts/official/glossary/`，见那里的 README；格式 `词\t词性. 译词[|假名]`）。只补越南语时 `generate --languages vi --out data/generated/gloss-vi-llm.jsonl`，再对这个 JSONL `export`。CLI 与 bundle.sh 用的是这些文件；打包时 `dict-convert pack glossary --language vi` 会写 `glossary-vi.qj`。
 
 ## tools/dict-convert
 
 产品数据的生成工具，输出到 `data/generated/`（gitignore）。
 
-- `lexicon`：从 `assets/lexicon/`（自建词库源：规范字 + 常用词 + THUOCL 领域词 + 生僻字）加 Unihan 读音（`data/unihan/Unihan_Readings.txt`）、LLM 多音字标注（`gloss-gen pinyin`，
+- `lexicon`：从 `../qingjian-dicts/official/upstream/`（自建词库源：规范字 + 常用词 + THUOCL 领域词 + 生僻字）加 Unihan 读音（`data/unihan/Unihan_Readings.txt`）、LLM 多音字标注（`gloss-gen pinyin`，
   结果 `data/generated/pinyin-llm.jsonl`，不进 git）、语料词频（`lm-unigram.tsv`）建基础词库 `dict.tsv`（13 万条），并把 THUOCL 领域词按语料次数 < 50 拆成
-  `dicts/<领域>.tsv` + `.qj`（11 本、13 万条，`--domain-keep-min`），流程见 `assets/lexicon/QINGJIAN.md`；Unihan 只给 `n` / `ng` 的字（嗯）按输入习惯收成 `en`；单字各读音按 kHanyuPinlu 频次分摊字频，频次表里没有的次要读音按主读音的 5% 猜（`MINOR_READING_SHARE`），再压到同音字里有频次撑着的最高那个的 1/4 以下（`MINOR_READING_CEILING`：高频字的 5% 绝对值很大，和 读 hu 原来 4.5 万次、排在 胡 湖 前，#759）；生僻字表 `01_characters/rare_chars.tsv`（`tools/corpus/rare_chars.py` 从「规范字表外扩充汉字」与台湾教育部罕用字 C 表合成，3.6 万字）里词库没有的字按词频 0 收、读音用表里的（词频 0：不进整句词图、`bigram` 分词跳过，语料里的日文新字体与繁体残留不会把它们统计成常用字；表里标 `everyday` 的 诶 囧 按规范字处理），音节表为此加了 `fiao`（覅）`biang`（𰻝），切分与双拼同键时让给常用音节；`--extra-words` 并入人工挑的领域词 `assets/lexicon/domain_words.tsv`（2026-09-27 起该文件另含按 jieba 词表（MIT）对照出的缺失高频词：读音逐字取 Unihan、多音字逐条人工判定（判定明细与理由在 `assets/lexicon/00_meta/polyphone-judgments.tsv`），词频按 log-log 回归从 jieba 次数折算；另含「姓氏+总」称谓层 98 条与符号词 6 条，定值依据见文件头注。这些词进语言模型同样走 `bigram --phrases`，改了词库发数据时要重跑 bigram，否则新词只拿兜底分、会被同音的 lm 词压过）。五份额外词以前要手动列，少给一个那批词就从 `dict.tsv` 里悄悄没了（漏过 `mixed_words.tsv`，C盘 / U盘 打不出来，#807），现在缺省全并、缺文件报错；`lexicon/tests.rs` 对着仓库里的 `dict.tsv` 与 `dicts/` 查这五个文件的词都在。
-  各项输入缺省都并入（LLM 读音、语料词频、`assets/lexicon` 五份额外词、`data/lexicon/` 的青简词库），缺文件报错，不要的用 `--no-pinyin` / `--no-frequency` / `--no-extra-words` / `--no-general` 排除，免得漏给参数悄悄少并一份。
+  `dicts/<领域>.tsv` + `.qj`（11 本、13 万条，`--domain-keep-min`），流程见 `../qingjian-dicts/official/lexicon/zh/base/BUILD.md`；Unihan 只给 `n` / `ng` 的字（嗯）按输入习惯收成 `en`；单字各读音按 kHanyuPinlu 频次分摊字频，频次表里没有的次要读音按主读音的 5% 猜（`MINOR_READING_SHARE`），再压到同音字里有频次撑着的最高那个的 1/4 以下（`MINOR_READING_CEILING`：高频字的 5% 绝对值很大，和 读 hu 原来 4.5 万次、排在 胡 湖 前，#759）；生僻字表 `01_characters/rare_chars.tsv`（`tools/corpus/rare_chars.py` 从「规范字表外扩充汉字」与台湾教育部罕用字 C 表合成，3.6 万字）里词库没有的字按词频 0 收、读音用表里的（词频 0：不进整句词图、`bigram` 分词跳过，语料里的日文新字体与繁体残留不会把它们统计成常用字；表里标 `everyday` 的 诶 囧 按规范字处理），音节表为此加了 `fiao`（覅）`biang`（𰻝），切分与双拼同键时让给常用音节；`--extra-words` 并入人工挑的领域词 `../qingjian-dicts/official/lexicon/zh/base/inputs/manual.tsv`（2026-09-27 起该文件另含按 jieba 词表（MIT）对照出的缺失高频词：读音逐字取 Unihan、多音字逐条人工判定（判定明细与理由在 `../qingjian-dicts/official/upstream/00_meta/polyphone-judgments.tsv`），词频按 log-log 回归从 jieba 次数折算；另含「姓氏+总」称谓层 98 条与符号词 6 条，定值依据见文件头注。这些词进语言模型同样走 `bigram --phrases`，改了词库发数据时要重跑 bigram，否则新词只拿兜底分、会被同音的 lm 词压过）。五份额外词以前要手动列，少给一个那批词就从 `dict.tsv` 里悄悄没了（漏过 `mixed_words.tsv`，C盘 / U盘 打不出来，#807），现在缺省全并、缺文件报错；`lexicon/tests.rs` 对着仓库里的 `dict.tsv` 与 `dicts/` 查这五个文件的词都在。
+  各项输入缺省都并入（LLM 读音、语料词频、`../qingjian-dicts/official/upstream` 五份额外词、`data/lexicon/` 的青简词库），缺文件报错，不要的用 `--no-pinyin` / `--no-frequency` / `--no-extra-words` / `--no-general` 排除，免得漏给参数悄悄少并一份。
   青简词库（数字声调版，缺省 `data/lexicon/qingjian-full.tone-numbers.tsv`，交付目录软链过来）并入通用大词库（`lexicon/general.rs`）：基础词库已有同读音的补声调、词频不动；读音不同的新读音按换算词频的 1/8 收；其余按两边同读音词在对数坐标拟的直线（2026-10-21 交付版 7.2 万对，斜率 0.97、截距 1.39）换算词频，写 `dict-general.tsv`（输出目录顶层）与 `dicts/general.qj`；领域词库不动（挪进基础词库会让 智永 这类人名进第一档）。它们不进 `bigram` 分词词表（一元最大概率切分会把片段整块切走），所以 `dict.tsv` 除声调外与不并时逐行相同、语言模型不用重跑。领域词多音字按语料读音猜时打平取 Unihan 靠前的读音（以前按 HashMap 顺序，每次跑可能不同）。
-- `english`：转 `assets/lexicon/05_english/00_all_words.tsv`；同一文件内同编码优先全小写（数据包把 `OR` `May` 排在 `or` `may` 前），多于一个字母且常见度级别严格更常见的大写写法才留（Java、HTML），
-  该出专名写法的（I、China、VSCode）靠展示写法补充表 `07_display_forms.tsv` 后置读入；`cedict`：释义表备用来源。中英混杂词源在 `assets/lexicon/mixed_words.tsv`（`lexicon --extra-words`）。
-- `tones`：`assets/lexicon/02_common` 通用词表的数字声调逐字收成单字声调表（`字\t带调音节…`，轻声记 5，按词表排序号首次出现的顺序，第一个当首读音），
+- `english`：转 `../qingjian-dicts/official/upstream/05_english/00_all_words.tsv`；同一文件内同编码优先全小写（数据包把 `OR` `May` 排在 `or` `may` 前），多于一个字母且常见度级别严格更常见的大写写法才留（Java、HTML），
+  该出专名写法的（I、China、VSCode）靠展示写法补充表 `07_display_forms.tsv` 后置读入；`cedict`：释义表备用来源。中英混杂词源在 `../qingjian-dicts/official/lexicon/zh/base/inputs/mixed.tsv`（`lexicon --extra-words`）。
+- `tones`：`../qingjian-dicts/official/upstream/02_common` 通用词表的数字声调逐字收成单字声调表（`字\t带调音节…`，轻声记 5，按词表排序号首次出现的顺序，第一个当首读音），
   `--out-dir crates/qingjian-core/data` 直接写到 Core 的 `data/tones.tsv`（`include_str!`，进 git，约 5 千字 50 KB）；通用词表没收的字没有声调，注音排序当查不到。
-- `chaizi`：開放詞典網拆字字典（`assets/chaizi/chaizi-jt.txt`，CC BY 3.0）的每种拆法按词库单字读音连成部件拼音串（林 → `mumu`；多音部件按词频取前 3 个读音交叉、一种拆法最多 16 串；有部件读不出的拆法跳过；原表同一个字分两行的合并），
-  行按字频排，写 Core 的 `data/chaizi.tsv`（约 1.4 万字 280 KB）。Core 的 `chaizi` 模块整串对上在前、前缀在后，问字模式出候选（`engine/query/modes.rs`），全是字母又拆得出字时数字键选字、不当码点。
+- `chaizi`：開放詞典網拆字字典（簡體 `chaizi-jt.txt` + 繁体 `chaizi-ft.txt`，CC BY 3.0）的每种拆法按词库单字读音写成部件串（林 → 部件 `木木`、读音 `mu'mu`；一个部件最多留 3 个读音，不再交叉展开），繁体表里「简体表没有的字」按 `fanjian_suoyin.txt` 落到简体主键（3012 字），`□` 占位退回原字；
+  行按字频排，写 Core 的 `data/chaizi.tsv`（1.7 万字 638 KB，`字\t读音\t拆法部件\t拆法读音`）。Core 的 `chaizi` 模块三张表编进二进制：`chaizi.tsv`（拆法）、`stroke.tsv`（键位形式的笔顺，`qingjian-dict-convert stroke --keys`）、`parts.tsv`（部件别名，俗名读音与 CNS 没有的笔画符号）。查询是「输入串 × 每种拆法」的对齐：每个部件要么吃掉它的一个读音，要么吃掉它笔顺的前几笔，于是纯读法、纯笔画、两者混着打都走同一条路；排序按「吃掉多少 → 是不是整字笔顺 → 走完没走完 → 还差几笔 → 档位 → 字频」，只吃掉不足四分之三的那种巧合匹配直接丢掉（`usangemu` 这类整句问题不该被「桑」拆出候选）。`has_match` 保留老的「部件读音连写」口径——笔画与混输不参与码点判定，否则 `uface` 就没法打码点了。
 - `wubi`：Rime 形码码表（`.dict.yaml`，极点 86 五笔）→ `词\t编码\t词频`（`wubi.rs`，`--name` 决定文件名，缺省 `table.tsv`，即形码方案目录里码表的缺省名）。单字母码保留源表顺序，其余编码按回填词频排序。
   **码表自带的权重不用**——那是码表顺序不是语料词频，用了同一个词在形码下和在拼音下会排得不一样；词频从青简词库按**词面**交叉回填，
   词库里没有的词给 `UNKNOWN_FREQUENCY = 1`。解析复用 `qingjian_dictionary::import::rime`（与用户导入 Rime 词库同一个解析器，
   形码码表的第二列是编码，格式一样）。词库还没收的词不收（码表整张进，不做取码推导，见 `docs/plan/wubi.md`）。
-- `bigram`：统计语料；`--phrases` 给短语层、`--brand` 给品牌词（`assets/lexicon/brand.tsv`，青简 210）与中英混杂词（`mixed_words.tsv`，C盘 / B站：合成计数要成分词在语料里，C 不是 token，只能直接给一元，次数对着同音竞争词定；词表里没有的品牌词直接报错，不再跳过——跳过的话模型里也跟着没有），领域词也走合成计数（语料里只有几十次的词当 token 统计会吸走成分词的二元证据）。
+- `bigram`：统计语料；`--phrases` 给短语层、`--brand` 给品牌词（`../qingjian-dicts/official/lexicon/zh/base/inputs/brands.tsv`，青简 210）与中英混杂词（`mixed_words.tsv`，C盘 / B站：合成计数要成分词在语料里，C 不是 token，只能直接给一元，次数对着同音竞争词定；词表里没有的品牌词直接报错，不再跳过——跳过的话模型里也跟着没有），领域词也走合成计数（语料里只有几十次的词当 token 统计会吸走成分词的二元证据）。
 - `mine`：从语料挖词库没收的高频词并过滤（`oov_filter.rs`：虚词规则 + 相邻字对 PMI≥3，`--candidates` 只重过滤）。
 - `phrases`：挖短语层（两遍扫语料：相邻两词、两段二元都够频的相邻三词，总次数与对话语料次数都 ≥ 2000 + 边界规则，读音由成分词拼出；我的 / 不知道 / 有没有 这类常用词表不收的组合，
-  `assets/lexicon/phrases.tsv`；词库已并入过短语时重跑加 `--refresh`）。
+  `../qingjian-dicts/official/lexicon/zh/base/inputs/phrases.tsv`；词库已并入过短语时重跑加 `--refresh`）。
 - `pack dict|lm|glossary|codes`：打 `.qj`（释义表也进容器；`codes` 是唯一带计算的一种，见下）。
 - `stroke`：CNS11643 全字庫筆順（`data/cns/`，官方 Properties.zip / MapingTables.zip 解出，gitignore）+ 大陆序覆盖表
-  `assets/stroke/prc-rules.tsv` → `data/generated/codes/stroke.tsv`（随包笔画表的源数据：7,991 字、127 KB，
+  `../qingjian-dicts/official/upstream/stroke/prc-rules.tsv` → `data/generated/codes/stroke.tsv`（随包笔画表的源数据：7,991 字、127 KB，
   1 横 2 竖 3 撇 5 折 n 点捺；首笔按《通用规范汉字笔顺规范》GF 0023—2020 全对：门字头 / 戶→户 两条前缀规则 + 66 行整字覆盖，阝第二笔随规范改竖）；`--verify` 双对照——笔画数按一级字每 12 字取 1（291 字）、首笔按一级字 3,500 全量，白名单
-  `assets/stroke/residual-whitelist.tsv`（7 字）与首笔 `assets/stroke/residual-first-strokes.tsv`（408 字，对照源几何假阳性；首笔不按几何近似放行，不符的字都要逐字进白名单）各自口径之外一处不符即退出码非 0；两张对照表（笔画数 / 首笔几何类别）由 `mmh-reference` 子命令从 hanzi-writer-data 生成到 `data/mmh/`（Arphic 许可，不进仓库、不随包；缺席时跳过对照并提示）。
-  来源、许可与验收记录见 `assets/stroke/README.md`。
+  `../qingjian-dicts/official/upstream/stroke/residual-whitelist.tsv`（7 字）与首笔 `../qingjian-dicts/official/upstream/stroke/residual-first-strokes.tsv`（408 字，对照源几何假阳性；首笔不按几何近似放行，不符的字都要逐字进白名单）各自口径之外一处不符即退出码非 0；两张对照表（笔画数 / 首笔几何类别）由 `mmh-reference` 子命令从 hanzi-writer-data 生成到 `data/mmh/`（Arphic 许可，不进仓库、不随包；缺席时跳过对照并提示）。
+  来源、许可与验收记录见 `../qingjian-dicts/official/upstream/stroke/README.md`。
 - `pack codes`：把 `codes/stroke.tsv` 与词库（缺省 `data/generated/dict.qj`）算成随包原生码表 `data/generated/codes/stroke.qj`
   （键位 1→h 横 / 2→s 竖 / 3→p 撇 / 5→z 折 / 点捺 n→n；单字「前 4 笔 + 末笔」，不足 5 笔按实际取；词组每字首笔，
   二字 2 码、三字 3 码、四字以上 = 前三字首笔 + 末字首笔；词里有一个字不在笔画表里整词跳过）；
   `--stroke` / `--dict` / `--output` 改路径，元数据缺省「笔画」/ `OFL-1.1` / CNS11643 数位发展部署名（可覆盖），数据版本取笔画表日期。
   2026-09-20 实测：词库 92,821 词条 / 91,904 词，有码 91,773、无码跳过 131，码表 91,773 条 / 3.0 MB。
+  随包的那份在词库仓库发版（`official/codes/stroke`：笔画表 + 基础词库 `words.tsv` 由它的 pack.py 调 `pack codes`），`dicts-fetch.py` 取成 `data/generated/codes/stroke.qj`；笔画表改了要拷到那边、升版本重发。
 
 ## apps/linux
 
 `qingjian-linux-server` 为独立产品，装配本地 Engine、词库、释义、频率学习、个人 n-gram、词汇记录与可选输入日志，
-本地整句模型优先加载用户 `~/.local/share/qingjian/models/hanzhang-tongbian/` 或随包 `data/models/hanzhang-tongbian/`（Linux 继续随包，还没接下载）；含章·知微已下线，不再回退；旧用户目录 `model-p2c/` 兼容读取。按 `[model] enabled` 在后台加载、停键 80 ms 后重排、20 ms 轮询（Windows Server 的 `dispatch/rescore` 已改成 30 ms 防抖 + 后台叫醒，这里还没跟）；云联想按 `[predict]` 接入，用量累计到用户目录的 `api-usage.json`（设置统计页读同一份），释义兜底与生词本整句翻译随 `enabled` 一起接，结果由 `tick` 里的 `poll_glosses` 收。配置热加载在 `dispatch/reload`：`tick` 每秒看 `config.toml` mtime 与用户 `dicts/` 快照，`[predict]` / `[model]` / `[dictionaries]` / 学习语言按变化重建，其余无条件重设；`preedit`、`input_log` 仍要重启。`dispatch/session` 交换每个上下文的 EngineSession；真正的能力变化丢弃输入，普通焦点切换隔离保存。
+本地整句模型优先加载 `~/.local/share/qingjian/downloads/models/hanzhang-tongbian/` 或随包 `data/models/hanzhang-tongbian/`（Linux 继续随包，还没接下载）；含章·知微已下线，不再回退。按 `[model] enabled` 在后台加载、停键 80 ms 后重排、20 ms 轮询（Windows Server 的 `dispatch/rescore` 已改成 30 ms 防抖 + 后台叫醒，这里还没跟）；云联想按 `[predict]` 接入，用量累计到用户目录的 `api-usage.json`（设置统计页读同一份），释义兜底与生词本整句翻译随 `enabled` 一起接，结果由 `tick` 里的 `poll_glosses` 收。配置热加载在 `dispatch/reload`：`tick` 每秒看 `config.toml` mtime 与用户 `dicts/` 快照，`[predict]` / `[model]` / `[dictionaries]` / 学习语言按变化重建，其余无条件重设；`preedit`、`input_log` 仍要重启。`dispatch/session` 交换每个上下文的 EngineSession；真正的能力变化丢弃输入，普通焦点切换隔离保存。
 默认面板插件仅转换事件（Shift / Ctrl 本身报成 VK `0x10` / `0x11`），中英切换、候选点击、分页和失焦提交都由 Server 决定：`[shortcut] switch_mode` 的单击 Shift / Ctrl 在按下时记进会话的 `switch_tap`、中间按了别的键或失焦就作废，松开时切换；`Ctrl + Alt + Space` 在按下时切换。`[general] default_english` 定新会话的初始模式，`english_mode` 关掉时切换键全不认、热加载时把所有会话拉回中文。
 启动与热加载共用 `assembly::attach_cloud`（签名与 Windows 的 `dispatch::attach_cloud` 对齐：`[predict]` 配置 + 用量文件路径）；切换服务先取消旧请求与选区翻译，重建所有会话的本地候选布局以清除旧云词，保留本地高亮，聚焦会话再发新请求。无密钥时退回本地，不预留云词槽。按需联想在 `LinuxEvent::Key` 里拦 `[shortcut] predict` 组合键（按字符匹配，`.` 的键码与 Delete 冲突），结果按模型顺序置顶；自动请求由 `RouterConfig::cloud_enabled` 门控，`automatic = false` 时只剩按需触发。插件把缺失的可选 `kind` / `sentence` 按本地候选 / 无整句处理。
 插件在清空预编辑之前上屏；上屏回调重入后核对生命周期和帧身份，跳过过期重画而不撤销或重复提交，见 [Linux 协议与状态](linux-fcitx5.md#协议与状态)。
@@ -847,7 +872,7 @@ Windows Server 受控退出使用 ExitCode 返回以刷新既有 tracing 队列�
 
 ## 常用词库补充（Windows fork）
 
-`Dictionary::builtin_patch` 合并原 `patches.tsv` 与 `assets/lexicon/supplement/dict.tsv`，经 Windows 装配／热加载与 CLI 原有入口默认接入。补充库 19,662 词形，492 KiB；不改 `data.lock`。`tools/lexicon/supplement.py` 以固定 SHA256 的结巴词表和 Unihan 17.0.0，以及已有 THUOCL 与整词读音离线复现；跳过未知多音字和未核验专名，去重基础词形，保留逐条来源与排序权重说明。Windows 安装器同时安装三个来源的版权许可证、说明与生成清单。
+`Dictionary::builtin_patch` 合并原 `patches.tsv` 与 `assets/lexicon/supplement/dict.tsv`，经 Windows 装配／热加载与 CLI 原有入口默认接入。补充库 19,662 词形，492 KiB；不改上游词库锁文件。`tools/lexicon/supplement.py` 以固定 SHA256 的结巴词表和 Unihan 17.0.0，以及已有 THUOCL 与整词读音离线复现；跳过未知多音字和未核验专名，去重基础词形，保留逐条来源与排序权重说明。Windows 安装器同时安装三个来源的版权许可证、说明与生成清单。上游主词库迁往独立仓库后，本 fork 仅保留 `supplement/manifest.json` 列出的历史输入与 THUOCL 许可，供补库离线复现；产品基础词库、英文词表与成语词库仍按 `dicts.lock` 下载。通用扩展词库继续随 Windows 包提供，按 `dicts-extra.lock` 从官方词库仓库下载并核对，排序和开关仍由原有 `general` 规则控制。
 
 `tools/eval/daily_reading.py` 冻结 64 个词句种子、1,123 个组合，包含 16 个留出种子、跨音节互换和多处错误；`tools/eval/lexicon.py` 对新增词稳定抽样 192 条、全部人工核验词与 14 个对照输入，能力抽测与独立文章准确率分开报告。三个原评测和新文章评测均保存补充库哈希。整句标准答案不进入词库。
 

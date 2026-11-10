@@ -11,6 +11,7 @@ pub use size_kind::SizeKind;
 use bamboo_slip::{Edit, KeyPress};
 use qingjian_core::Language;
 
+use crate::jobs::download::Item;
 use crate::library::Kind;
 use crate::page_id::PageId;
 use crate::shortcut::Shortcut;
@@ -69,6 +70,8 @@ pub enum Message {
     Import(Kind),
     /// 移除用户导入的一本（文件名不含扩展名）。
     Remove(Kind, String),
+    /// 把「我的词库」里的一本导出成 TSV（文件名不含扩展名）。
+    ExportDict(String),
     /// 勾掉或勾上 Windows 的系统 Ctrl + Space（改的是系统设置，不是配置文件）。
     SystemCtrlSpace(bool),
     /// 表达式、问字两个模式键之一换成这个字母（撞了就对调）。
@@ -76,7 +79,18 @@ pub enum Message {
     CheckUpdate,
     /// 实验功能里下载这个模型（失败后的「重试」也是它）。
     DownloadModel(qingjian_platform::LocalModel),
-    CancelDownload,
+    /// 「词库」页从词库仓库取可下载的词库清单（失败后的「重试」也是它）。
+    FetchDictIndex,
+    /// 「词库」页下载清单里的这一本（id；更新与重试也是它）。
+    DownloadDict(String),
+    /// 删掉下载的这一本（id；第一下只是确认）。
+    RemoveDownload(String),
+    /// 「词库」页「可下载的」换标签：词库或释义表。
+    DictShelf(crate::jobs::dict_index::Shelf),
+    /// 点了作者名：交给系统打开这个主页（打开前再核一次地址）。
+    OpenLink(String),
+    /// 取消正在下的模型或词库。
+    CancelDownload(Item),
     /// 删掉下好的模型（第一下只是确认）。
     RemoveModel(qingjian_platform::LocalModel),
     /// 实验功能里开一个模型（`None` 是关掉，不用模型）。

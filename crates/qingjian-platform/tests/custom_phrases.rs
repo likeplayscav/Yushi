@@ -236,6 +236,16 @@ fn exported_phrases_import_back_and_configs_are_refused() {
     assert!(qingjian_platform::import_phrases("").is_err());
 }
 
+#[test]
+fn phrase_files_saved_with_a_bom_import_clean() {
+    // 带 BOM 的短语文件：第一条的文字不能带上看不见的 U+FEFF，否则上屏时一起打进去
+    let (read, _) = qingjian_platform::import_phrases("\u{feff}你好\tnh\t5\n").unwrap();
+    assert_eq!(read[0].text, "你好");
+    let exported = qingjian_platform::export_phrases(&[CustomPhrase::new("nh", "你好")]);
+    let (read, _) = qingjian_platform::import_phrases(&format!("\u{feff}{exported}")).unwrap();
+    assert_eq!(read, vec![CustomPhrase::new("nh", "你好")]);
+}
+
 /// Rime `custom_phrase.txt`：文字<Tab>输入码<Tab>权重，文件头与注释跳过，权重夹到 1–999。
 #[test]
 fn rime_style_tsv_imports() {

@@ -42,7 +42,7 @@ def cases():
 def compare(results, reference):
     previous = json.loads(reference.read_text(encoding='utf-8'))
     assert previous['seed_sha256'] == sha(SEEDS), 'reference uses different seeds'
-    assert previous['data_lock_sha256'] == sha(ROOT / 'tools/release/data.lock'), 'different product data'
+    assert previous['data_locks_sha256'] == {name: sha(ROOT / 'tools/release' / name) for name in ['dicts.lock', 'dicts-extra.lock', 'models.lock']}, 'different product data'
     assert previous['supplement_sha256'] == sha(ROOT / 'assets/lexicon/supplement/dict.tsv'), 'different lexicon'
     assert len(previous['results']) == len(results), 'reference is incomplete'
     lost = []
@@ -86,7 +86,7 @@ def run(binary, output, model=None, reference=None):
     categories = sorted({r['category'] for r in results})
     groups = sorted({r['group'] for r in results})
     report = dict(schema=1, count=len(results), seed_sha256=sha(SEEDS), binary_sha256=fingerprint,
-                  data_lock_sha256=sha(ROOT / 'tools/release/data.lock'),
+                  data_locks_sha256={name: sha(ROOT / 'tools/release' / name) for name in ['dicts.lock', 'dicts-extra.lock', 'models.lock']},
                   dictionary_sha256=sha(ROOT / 'data/generated/dict.qj'),
                   supplement_sha256=sha(ROOT / 'assets/lexicon/supplement/dict.tsv'),
                   model_sha256=sha(model) if model else None,
@@ -98,7 +98,7 @@ def run(binary, output, model=None, reference=None):
     for name, rows in [('results.jsonl', results), ('failures.jsonl', [r for r in results if r['top'] != r['text']])]:
         (output / name).write_text(''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in rows), encoding='utf-8')
     (output / 'summary.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    compact = {key: report[key] for key in ['seed_sha256', 'data_lock_sha256', 'supplement_sha256']}
+    compact = {key: report[key] for key in ['seed_sha256', 'data_locks_sha256', 'supplement_sha256']}
     compact['results'] = [{key: r[key] for key in ['id', 'text', 'pinyin', 'top', 'position']} for r in results]
     (output / 'reference.json').write_text(json.dumps(compact, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(report, ensure_ascii=False, indent=2))

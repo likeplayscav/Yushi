@@ -35,13 +35,16 @@
   这个平台的 `SHA256SUMS-<平台>`、`build-info-<平台>.json` 片段传到草稿上。
 - `linux-packages`（`ubuntu-26.04`）与它们并行：在容器里打 deb / rpm（`apps/linux/packaging/build.sh`，见 [linux-packaging.md](linux-packaging.md)），在 Debian 13、Ubuntu 26.04、Fedora 42 的干净容器里装一遍自检，
   再同样传到草稿上（片段名 `linux-packages`）。它们不进 `releases.json`：每种格式两个包，检查更新与官网下载页仍按 tar.gz 认 Linux。
+- `linux-appimage`（`ubuntu-26.04`）也并行：`apps/linux/appimage/build.sh` 在 Debian 13 容器里打 AppImage（见 [linux-appimage.md](linux-appimage.md)），
+  `test/test.sh` 在 Debian 13 容器里装、打字比对，Ubuntu 24.04（Fcitx5 5.1.7）应拒装，再传到草稿上（片段名 `linux-appimage`）。
+  它进 `releases.json`：`releases_json.py` 里排在 tar.gz 前面，官网 Linux 的主按钮给它，tar.gz 作小字链接。
 - `publish`：要打的平台都成功才跑，`tools/release/finish-release.sh` 把片段合成一份 `SHA256SUMS` 与 `build-info.json`（各平台构建机记在 `platforms` 里）、删掉片段、草稿转正
   → `publish-releases-json.sh` 生成并签名 `releases.json` → `bump-website.sh` 触发官网构建。
   任何平台失败，Release 就停在草稿、用户看不到；修好后删掉草稿与标签重推，或在 Actions 页重跑失败的 job。
 
 **单平台补丁**（只修一个平台的急事）：只改那个平台的版本号，打 `macos-v<版本>` / `windows-v<版本>` / `linux-v<版本>` / `android-v<版本>`，同一套流程只打那一个平台，Release 标题带平台名。
 
-发版后 GitHub Release 上有：`qingjian-<版本>-macos-arm64.pkg`、`-macos-x86_64.pkg`、`-windows-x86_64-setup.exe`、`-linux-x86_64.tar.gz`、`-android-arm64.apk`，deb / rpm 各两个（`qingjian`、`qingjian-fcitx5`），`SHA256SUMS`、`build-info.json`、`releases.json` 与 `.sig`。
+发版后 GitHub Release 上有：`qingjian-<版本>-macos-arm64.pkg`、`-macos-x86_64.pkg`、`-windows-x86_64-setup.exe`、`-linux-x86_64.tar.gz`、`-android-arm64.apk`、`Qingjian-<版本>-x86_64.AppImage`，deb / rpm 各两个（`qingjian`、`qingjian-fcitx5`），`SHA256SUMS`、`build-info.json`、`releases.json` 与 `.sig`。
 
 官网由 Cloudflare Workers Builds 按官网仓库的提交自动构建，没有可调用的构建钩子，所以主仓库靠**往官网仓库推一个小提交**来触发：
 `tools/release/bump-website.sh` 把版本标签与文档提交号写进官网的 `src/content/upstream.json` 并提交推送（提交者 qingjian-ci）。
@@ -82,24 +85,26 @@ cargo 命令全 `--locked`（含 `bundle.sh` 与 `build.ps1`）。普通 CI 只�
 |---|---|---|
 | `.github/workflows/ci.yml` | push main、PR | Linux 上 `cargo fmt --check` / clippy / test，排除 `qingjian-macos`（IMK 外壳只能在 macOS 编译，macOS runner 计费是 Linux 的 10 倍） |
 | `.github/workflows/clipboard-release.yml` | 推 `clipboard-v*` 标签 | 打青简剪贴板的独立安装包，发到 qingjian-clipboard 的 Release（见下文「青简剪贴板」） |
-| `.github/workflows/release.yml` | 推 `v*`（全部平台）或 `macos-v*` / `windows-v*` / `linux-v*` / `android-v*`（单平台）标签 | `prepare` 门禁并建草稿 Release → `macos` / `windows` / `linux` / `android` 并行打包上传 → `publish` 合并摘要、转正、生成 `releases.json`、触发官网构建（见上文） |
+| `.github/workflows/release.yml` | 推 `v*`（全部平台）或 `macos-v*` / `windows-v*` / `linux-v*` / `android-v*`（单平台）标签 | `prepare` 门禁并建草稿 Release → `macos` / `windows` / `linux` / `linux-packages` / `linux-appimage` / `android` 并行打包上传 → `publish` 合并摘要、转正、生成 `releases.json`、触发官网构建（见上文） |
 
 ## 产品数据从哪来
 
-词库、语言模型、释义表（`data/generated/*.qj`、`dicts/*.qj`、英文词表）不在 git 里，体积约 90 MB 且由本机数据管道生成。
-它们发在仓库里一个个**不可变**的预发布 Release 上：`data-v1`、`data-v2`……每次数据重生成发一个新号、从不覆盖
-（预发布不会成为 GitHub 的 latest，官网取 latest 时不会拿到它）。仓库里 `tools/release/data.lock` 钉住当前要用的标签与资产的 SHA-256，
+语言模型、模型与词库都不在 git 里，发在两个数据仓库的 Release 上，主仓库用锁文件钉住标签与 SHA-256，
 跟用到新数据的代码同一个提交进去：checkout 哪个提交就拿到它对应的那版数据，离线自编译的人不会因为我们改了数据而编出坏包。
 
-- `tools/release/data-bundle.sh`：把 `data/generated/`、含章·知微 `hanzhang-zhiwei-small.qjm` 与含章·通变 `hanzhang-tongbian-small.qjm` 装进唯一附件 `qingjian-data.tar.gz`
-  （导出的三件套放各自模型目录，`tools/release/pack-model.sh` 打成 `.qjm` 容器）。训练中间产物不进入公开包；发到下一个 `data-vN`（`--tag` 可指定，已存在就拒绝），然后改写 `data.lock`。
-- `tools/release/data-fetch.sh`：按 `data.lock` 下载（有 gh 用 gh，没有就 curl 直连）、按锁文件里的哈希校验，
-  数据包解到 `data/generated/` 与两份模型各自的 `data/models/<标识>/`。旧锁仍可读取分离附件。`release.yml` 各平台的 job 和离线自编译走同一个脚本；
-  `bundle.sh`、`qingjian.iss` 与 Linux 打包脚本将两份模型分别装入对应目录，产品端优先使用通变。
-  标签与各资产哈希记进 `build-info.json`（`data_tag` / `data_sha256` / `model_sha256` / `p2c_model_sha256`）。
+- 随包模型（语言模型 `lm.qj`、Linux 版随包的含章·通变）在模型仓库 [qingjian-models](https://github.com/qingjian-team/qingjian-models) 发版（`lm-v1.0.0`、`hanzhang-tongbian-v1.0.0`，打包与标签约定见那边的 `docs/maintaining.md`），
+  `tools/release/models.lock` 钉住每个的标签与压缩包的 SHA-256。`tools/release/models-fetch.py` 按 `manifest.json` 逐块下载、拼回后按锁文件核对，
+  解出模型文件放到锁文件写的位置（`data/generated/lm.qj`、`data/models/hanzhang-tongbian/`；压缩包缓存在 `target/release-data/models/`）。
+  语言模型重生成（`dict-convert bigram` + `pack lm`）或模型重训（`tools/release/pack-model.sh` 打成 `.qjm`）之后，在模型仓库发新版本，再改 `models.lock` 提交。
+- 随包词库（基础词库、成语词库、英文词表、英语与中文释义表、越南语词表与越南语→中文对照）与码表（五笔、笔画）在词库仓库 [qingjian-dicts](https://github.com/qingjian-team/qingjian-dicts) 发版，
+  `tools/release/dicts.lock` 钉住每本的标签与 `.qjz` 的 SHA-256。`tools/release/dicts-fetch.py` 核对后解成 `.qj` 放进 `data/generated/`（`.qjz` 缓存在 `target/release-data/dicts/`）。
+  词库仓库发了新版或改了随包哪几本，跑 `dicts-fetch.py --update` 按它的 `index.json` 重写锁文件，提交（`chore(data): 随包词库 …`）；
+  换了随包词库的文件名还要同步 `qingjian.iss`、`build.ps1`、安卓的 `build.gradle.kts` 和各壳加载的路径。别的词库与释义表不随包，在设置里下载。
+- 两个脚本都是 Gitee 与 GitHub 同时请求、先回来的用（共用 `tools/release/mirror.py`）。`tools/release/data-fetch.sh` 依次调它们，
+  `release.yml` 各平台的 job、mac 的 `bundle.sh` 与离线自编译都走它，Windows 的 `build.ps1` 直接调这两个脚本；已下过的只核对，`--verify` 不联网只核对。
+  随包语言模型与含章·通变的摘要记进 `build-info.json`（`lm_sha256` / `p2c_model_sha256`）。文件缺失或哈希不符时打包失败，不会静默地发出错数据的包。
 
-数据重生成之后（重跑 lexicon / bigram / gloss-gen export）或模型重训之后跑一次 `data-bundle.sh`（三件套比 `.qjm` 新会自动重打），
-把锁文件的改动提交（`chore(data): 数据 data-vN`），否则 CI 打的包还是锁文件指的旧数据。模型文件缺失或哈希不符时 CI 会失败，不会静默地发出错数据的包。
+2026-11-10 之前语言模型与含章·通变装在主仓库的 `data-vN` 预发布 Release 里（`data.lock` 钉住，最后一版 `data-v10`），已停用；
 2026-09-16 之前用的是滚动覆盖的 `data` Release，已冻结不再更新。
 
 ## 版本索引的签名

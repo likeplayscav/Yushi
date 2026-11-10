@@ -8,7 +8,8 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use qingjian_core::{Engine, Language};
-use qingjian_platform::{Config, ConfigError, LogLevel, resources};
+use qingjian_platform::pronunciations::ENGLISH_PRONUNCIATIONS_FILE;
+use qingjian_platform::{Config, ConfigError, LogLevel, UserDirs, resources};
 use qingjian_windows_server::assembly::{glossary_file, learning_language};
 use qingjian_windows_server::{
     AssemblySpec, LanguageModelFiles, Router, RouterConfig, ServerError, assembly, dispatch,
@@ -179,8 +180,8 @@ fn main() -> ExitCode {
         return ExitCode::SUCCESS;
     };
     match template {
-        Some(Ok(true)) => tracing::info!("已写出配置模板"),
-        Some(Err(error)) => tracing::warn!(%error, "写配置模板失败"),
+        Some(Ok(true)) => tracing::info!("config template written"),
+        Some(Err(error)) => tracing::warn!(%error, "failed to write config template"),
         _ => {}
     }
     let language = learning_language(&config);
@@ -189,10 +190,15 @@ fn main() -> ExitCode {
     let dict = std::env::var_os("QINGJIAN_DICT")
         .map(PathBuf::from)
         .unwrap_or_else(|| default_dict(&root));
+    let user = qingjian_platform::dirs::user_dirs();
+    if let Some(user) = &user {
+        user.prepare();
+    }
+    let downloads = user.as_ref().map(UserDirs::downloads);
     let glossary_path = language.and_then(|language| {
         std::env::var_os("QINGJIAN_GLOSSARY")
             .map(PathBuf::from)
-            .or_else(|| glossary_file(&root, language))
+            .or_else(|| glossary_file(&root, downloads.as_deref(), language))
             .filter(|path| path.is_file())
     });
     let glossary = language.zip(glossary_path);
@@ -200,8 +206,9 @@ fn main() -> ExitCode {
     let bundled_codes_dir = Some(root.join("data/generated/codes")).filter(|dir| dir.is_dir());
     let spec = AssemblySpec {
         glossary: glossary.clone(),
-        english_glossary: glossary_file(&root, Language::Chinese),
-        english: generated(&root, "english.tsv"),
+        english_glossary: glossary_file(&root, downloads.as_deref(), Language::Chinese),
+        english: generated(&root, "english.qj"),
+        english_ipa: generated(&root, ENGLISH_PRONUNCIATIONS_FILE),
         emoji: ["emoji-zh.tsv", "emoji-en.tsv"]
             .into_iter()
             .filter_map(|name| asset(&root, &format!("emoji/{name}")))
@@ -212,14 +219,14 @@ fn main() -> ExitCode {
         bundled_codes_dir: bundled_codes_dir.clone(),
         bundled_schemes_dir: dispatch::find_bundled_schemes(&root),
         aux_code: config.aux_code.clone(),
-        user_dir: user_dir(),
+        user: user.clone(),
         input_log: config.general.input_log,
         ..AssemblySpec::new(&dict)
     };
     let mut engine = match assemble_with_fallback(spec, &root) {
         Ok(engine) => engine,
         Err(error) => {
-            tracing::error!(%error, "样例词库也装配失败");
+            tracing::error!(%error, "sample dictionary failed to assemble too");
             return ExitCode::FAILURE;
         }
     };
@@ -239,6 +246,7 @@ fn main() -> ExitCode {
     engine.set_kaomoji_limit(usize::from(config.general.kaomoji.get()));
     engine.set_symbol_limit(usize::from(config.general.symbols.get()));
     engine.set_english_in_chinese(config.general.english_in_chinese);
+    engine.set_show_english_pronunciation(config.general.show_english_pronunciation);
     engine.set_english_max_in_chinese(config.general.english_max_in_chinese());
     engine.set_english_min_position(config.general.english_min_position());
     engine.set_shift_letter_compose(config.general.shift_letter.compose());
@@ -250,30 +258,32 @@ fn main() -> ExitCode {
     engine.set_hold_selections(config.general.hold_selections);
     engine.set_context_memory(config.model.context_memory_seconds);
     engine.log_session(env!("CARGO_PKG_VERSION"), "windows");
-    let usage_path = user_dir().map(|dir| dir.join(qingjian_predict::API_USAGE_FILE));
+    let usage_path = user
+        .as_ref()
+        .map(|user| user.records().join(qingjian_predict::API_USAGE_FILE));
     qingjian_windows_server::clipboard_process::sync(config.clipboard.enabled);
     dispatch::attach_cloud(&mut engine, &config.predict, usage_path);
     let router_config = RouterConfig::from(&config);
     let mut router = Router::new(engine, router_config.clone());
-    let vietnamese_words = generated(&root, "vietnamese.tsv").and_then(|path| {
+    let vietnamese_words = generated(&root, "vietnamese.qj").and_then(|path| {
         match qingjian_dictionary::WordList::from_path(&path) {
             Ok(words) => Some(words),
             Err(error) => {
-                tracing::warn!(%error, path = %path.display(), "越南语候选词表读不了");
+                tracing::warn!(%error, path = %path.display(), "vietnamese word list unreadable");
                 None
             }
         }
     });
     router.set_vietnamese_words(vietnamese_words);
-    let vietnamese_glossary = generated(&root, "vietnamese-zh.tsv").and_then(|path| {
+    let vietnamese_glossary = generated(&root, "vietnamese-chinese.qj").and_then(|path| {
         match qingjian_translate::Glossary::from_path(Language::Chinese, &path) {
             Ok(bundled) => {
-                let personal = user_dir().map_or_else(
+                let personal = user.as_ref().map_or_else(
                     || qingjian_translate::PersonalGlossary::in_memory(Language::Chinese),
-                    |dir| {
+                    |user| {
                         qingjian_translate::PersonalGlossary::open(
                             Language::Chinese,
-                            dir.join("user-glossary-input-vi-zh.tsv"),
+                            user.learning().join("user-glossary-input-vi-zh.tsv"),
                         )
                     },
                 );
@@ -282,7 +292,7 @@ fn main() -> ExitCode {
                 ))
             }
             Err(error) => {
-                tracing::warn!(%error, path = %path.display(), "越南语中文释义表读不了");
+                tracing::warn!(%error, path = %path.display(), "vietnamese-chinese glossary unreadable");
                 None
             }
         }
@@ -290,25 +300,22 @@ fn main() -> ExitCode {
     router.set_vietnamese_glossary(vietnamese_glossary);
     router.configure_local_model(
         dispatch::ModelDirs {
-            user: user_dir(),
+            downloaded: user.as_ref().map(UserDirs::models),
             bundled_root: root.clone(),
         },
         &config.model,
     );
     router.configure_schemes(&config, dispatch::find_bundled_schemes(&root));
     if let Some(path) = config_path() {
-        let user = user_dir();
         router.watch_config(
             &config,
             path,
             root.clone(),
             dispatch::DataDirs {
-                user_root: user.clone(),
+                user: user.clone(),
                 bundled_dicts: bundled_dicts_dir,
                 bundled_codes: bundled_codes_dir,
                 bundled_schemes: dispatch::find_bundled_schemes(&root),
-                user_dicts: assembly::user_dicts_dir(user.as_deref()),
-                user_codes: assembly::user_codes_dir(user.as_deref()),
             },
         );
     }
@@ -327,7 +334,7 @@ fn main() -> ExitCode {
         model = config.model.name.key(),
         model_enabled = config.model.enabled,
         sessions = router.session_count(),
-        "青简 Windows Server 就绪"
+        "Qingjian Windows Server ready"
     );
 
     let code = serve(router);

@@ -2,15 +2,17 @@
 
 mod interactions;
 mod scenario;
+mod stability;
 mod word_learning;
 
 use std::path::Path;
 use std::time::Instant;
 
 use qingjian_core::{Candidate, CandidateKind, CandidateView, Engine};
-use qingjian_dictionary::{Dictionary, GENERAL_DICTIONARY, WordList};
+use qingjian_dictionary::{Dictionary, WordList};
 use qingjian_learning::FrequencyLearner;
 use qingjian_lm::BigramModel;
+use qingjian_platform::{DictionariesConfig, extra_dictionaries};
 use serde_json::{Value, json};
 
 use crate::error::CliError;
@@ -24,11 +26,14 @@ fn engine() -> Result<Engine, CliError> {
         .with_language_model(Box::new(BigramModel::from_path(Path::new(
             "data/generated/lm.qj",
         ))?))
-        .with_english(WordList::from_path("data/generated/english.tsv")?);
-    let mut general =
-        Dictionary::from_path(format!("data/generated/dicts/{GENERAL_DICTIONARY}.qj"))?;
-    general.set_secondary(true);
-    engine.set_extra_dictionaries(vec![Dictionary::builtin_patch()?, general]);
+        .with_english(WordList::from_path("data/generated/english.qj")?);
+    let mut dictionaries = extra_dictionaries::load(
+        Some(Path::new("data/generated/dicts")),
+        &[],
+        &DictionariesConfig::default(),
+    );
+    dictionaries.push(Dictionary::builtin_patch()?);
+    engine.set_extra_dictionaries(dictionaries);
     engine.set_default_candidate_view(CandidateView::Compact);
     Ok(engine)
 }
@@ -132,9 +137,19 @@ fn run_attempt(engine: &mut Engine, case: &Scenario, all: bool, word_limit: usiz
         let elapsed = started.elapsed().as_secs_f64() * 1000.0;
         event_timings.push(elapsed);
         let repeated = query(engine, &mut repeated_timings, &mut errors);
-        stable &= texts(&candidates) == texts(&repeated);
+        stable &= stability::same(engine.composition().text(), &candidates, &repeated);
+        let refreshed: Vec<Value> = candidates
+            .iter()
+            .zip(&repeated)
+            .enumerate()
+            .filter(|(_, (before, after))| before.text != after.text)
+            .map(|(index, (before, after))| {
+                json!({"index":index, "before":before.text, "after":after.text,
+                    "before_kind":before.kind, "after_kind":after.kind})
+            })
+            .collect();
         prefixes.push(json!({"key":c, "keys": engine.composition().text(),
-            "top": candidates.first().map(|c| &c.text), "event_ms":elapsed}));
+            "top": candidates.first().map(|c| &c.text), "event_ms":elapsed, "refreshed":refreshed}));
     }
     let expected = case.text.trim_end_matches(['，', '？']);
     let cold = texts(&candidates)

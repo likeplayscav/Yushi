@@ -3,17 +3,12 @@ use std::path::PathBuf;
 use clap::Parser;
 use qingjian_platform::ZhiyiTier;
 
-/// 按优先级挑一个存在的数据文件：`data/generated/` 里打包好的 `.qj`、那里的 TSV、仓库自带的产品数据
-/// （`assets/lexicon/dict.tsv`、`assets/glossary/glossary-*.tsv`、`assets/lexicon/english.tsv`），最后是 `assets/sample/` 的样例。
+/// 按优先级挑一个存在的数据文件：`data/generated/` 里的 `.qj`（dicts-fetch 从词库仓库取的）、那里的 TSV，
+/// 最后是 `assets/sample/` 的样例。
 pub fn default_data_file(name: &str) -> PathBuf {
     let generated = PathBuf::from("data/generated").join(name);
     let packed = generated.with_extension("qj");
-    let shipped = if name.starts_with("glossary-") {
-        PathBuf::from("assets/glossary").join(name)
-    } else {
-        PathBuf::from("assets/lexicon").join(name)
-    };
-    for candidate in [packed, generated, shipped] {
+    for candidate in [packed, generated] {
         if candidate.is_file() {
             return candidate;
         }
@@ -86,9 +81,17 @@ pub struct Args {
     #[arg(long, value_delimiter = ',')]
     pub aux_query: Vec<String>,
 
-    /// 英文词表路径（中英混输）。缺省：data/generated/english.tsv 存在就用它，否则不启用
+    /// 英文词表路径（中英混输）。缺省：data/generated/english.qj（或同名 TSV）存在就用它，否则不启用
     #[arg(long)]
     pub english: Option<PathBuf>,
+
+    /// 英文音标表（`english-ipa.qj`，或 `词\t/音标/` 的 TSV）。缺省：data/generated/english-ipa.qj 存在就用它
+    #[arg(long)]
+    pub english_ipa: Option<PathBuf>,
+
+    /// 英文候选与英文译文旁显示音标（配置 `[general] show_english_pronunciation`，缺省关）
+    #[arg(long)]
+    pub show_english_pronunciation: bool,
 
     /// 用户词频文件；给了就在退出时写回，不给则只在本次会话内学习
     #[arg(long)]
